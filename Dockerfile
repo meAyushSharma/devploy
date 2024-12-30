@@ -1,21 +1,23 @@
-# Base image: Ubuntu
+# Base image with Ubuntu
 FROM ubuntu:22.04
 
-WORKDIR /app
+# Set the working directory
+WORKDIR /usr/src/app
 
 # Update and install prerequisites
 RUN apt-get update && apt-get install -y \
     curl \
     gnupg \
+    build-essential \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js (using NodeSource setup script for the latest LTS version)
+# Add Node.js repository and install Node.js (LTS version)
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt-get install -y nodejs && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y nodejs
 
-# Copy files from the current directory on the host to /app in the container
-COPY . /app
+# Expose port 3000 (or any port your app uses)
+EXPOSE 3007
 
-# Set the default command
-CMD ["node", "--version"]
+# Set default command (useful for interactive containers)
+CMD [ "bash" ]
