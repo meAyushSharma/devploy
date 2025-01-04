@@ -1,37 +1,15 @@
 const express = require("express");
-const fs = require('fs');
-const path = require('path');
-const Docker = require("dockerode");
-var docker = new Docker({ socketPath: "/var/run/docker.sock" });
+const Docker = require('dockerode');
+
 const dockerRouter = express.Router();
+const docker = new Docker({ host: 'localhost', port: 2375 });
 
-dockerRouter.get("/start", async (req, res) => {
-    const dockerfilePath = path.resolve(__dirname, 'Dockerfile');
-    const tar = require('tar-fs');
-
-    // Create a tarball of the context (assuming Dockerfile is in the current folder)
-    const tarStream = tar.pack(__dirname);
-
-    try {
-        console.log("Building Docker image...");
-        const stream = await docker.buildImage(tarStream, {
-            t: 'devboxTestImage', // Tag the image
-        });
-
-        // Stream progress logs
-        stream.pipe(process.stdout);
-        await new Promise((resolve, reject) => {
-            docker.modem.followProgress(stream, (err, res) =>
-                err ? reject(err) : resolve(res)
-            );
-        });
-
-        console.log('Docker image built successfully as "devboxTestImage".');
-    } catch (error) {
-        console.error('Error building Docker image:', error);
-    }
-
-    res.send("successfull...");
+dockerRouter.get('/containers', async (req, res) => {
+  const containers=await docker.listContainers();
+  console.log(containers);
+  return res.json({
+    containers: containers.map(container => ({id: container.Id, name: container.Names}))
+  });
 });
 
-module.exports = { dockerRouter };
+module.exports = {dockerRouter}
