@@ -1,46 +1,39 @@
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import Select from "react-select";
 
-import { useFetchOptions } from "../hooks/useFetchOptions";
+import { useDockerFetch } from "../hooks/useDockerFetch";
 
-import {selectedDatabaseAtom} from "../store/atoms/selectedDatabaseAtom";
-import {selectedOsAtom} from "../store/atoms/selectedOsAtom";
-import {selectedRuntimeAtom} from "../store/atoms/selectedRuntimeAtom";
+import {selectedDatabaseAtom} from "../store/atoms/softwareAtoms/selectedDatabaseAtom";
+import {selectedOsAtom} from "../store/atoms/softwareAtoms/selectedOsAtom";
+import {selectedRuntimeAtom} from "../store/atoms/softwareAtoms/selectedRuntimeAtom";
 
 
-
-export const DockerSearchComponent = ({ label, isMulti }) => {
-  const [inputValue, setInputValue] = useState("");
-  const [selectedOption, setSelectedOption] = useState(isMulti ? [] : null);
+export const DockerSearchComponent = memo(({ label }) => {
+  const [inputValue, setInputValue] = useState(null);
+  const [selectedOption, setSelectedOption] = useState([]);
 
   const setOs = useSetRecoilState(selectedOsAtom);
   const setRuntime = useSetRecoilState(selectedRuntimeAtom);
   const setDatabase = useSetRecoilState(selectedDatabaseAtom);
 
-  const { options, isLoading } = useFetchOptions(inputValue ? `http://localhost:3007/api/v1/search?q=${inputValue}` : null);
+  const { options, isLoading } = useDockerFetch(inputValue ? `http://localhost:3007/api/v1/search?q=${inputValue}&requestFor=docker` : null);
   
   useEffect(() => {
-    if(isMulti){
-        if(label === "Operating System ") setOs(selectedOption) // just in case for future
-        if(label === "Runtime(s) ") setRuntime(selectedOption)
-        if(label === "Database(s) ") setDatabase(selectedOption)
-    }else {
-        if(label === "Operating System ") setOs(selectedOption ? selectedOption : null)
-        if(label === "Runtime(s) ") setRuntime(selectedOption ? selectedOption : []) // jic
-        if(label === "Database(s) ") setDatabase(selectedOption ? selectedOption : []) //jic
-    }
-  }, [selectedOption, isMulti, label, setOs, setRuntime, setDatabase])
+        if(label === "Runtime(s)") setRuntime(selectedOption)
+        if(label === "Database(s)") setDatabase(selectedOption)
+        if(label === "Operating System") setOs(selectedOption)
+  }, [selectedOption, label, setOs, setRuntime, setDatabase])
 
   return (
     <div>
       <label>{label} : </label>
       <Select
         options={options}
-        isMulti={isMulti}
+        isMulti={true}
         onInputChange={(newValue) => setInputValue(newValue)}
         onChange={(selected) => {
-          setSelectedOption(selected || (isMulti ? [] : null));
+          setSelectedOption(selected || ([]));
         }}
         placeholder={`Start typing to search ${label}...`}
         isLoading={isLoading}
@@ -51,12 +44,10 @@ export const DockerSearchComponent = ({ label, isMulti }) => {
         <p>
           Selected:{" "}
           <strong>
-            {isMulti
-              ? selectedOption.map((opt) => opt.label).join(", ")
-              : selectedOption.label}
+            {selectedOption.map((opt) => opt.label).join(", ")}
           </strong>
         </p>
       )}
     </div>
   );
-};
+});

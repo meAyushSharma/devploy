@@ -1,6 +1,6 @@
 import { NewProjectButton } from "../components/NewProjectButton"
 
-export const Build = () => {
+export const Builds = () => {
     return <div>
         {/* 
         Create a new Project: Button =onClick()=> choose screen where os, node etc will be shown

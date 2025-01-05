@@ -17,9 +17,10 @@ export const useAxios = (url) => {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
+                console.log("useAxios() is fetching...")
                 const response = await axios.get(url);
                 setData(response.data);
-                console.log("Fetched data:", response.data);
+                console.log("useAxios() data:", response.data);
             } catch (err) {
                 console.error("Error fetching data:", err);
                 setError(err);

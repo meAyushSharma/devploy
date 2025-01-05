@@ -1,52 +1,87 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Select from "react-select";
+
 import { useAxios } from "../hooks/useAxios";
 
-export const PackageSearchComponent = ({url, label}) => {
+import { npmLibsAtom } from "../store/atoms/libAtoms/npmLibsAtom";
+import { pipLibsAtom } from "../store/atoms/libAtoms/pipLibsAtom";
+import { cargoLibsAtom } from "../store/atoms/libAtoms/cargoLibsAtom";
+import { gemLibsAtom } from "../store/atoms/libAtoms/gemLibsAtom";
+import { useSetRecoilState } from "recoil";
+
+export const PackageSearchComponent = React.memo(({requestFor, label}) => {
     const [options, setOptions] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [inputValue, setInputValue] = useState(null);
     const [actualUrl, setActualUrl] = useState(null);
     useEffect(() => {
         if(inputValue){
-            const updatedUrl = url.split("|")[1].replace("$", inputValue);
+            const updatedUrl = `http://localhost:3007/api/v1/search?q=${inputValue}&requestFor=${requestFor}`;
             setActualUrl(updatedUrl);
         }
-    }, [inputValue, url])
+    }, [inputValue, requestFor])
     const {data, isLoading, error} = useAxios(actualUrl);
-    console.log("this is actual url:: ", actualUrl)
-    // now define how each data from npm, pip, gem, cargo will be handeled
+    // now define how data from query will be handeled (setting options for Select)...
     useEffect(() => {
-        const signature = label.split(":")[1];
-        if (signature === " npm" && data){
+        const signature = requestFor;
+        if (signature === "npm" && data){
             const options = data.objects.map(ele => ({
                 label: `Name: ${ele.package.name} , ${ele.package.description} || version : ${ele.package.version}`,
                 value: ele.package.name
             }))
+            console.log("npm option added")
             setOptions(options);
-        }else if (signature === " pip" && data){
+        }else if (signature === "pip" && data){
             if(data.message === "Not Found"){
-                console.log("pip not found!!")
                 setOptions([]);
             }else if(data.info){
-                console.log("pip founddd!!!");
-                const option = [{ label: `version : ${data.info.version} || ${data.info.summary}`, value: data.info.name }]
+                const option = [{ label: `Name : ${data.info.name} || version : ${data.info.version} || ${data.info.summary}`, value: data.info.name }]
+                console.log("pip option added")
                 setOptions(option);
             }
-        }else if (signature === " cargo" && data) {
+        }else if (signature === "cargo" && data) {
             const options = data.crates.map(ele => ({
-                label:`${ele.description}`,
+                label:`Name : ${ele.id} || ${ele.description}`,
                 value: ele.id
             }))
+            console.log("cargo option added")
             setOptions(options);
-        }else if (signature === " gem" && data) {
+        }else if (signature === "gem" && data) {
             const options = data.map(ele => ({
-                label:`${ele.version} || Info : ${ele.info}`,
-                value:ele.name
+                label:`Name : ${ele.name} || ${ele.version} || Info : ${ele.info}`,
+                value: ele.name
             }));
+            console.log("gem option added")
             setOptions(options);
         }
-    }, [label, data, setOptions])
+    }, [requestFor, data, setOptions]);
+
+    // now define how choosen option(s) will be handeled (setting global variables)
+    const setNpmLibs = useSetRecoilState(npmLibsAtom);
+    const setPipLibs = useSetRecoilState(pipLibsAtom);
+    const setCargoLibs = useSetRecoilState(cargoLibsAtom);
+    const setGemLibs = useSetRecoilState(gemLibsAtom);
+
+    useEffect(() => {
+        switch(requestFor){
+            case "npm" :
+                console.log("npm added to global", selectedOptions);
+                setNpmLibs(selectedOptions);
+                break;
+            case "pip" :
+                setPipLibs(selectedOptions);
+                break;
+            case "cargo" :
+                setCargoLibs(selectedOptions);
+                break;
+            case "gem" :
+                setGemLibs(selectedOptions);
+                break;
+            default :
+                console.log("Wrong 'requestFor' in 'PackageSearchComponent' in setting 'global state'");
+        }
+    }, [requestFor, setNpmLibs, setPipLibs, setCargoLibs, setGemLibs, selectedOptions]);
+
     return <div>
         <label>{label} :</label>
         <Select
@@ -60,6 +95,6 @@ export const PackageSearchComponent = ({url, label}) => {
             isLoading={isLoading}
             isClearable
             noOptionsMessage={() => (isLoading ? "Loading..." : "No options found")}
-      />
+        />
     </div>
-}
+})
