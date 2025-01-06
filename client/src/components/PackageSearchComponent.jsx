@@ -1,3 +1,7 @@
+
+//! Depreciated ::
+
+
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
 

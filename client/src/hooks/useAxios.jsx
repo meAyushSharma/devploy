@@ -8,7 +8,7 @@ export const useAxios = (url) => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     useEffect(() => {
-        if (!url) {
+        if (!url || url == null) {
             setData(null);
             setIsLoading(false);
             setError(null);

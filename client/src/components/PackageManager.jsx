@@ -29,8 +29,5 @@ export const PackageManager = memo(({label, isMulti=true}) => {
             placeholder={`Start typing to search ${label}...`}
             isClearable
       />
-      {selectedOption && (
-        selectedOption.map(ele => ele.label).join(", ")
-      )}
     </div>
 })

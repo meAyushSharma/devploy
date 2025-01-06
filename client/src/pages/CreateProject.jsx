@@ -1,10 +1,18 @@
 import { useRecoilValue } from "recoil";
 import { memo } from "react";
-import { DockerSearchComponent } from "../components/DockerSearchComponent";
+
 import { PackageManager } from "../components/PackageManager";
-import { PackageSearchComponent } from "../components/PackageSearchComponent";
 import { selectedPackageManagerAtom } from "../store/atoms/libAtoms/selectedPackageManagerAtom";
 import { TestComponent } from "../components/testComponent";
+
+import { DockerSearchComponent } from "../components/DockerSearchComponent";
+import { NpmSearchComponent } from "../components/NpmSearchComponent";
+import { CargoSearchComponent } from "../components/CargoSearchComponent";
+import { PipSearchComponent } from "../components/PipSearchComponent";
+import { GemSearchComponent } from "../components/GemSearchComponent";
+// import { PackageSearchComponent } from "../components/PackageSearchComponent"; //! depreciated
+
+
 
 // * memo not needed
 export const CreateProject = memo(() => {
@@ -22,10 +30,29 @@ export const CreateProject = memo(() => {
         <DockerSearchComponent label={"Database(s)"}/>
         <div className="text-xl font-medium text-gray-500 mt-4">Framework and libraries :</div>
         <PackageManager label={"Select Package Managers for above choosen runtimes : "} isMulti={true}/>
-        {packageManagers.map(pm => <PackageSearchComponent requestFor={pm.value} label={pm.label} key={pm.label.split(":")[1]}/>)}
-        <br />
-        <br />
-        <br />
+
+        {/* //? depreciated :: */}
+        {/* {packageManagers.map(pm => <PackageSearchComponent requestFor={pm.value} label={pm.label} key={pm.label.split(":")[1]}/>)} */}
+
+        {/* //todo : updated :: more modular */ }
+        {packageManagers.map(pm => {
+            const pmValue = pm.value;
+            switch(pmValue){
+                case "npm":
+                    return <NpmSearchComponent key={pmValue}/>
+                case "pip":
+                    return <PipSearchComponent key={pmValue}/>
+                case "cargo":
+                    return <CargoSearchComponent key={pmValue}/>
+                case "gem":
+                    return <GemSearchComponent key={pmValue}/>
+                default :
+                    return <div key={pmValue}>Wrong package manager chosen</div>;             
+            }
+        })}
+
+
+
         <br />
         <br />
         <br />
