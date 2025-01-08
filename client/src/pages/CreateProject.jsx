@@ -1,15 +1,17 @@
 import { useRecoilValue } from "recoil";
 import { memo } from "react";
 
-import { PackageManager } from "../components/PackageManager";
+import { PackageManager } from "../components/package_manager/PackageManager";
 import { selectedPackageManagerAtom } from "../store/atoms/libAtoms/selectedPackageManagerAtom";
 import { TestComponent } from "../components/testComponent";
 
 import { DockerSearchComponent } from "../components/DockerSearchComponent";
-import { NpmSearchComponent } from "../components/NpmSearchComponent";
-import { CargoSearchComponent } from "../components/CargoSearchComponent";
-import { PipSearchComponent } from "../components/PipSearchComponent";
-import { GemSearchComponent } from "../components/GemSearchComponent";
+import { NpmSearchComponent } from "../components/package_manager/NpmSearchComponent";
+import { CargoSearchComponent } from "../components/package_manager/CargoSearchComponent";
+import { PipSearchComponent } from "../components/package_manager/PipSearchComponent";
+import { GemSearchComponent } from "../components/package_manager/GemSearchComponent";
+import { Environments } from "../components/environment/Environments";
+import { Configurations } from "../components/Configurations";
 // import { PackageSearchComponent } from "../components/PackageSearchComponent"; //! depreciated
 
 
@@ -25,11 +27,15 @@ export const CreateProject = memo(() => {
     const packageManagers = useRecoilValue(selectedPackageManagerAtom);
     return <div>
         <div className="text-xl font-medium text-gray-500 mt-4">Software and tools :</div>
-        <DockerSearchComponent label={"Operating System"}/>
+        <div className="">
+            <DockerSearchComponent label={"Operating System"}/>
+        </div>
         <DockerSearchComponent label={"Runtime(s)"}/>
         <DockerSearchComponent label={"Database(s)"}/>
         <div className="text-xl font-medium text-gray-500 mt-4">Framework and libraries :</div>
-        <PackageManager label={"Select Package Managers for above choosen runtimes : "} isMulti={true}/>
+        <div>
+            <PackageManager label={"Package Managers"} isMulti={true}/>
+        </div>
 
         {/* //? depreciated :: */}
         {/* {packageManagers.map(pm => <PackageSearchComponent requestFor={pm.value} label={pm.label} key={pm.label.split(":")[1]}/>)} */}
@@ -50,15 +56,11 @@ export const CreateProject = memo(() => {
                     return <div key={pmValue}>Wrong package manager chosen</div>;             
             }
         })}
-
-
-
+        <Configurations/>
+        <Environments/>
         <br />
         <br />
         <br />
-        <br />
-        <br />
-        <TestComponent/>
     </div>
 })
 

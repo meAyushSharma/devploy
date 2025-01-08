@@ -1,6 +1,6 @@
 import { useSetRecoilState } from "recoil";
 import { BasePackageSearchComponent } from "./BasePackageSearchComponent";
-import { pipLibsAtom } from "../store/atoms/libAtoms/pipLibsAtom";
+import { pipLibsAtom } from "../../store/atoms/libAtoms/pipLibsAtom";
 
 export const PipSearchComponent = () => {
     const setPipLibs = useSetRecoilState(pipLibsAtom);

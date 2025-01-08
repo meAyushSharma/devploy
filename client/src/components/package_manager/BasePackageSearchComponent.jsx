@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAxios } from "../hooks/useAxios";
+import { useAxios } from "../../hooks/useAxios";
 import Select from "react-select";
 
 export const BasePackageSearchComponent = ({ label, requestFor, transformData, setGlobalState }) => {
@@ -20,18 +20,19 @@ export const BasePackageSearchComponent = ({ label, requestFor, transformData, s
     }, [selectedOptions, setGlobalState]);
 
     return (
-        <div>
-            <br />
-            <label>{label}:</label>
-            <Select
-                options={options}
-                isMulti={true}
-                onInputChange={(newValue) => setInputValue(newValue)}
-                onChange={(selected) => setSelectedOptions(selected)}
-                placeholder={`Start typing to search ${label}...`}
-                isLoading={isLoading}
-                isClearable
-            />
+        <div className="flex justify-evenly gap-2">
+             <div className="w-1/4 flex justify-between items-center pl-2 font-medium"><span>{label}</span><span>:</span></div>
+             <div className="w-3/4 p-2">
+                <Select
+                    options={options}
+                    isMulti={true}
+                    onInputChange={(newValue) => setInputValue(newValue)}
+                    onChange={(selected) => setSelectedOptions(selected)}
+                    placeholder={`Start typing to search ${label}...`}
+                    isLoading={isLoading}
+                    isClearable
+                />
+            </div>
         </div>
     );
 };

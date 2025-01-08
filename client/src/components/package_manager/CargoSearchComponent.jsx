@@ -1,6 +1,6 @@
 import { useSetRecoilState } from "recoil";
 import { BasePackageSearchComponent } from "./BasePackageSearchComponent";
-import { cargoLibsAtom } from "../store/atoms/libAtoms/cargoLibsAtom";
+import { cargoLibsAtom } from "../../store/atoms/libAtoms/cargoLibsAtom";
 
 export const CargoSearchComponent = () => {
     const setCargoLibs = useSetRecoilState(cargoLibsAtom);

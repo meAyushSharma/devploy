@@ -17,7 +17,7 @@ export const useDockerFetch = (url) => {
                 const query = await axios.get(url);
                 const data = query.data;
                 const formattedData = data.results.map(res => ({
-                    label:`${res.repo_name} : ${res.short_description}  || Official : ${res.is_official} || Star Count : ${res.star_count}`,
+                    label:`${res.repo_name}; Official:${res.is_official}`,
                     value: `${res.repo_name}`
                 }));
                 console.log("useFetchOptions() data:", data);

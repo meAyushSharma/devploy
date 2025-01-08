@@ -26,8 +26,9 @@ export const DockerSearchComponent = memo(({ label }) => {
   }, [selectedOption, label, setOs, setRuntime, setDatabase])
 
   return (
-    <div>
-      <label>{label} : </label>
+    <div className="flex justify-evenly gap-2">
+      <div className="w-1/4 flex justify-between items-center pl-2 font-medium"><span>{label}</span><span>:</span></div>
+      <div className="w-3/4 p-2">
       <Select
         options={options}
         isMulti={true}
@@ -40,14 +41,15 @@ export const DockerSearchComponent = memo(({ label }) => {
         isClearable
         noOptionsMessage={() => (isLoading ? "Loading..." : "No options found")}
       />
-      {selectedOption && (
+      </div>
+      {/* {selectedOption && (
         <p>
           Selected:{" "}
           <strong>
             {selectedOption.map((opt) => opt.label).join(", ")}
           </strong>
         </p>
-      )}
+      )} */}
     </div>
   );
 });

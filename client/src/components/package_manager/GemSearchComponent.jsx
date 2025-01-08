@@ -1,6 +1,6 @@
 import { useSetRecoilState } from "recoil";
 import { BasePackageSearchComponent } from "./BasePackageSearchComponent";
-import { gemLibsAtom } from "../store/atoms/libAtoms/gemLibsAtom";
+import { gemLibsAtom } from "../../store/atoms/libAtoms/gemLibsAtom";
 
 export const GemSearchComponent = () => {
     const setGemLibs = useSetRecoilState(gemLibsAtom);
