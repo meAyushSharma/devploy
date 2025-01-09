@@ -12,6 +12,7 @@ import { PipSearchComponent } from "../components/package_manager/PipSearchCompo
 import { GemSearchComponent } from "../components/package_manager/GemSearchComponent";
 import { Environments } from "../components/environment/Environments";
 import { Configurations } from "../components/Configurations";
+import { NetworkConfig } from "../components/netword_config/NetworkConfig";
 // import { PackageSearchComponent } from "../components/PackageSearchComponent"; //! depreciated
 
 
@@ -58,6 +59,7 @@ export const CreateProject = memo(() => {
         })}
         <Configurations/>
         <Environments/>
+        <NetworkConfig/>
         <br />
         <br />
         <br />

@@ -42,14 +42,6 @@ export const DockerSearchComponent = memo(({ label }) => {
         noOptionsMessage={() => (isLoading ? "Loading..." : "No options found")}
       />
       </div>
-      {/* {selectedOption && (
-        <p>
-          Selected:{" "}
-          <strong>
-            {selectedOption.map((opt) => opt.label).join(", ")}
-          </strong>
-        </p>
-      )} */}
     </div>
   );
 });

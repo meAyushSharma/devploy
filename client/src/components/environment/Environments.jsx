@@ -1,8 +1,13 @@
-import { useRecoilState } from "recoil"
+import { useRecoilState, useRecoilValue } from "recoil"
 import { envVariablesAtom } from "../../store/atoms/envAtoms/envVariablesAtom"
 import { useState } from "react";
+import { ShowEnv } from "./ShowEnv";
+import { envValidAtom } from "../../store/atoms/envAtoms/envValidAtom";
+import { TextInput } from "../common/TextInput";
+import { Button } from "../common/Button";
 
 export const Environments = () => {
+    const show = useRecoilValue(envValidAtom);
     const [envVars, setEnvVars] = useRecoilState(envVariablesAtom);
     const [name, setName] = useState("");
     const [val, setVal] = useState("");
@@ -13,23 +18,17 @@ export const Environments = () => {
             setVal("");
         }
     }
-    const delEnv = (index) => setEnvVars(envState => envState.filter((_, i)=> i!=index));
-    return <div>
+    const onChangeHandler = e => setName(e.target.value);
+    return show ? <div>
         <div>
             Environment variable(s) :
         </div>
-        <div>
-            <input type="text" placeholder="env name" onChange={e => setName(e.target.value)} value={name}/>
-            <input type="text" placeholder="env value" onChange={e => setVal(e.target.value)} value={val}/>
-            <button onClick={addEnv}>Add</button>
+        <div className="flex justify-around">
+            <TextInput placeholder={"env name"} onChangeFun={onChangeHandler} value={name}/>
+            <span>=</span>
+            <TextInput placeholder={"env value"} onChangeFun={onChangeHandler} value={val}/>
+            <Button label={"Add"} onClickFun={addEnv}/>
         </div>
-        {(envVars.length>0)
-            ? (<div> 
-            {envVars.map((env, index) => (
-                        <div key={index}>
-                            --env {env.envName} = {env.envValue}
-                            <button onClick={() => delEnv(index)}>delete</button>
-                        </div>
-            ))}</div>):null}
-    </div>
+        <ShowEnv/>
+    </div>:null
 }
