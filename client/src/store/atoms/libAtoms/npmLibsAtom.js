@@ -1,6 +1,7 @@
-import { atom } from "recoil";
+import { atom, atomFamily } from "recoil";
 
-export const npmLibsAtom = atom({
+export const npmLibsAtom = atomFamily({
     key: "npmLibsAtom",
     default: []
 });
+// [{value:value, label:label}]

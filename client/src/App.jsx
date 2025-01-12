@@ -19,7 +19,8 @@ function App() {
             <Route path="/about" element={<Suspense fallback={<ErrorBoundary/>}><About/></Suspense>}></Route>
             <Route path="/guide" element={<Suspense fallback={<ErrorBoundary/>}><Guide/></Suspense>}></Route>
             <Route path="/builds" element={<Suspense fallback={<ErrorBoundary/>}><Builds/></Suspense>}></Route>
-            <Route path="/create-project" element={<Suspense fallback={<ErrorBoundary/>}><CreateProject/></Suspense>}></Route>
+            <Route path="/create-env" element={<Suspense fallback={<ErrorBoundary/>}><CreateProject type={"env"}/></Suspense>}></Route>
+            <Route path="/docker-compose" element={<Suspense fallback={<ErrorBoundary/>}><CreateProject type={"service"}/></Suspense>}></Route>
           </Routes>
         </BrowserRouter>
     </>

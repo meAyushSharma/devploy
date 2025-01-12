@@ -1,8 +1,9 @@
 import { useRecoilState } from "recoil"
 import { portAtom } from "../../store/atoms/networkAtoms/portsAtom"
+import { memo } from "react";
 
-export const ShowPorts = () => {
-    const [ports, setPorts] = useRecoilState(portAtom);
+export const ShowPorts = memo(({type}) => {
+    const [ports, setPorts] = useRecoilState(portAtom(type));
     const delPort = (ind) => setPorts(ports => ports.filter((_,i) => i!=ind))
     return <div>
         {ports.map((item, key) => (<div key={key}>
@@ -11,4 +12,4 @@ export const ShowPorts = () => {
             </div>
         </div>))}
     </div>
-}
+})

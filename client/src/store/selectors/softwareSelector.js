@@ -1,18 +1,15 @@
-import { selector } from "recoil";
+import { selector, selectorFamily } from "recoil";
 import { selectedOsAtom } from "../atoms/softwareAtoms/selectedOsAtom";
 import { selectedRuntimeAtom } from "../atoms/softwareAtoms/selectedRuntimeAtom";
 import { selectedDatabaseAtom } from "../atoms/softwareAtoms/selectedDatabaseAtom";
 
-export const softwareSelector = selector({
+export const softwareSelector = selectorFamily({
     key: "softwareSelector",
-    get: ({get}) => {
-        const os = get(selectedOsAtom);
-        const runtime = get(selectedRuntimeAtom);
-        const database = get(selectedDatabaseAtom);
+    get: id => ({get}) => {
+        const os = get(selectedOsAtom(id));
+        const runtime = get(selectedRuntimeAtom(id));
+        const database = get(selectedDatabaseAtom(id));
         const softwares = [os, runtime, database];
-        console.log("this is os: ", os);
-        console.log("this is runtime: ", runtime);
-        console.log("this is database: ", database);
         return softwares;
     }
 })

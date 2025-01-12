@@ -1,9 +1,8 @@
-import { useRecoilValue } from "recoil";
-import { memo } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { memo, useEffect, useState } from "react";
 
 import { PackageManager } from "../components/package_manager/PackageManager";
 import { selectedPackageManagerAtom } from "../store/atoms/libAtoms/selectedPackageManagerAtom";
-import { TestComponent } from "../components/testComponent";
 
 import { DockerSearchComponent } from "../components/DockerSearchComponent";
 import { NpmSearchComponent } from "../components/package_manager/NpmSearchComponent";
@@ -13,29 +12,40 @@ import { GemSearchComponent } from "../components/package_manager/GemSearchCompo
 import { Environments } from "../components/environment/Environments";
 import { Configurations } from "../components/Configurations";
 import { NetworkConfig } from "../components/netword_config/NetworkConfig";
+import { serviceCountAtom } from "../store/atoms/serviceCountAtom";
+import { Button } from "../components/common/Button";
+import { CreateDockerfile } from "../components/CreateDockerfile";
 // import { PackageSearchComponent } from "../components/PackageSearchComponent"; //! depreciated
 
 
 
 // * memo not needed
-export const CreateProject = memo(() => {
+export const CreateProject = memo(({type}) => {
     // TODO : just fancy wrapper for "selectedPackageManagerAtom", nothing else
     // const packageManagers = useRecoilValue(transformedPackageManagerSelector);
     //?for debugging purposes only ...
     console.log("am i re-rendering?");
     //? ...
-
-    const packageManagers = useRecoilValue(selectedPackageManagerAtom);
+    const [projName, setProjName] = useState("");
+    const [serviceCount, setServiceCount] = useRecoilState(serviceCountAtom);
+    const env = type === "env";
+    const service = type === "service";
+    const saveProject = () => service && setServiceCount(count => count+1)
+    const [review, setReview] = useState(false);
+    const packageManagers = useRecoilValue(env ? selectedPackageManagerAtom(type) : selectedPackageManagerAtom(`service${serviceCount+1}`));
     return <div>
+        <div>
+            <span>{env?"Environment":`Service${serviceCount+1}`} name : </span> <input type="text" onChange={e => setProjName(e.target.value)} value={projName} className="border-2 rounded"/>
+        </div>
         <div className="text-xl font-medium text-gray-500 mt-4">Software and tools :</div>
         <div className="">
-            <DockerSearchComponent label={"Operating System"}/>
+            <DockerSearchComponent label={"Operating System"} type={env?"env":`service${serviceCount+1}`}/>
         </div>
-        <DockerSearchComponent label={"Runtime(s)"}/>
-        <DockerSearchComponent label={"Database(s)"}/>
+        <DockerSearchComponent label={"Runtime(s)"} type={env?"env":`service${serviceCount+1}`}/>
+        <DockerSearchComponent label={"Database(s)"} type={env?"env":`service${serviceCount+1}`}/>
         <div className="text-xl font-medium text-gray-500 mt-4">Framework and libraries :</div>
         <div>
-            <PackageManager label={"Package Managers"} isMulti={true}/>
+            <PackageManager label={"Package Managers"} isMulti={true} type={env?"env":`service${serviceCount+1}`}/>
         </div>
 
         {/* //? depreciated :: */}
@@ -46,38 +56,24 @@ export const CreateProject = memo(() => {
             const pmValue = pm.value;
             switch(pmValue){
                 case "npm":
-                    return <NpmSearchComponent key={pmValue}/>
+                    return <NpmSearchComponent key={pmValue} type={env?"env":`service${serviceCount+1}`}/>
                 case "pip":
-                    return <PipSearchComponent key={pmValue}/>
+                    return <PipSearchComponent key={pmValue} type={env?"env":`service${serviceCount+1}`}/>
                 case "cargo":
-                    return <CargoSearchComponent key={pmValue}/>
+                    return <CargoSearchComponent key={pmValue} type={env?"env":`service${serviceCount+1}`}/>
                 case "gem":
-                    return <GemSearchComponent key={pmValue}/>
+                    return <GemSearchComponent key={pmValue} type={env?"env":`service${serviceCount+1}`}/>
                 default :
                     return <div key={pmValue}>Wrong package manager chosen</div>;             
             }
         })}
-        <Configurations/>
-        <Environments/>
-        <NetworkConfig/>
+        <Configurations type={env?"env":`service${serviceCount+1}`}/>
+        <Environments type={env?"env":`service${serviceCount+1}`}/>
+        <NetworkConfig type={env?"env":`service${serviceCount+1}`}/>
+        <Button label={"Review"} onClickFun={e => setReview(true)}/>
         <br />
         <br />
         <br />
+        {(review && projName) && <CreateDockerfile type={env?"env":`service${serviceCount+1}`}/>}
     </div>
-})
-
-
-
-
-
-
-// classic method ::
-
-// const [inputOs, setInputOs] = useState(null);
-// const debouncedValue = useDebounce(inputOs);
-// const { data, isLoading, error } = useAxios(debouncedValue && debouncedValue.trim() !== "" ? `http://localhost:3007/api/v1/search?q=${debouncedValue}` : null);
-
-// {/* <div className="">Operating system: <input type="text" onChange={e => setInputOs(e.target.value)} list="osOptions" className="w-inherit"/></div>
-// <datalist id="osOptions" className="text-white">
-// {data ? data.results.map(res => <option key={res.repo_name} value={res.repo_name + ":" + res.short_description}/>): null}
-// </datalist> */}
+});

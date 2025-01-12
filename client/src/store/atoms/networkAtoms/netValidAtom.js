@@ -1,6 +1,6 @@
-import { atom } from "recoil";
+import { atom, atomFamily } from "recoil";
 
-export const netValidAtom = atom({
+export const netValidAtom = atomFamily({
     key:"netValidAtom",
     default:false
 })

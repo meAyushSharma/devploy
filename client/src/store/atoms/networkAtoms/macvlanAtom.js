@@ -1,7 +1,7 @@
 import { atom, atomFamily } from "recoil";
 
-export const ipvlanAtom = atomFamily({
-    key:"ipvlanAtom",
+export const macvlanAtom = atomFamily({
+    key:"macvlanAtom",
     default:{
         mode:"",
         pairs:[], // {subnet:"", gateway:""}

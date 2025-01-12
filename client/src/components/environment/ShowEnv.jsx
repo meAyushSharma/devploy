@@ -1,8 +1,9 @@
 import { useRecoilState } from "recoil"
 import { envVariablesAtom } from "../../store/atoms/envAtoms/envVariablesAtom"
+import { memo } from "react";
 
-export const ShowEnv = () => {
-    const [envs, setEnvVars] = useRecoilState(envVariablesAtom);
+export const ShowEnv = memo(({type}) => {
+    const [envs, setEnvVars] = useRecoilState(envVariablesAtom(type));
     const delEnv = (index) => setEnvVars(envState => envState.filter((_, i) => i!=index));
     return <div>
         {envs.map((env, id) => {
@@ -19,4 +20,4 @@ export const ShowEnv = () => {
             </div>
         })}
     </div>
-}
+})

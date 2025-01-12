@@ -9,13 +9,13 @@ import {selectedOsAtom} from "../store/atoms/softwareAtoms/selectedOsAtom";
 import {selectedRuntimeAtom} from "../store/atoms/softwareAtoms/selectedRuntimeAtom";
 
 
-export const DockerSearchComponent = memo(({ label }) => {
+export const DockerSearchComponent = memo(({ label, type }) => {
   const [inputValue, setInputValue] = useState(null);
   const [selectedOption, setSelectedOption] = useState([]);
 
-  const setOs = useSetRecoilState(selectedOsAtom);
-  const setRuntime = useSetRecoilState(selectedRuntimeAtom);
-  const setDatabase = useSetRecoilState(selectedDatabaseAtom);
+  const setOs = useSetRecoilState(selectedOsAtom(type));
+  const setRuntime = useSetRecoilState(selectedRuntimeAtom(type));
+  const setDatabase = useSetRecoilState(selectedDatabaseAtom(type));
 
   const { options, isLoading } = useDockerFetch(inputValue ? `http://localhost:3007/api/v1/search?q=${inputValue}&requestFor=docker` : null);
   

@@ -1,7 +1,7 @@
-import { atom } from "recoil";
+import { atom, atomFamily } from "recoil";
 
-export const portAtom = atom({
+export const portAtom = atomFamily({
     key:"portsAtom",
     default:[],
 });
-//{host:hostPort, container:contPort}
+//[{host:hostPort, container:contPort}]

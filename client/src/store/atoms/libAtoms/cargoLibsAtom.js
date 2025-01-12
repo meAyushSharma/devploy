@@ -1,6 +1,6 @@
-import { atom } from "recoil";
+import { atom, atomFamily } from "recoil";
 
-export const cargoLibsAtom = atom({
+export const cargoLibsAtom = atomFamily({
     key: "cargoLibsAtom",
     default: []
 });

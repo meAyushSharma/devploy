@@ -1,5 +1,5 @@
-import {atom} from "recoil"
-export const bridgeAtom = atom({
+import {atom, atomFamily} from "recoil"
+export const bridgeAtom = atomFamily({
     key:"bridgeAtom",
     default:""
 })

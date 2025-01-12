@@ -1,9 +1,9 @@
 import { useRecoilState } from "recoil"
 import { selectedDriverAtom } from "../../store/atoms/networkAtoms/selectedDriverAtom"
-import { Radio } from "../common/Radio";
+import { memo } from "react";
 
-export const DriverOption = () => {
-    const [driver, setSelectedDriver] = useRecoilState(selectedDriverAtom);
+export const DriverOption = memo(({type}) => {
+    const [driver, setSelectedDriver] = useRecoilState(selectedDriverAtom(type));
     const addDriver = e => setSelectedDriver(e.target.value);
     return <div className="flex-col">
         <div>
@@ -22,4 +22,4 @@ export const DriverOption = () => {
             <Radio value="none" name="network-driver" id="none" onChangeFun={addDriver} checked={(driver === "none")}/> */}
         </div>
     </div>
-}
+})

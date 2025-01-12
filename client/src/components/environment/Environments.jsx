@@ -1,14 +1,14 @@
 import { useRecoilState, useRecoilValue } from "recoil"
 import { envVariablesAtom } from "../../store/atoms/envAtoms/envVariablesAtom"
-import { useState } from "react";
+import { memo, useState } from "react";
 import { ShowEnv } from "./ShowEnv";
 import { envValidAtom } from "../../store/atoms/envAtoms/envValidAtom";
 import { TextInput } from "../common/TextInput";
 import { Button } from "../common/Button";
 
-export const Environments = () => {
-    const show = useRecoilValue(envValidAtom);
-    const [envVars, setEnvVars] = useRecoilState(envVariablesAtom);
+export const Environments = memo(({type}) => {
+    const show = useRecoilValue(envValidAtom(type));
+    const [envVars, setEnvVars] = useRecoilState(envVariablesAtom(type));
     const [name, setName] = useState("");
     const [val, setVal] = useState("");
     const addEnv = () => {
@@ -18,17 +18,17 @@ export const Environments = () => {
             setVal("");
         }
     }
-    const onChangeHandler = e => setName(e.target.value);
-    return show ? <div>
+
+    return show && <div>
         <div>
             Environment variable(s) :
         </div>
         <div className="flex justify-around">
-            <TextInput placeholder={"env name"} onChangeFun={onChangeHandler} value={name}/>
+            <TextInput placeholder={"env name"} onChangeFun={e => setName(e.target.value)} value={name}/>
             <span>=</span>
-            <TextInput placeholder={"env value"} onChangeFun={onChangeHandler} value={val}/>
+            <TextInput placeholder={"env value"} onChangeFun={e => setVal(e.target.value)} value={val}/>
             <Button label={"Add"} onClickFun={addEnv}/>
         </div>
-        <ShowEnv/>
-    </div>:null
-}
+        <ShowEnv type={type}/>
+    </div>
+})

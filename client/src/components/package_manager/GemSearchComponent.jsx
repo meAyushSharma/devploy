@@ -1,9 +1,10 @@
 import { useSetRecoilState } from "recoil";
 import { BasePackageSearchComponent } from "./BasePackageSearchComponent";
 import { gemLibsAtom } from "../../store/atoms/libAtoms/gemLibsAtom";
+import { memo } from "react";
 
-export const GemSearchComponent = () => {
-    const setGemLibs = useSetRecoilState(gemLibsAtom);
+export const GemSearchComponent = memo(({type}) => {
+    const setGemLibs = useSetRecoilState(gemLibsAtom(type));
     return (
         <BasePackageSearchComponent
             label="gem packages"
@@ -17,4 +18,4 @@ export const GemSearchComponent = () => {
             setGlobalState={setGemLibs}
         />
     );
-};
+})

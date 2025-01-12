@@ -1,6 +1,6 @@
-import { atom } from "recoil";
+import { atom, atomFamily } from "recoil";
 
-export const envVariablesAtom = atom({
+export const envVariablesAtom = atomFamily({
     key:"envVariablesAtom",
     default:[]
 })

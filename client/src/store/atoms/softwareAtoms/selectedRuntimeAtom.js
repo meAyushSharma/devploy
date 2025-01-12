@@ -1,6 +1,6 @@
-import { atom } from "recoil";
+import { atom, atomFamily } from "recoil";
 
-export const selectedRuntimeAtom = atom({
+export const selectedRuntimeAtom = atomFamily({
     key:"selectedRuntimeAtom",
     default: []
 });

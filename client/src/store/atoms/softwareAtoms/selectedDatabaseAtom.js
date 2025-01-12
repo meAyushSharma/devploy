@@ -1,6 +1,6 @@
-import { atom } from "recoil";
+import { atom, atomFamily } from "recoil";
 
-export const selectedDatabaseAtom = atom({
+export const selectedDatabaseAtom = atomFamily({
     key:"selectedDatabaseAtom",
     default: []
 });

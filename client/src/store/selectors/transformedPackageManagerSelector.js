@@ -5,10 +5,11 @@ import { selectedPackageManagerAtom } from "../atoms/libAtoms/selectedPackageMan
 export const transformedPackageManagerSelector = selector({
     key:"transformedPackageManagerSelector",
     get: ({get}) => {
-        const packageManagers = get(selectedPackageManagerAtom);
-        return packageManagers.map(pm => ({
-            value: pm.value,
-            label:pm.label
-        }));
+        // const packageManagers = get(selectedPackageManagerAtom);
+        // return packageManagers.map(pm => ({
+        //     value: pm.value,
+        //     label:pm.label
+        // }));
+        return 0;
     }
 })

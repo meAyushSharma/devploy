@@ -11,6 +11,8 @@ export const Builds = () => {
         |             like this           |
         |---------------------------------|
         */}
-        <NewProjectButton/>
+        <NewProjectButton label={"Create Environment"} navigateTo={'/create-env'}/>
+        <NewProjectButton label={"Docker compose"} navigateTo={'/docker-compose'}/>
+        <NewProjectButton label={"Containerize an app"} navigateTo={'/create-project'}/>
     </div>
 }

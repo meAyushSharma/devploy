@@ -5,24 +5,25 @@ import { netValidAtom } from "../../store/atoms/networkAtoms/netValidAtom";
 import { DriverOption } from "./DriverOption";
 import { selectedDriverAtom } from "../../store/atoms/networkAtoms/selectedDriverAtom";
 import { Bridge } from "./drivers/Bridge";
-import { Ipvlan } from "./drivers/Ipvlan";
+import { VlanDrivers } from "./drivers/VlanDrivers";
+import { memo } from "react";
 
-export const NetworkConfig = () =>  {
-    const show = useRecoilValue(netValidAtom);
-    const driver = useRecoilValue(selectedDriverAtom);
+export const NetworkConfig = memo(({type}) =>  {
+    const show = useRecoilValue(netValidAtom(type));
+    const driver = useRecoilValue(selectedDriverAtom(type));
     const renderDriver = (driver) => {
         switch(driver) {
             case "bridge":
-                return <Bridge/>
+                return <Bridge type={type}/>
             case "ipvlan":
-                return <Ipvlan/>
             case "macvlan":
+                return <VlanDrivers vlan={driver} type={type}/>
         }
     }
     return show && <div>
-        <Ports/>
-        <ShowPorts/>
-        <DriverOption/>
+        <Ports type={type}/>
+        <ShowPorts type={type}/>
+        <DriverOption type={type}/>
         {driver && renderDriver(driver)}
     </div>
-}
+})

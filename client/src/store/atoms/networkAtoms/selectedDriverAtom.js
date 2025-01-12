@@ -1,6 +1,6 @@
-import { atom } from "recoil";
+import { atom, atomFamily } from "recoil";
 
-export const selectedDriverAtom = atom({
+export const selectedDriverAtom = atomFamily({
     key:"selectedDriverAtom",
     default:"bridge"
 })

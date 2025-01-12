@@ -4,13 +4,13 @@ import { useRecoilState } from "recoil";
 import { selectedPackageManagerAtom } from "../../store/atoms/libAtoms/selectedPackageManagerAtom";
 
 
-export const PackageManager = memo(({label, isMulti=true}) => {
+export const PackageManager = memo(({label, isMulti=true, type}) => {
 
     //? for testing purpose only...
     console.log("re-rendering PackageManager component");
     //? ...
 
-    const [selectedOption, setSelectedOption] = useRecoilState(selectedPackageManagerAtom);
+    const [selectedOption, setSelectedOption] = useRecoilState(selectedPackageManagerAtom(type));
     const options = [
         {label:"Node Package Manager : npm", value:"npm"},
         {label:"Pip Installs Packages : pip", value:"pip"},

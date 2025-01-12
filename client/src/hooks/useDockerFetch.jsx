@@ -13,18 +13,18 @@ export const useDockerFetch = (url) => {
             }
             setIsLoading(true);
             try{
-                console.log("useFetchOptions() is fetching...");
+                // console.log("useFetchOptions() is fetching...");
                 const query = await axios.get(url);
                 const data = query.data;
                 const formattedData = data.results.map(res => ({
                     label:`${res.repo_name}; Official:${res.is_official}`,
                     value: `${res.repo_name}`
                 }));
-                console.log("useFetchOptions() data:", data);
+                // console.log("useFetchOptions() data:", data);
                 setOptions(formattedData);
                 setIsLoading(false);
             }catch(err){
-                console.error("")
+                console.error(`error in useDockerFetch is: ${err}`);
             }
         }
         const debounceValue=setTimeout(fetchData, 500);

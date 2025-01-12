@@ -1,9 +1,10 @@
 import { useSetRecoilState } from "recoil";
 import { BasePackageSearchComponent } from "./BasePackageSearchComponent";
 import { npmLibsAtom } from "../../store/atoms/libAtoms/npmLibsAtom";
+import { memo } from "react";
 
-export const NpmSearchComponent = () => {
-    const setNpmLibs = useSetRecoilState(npmLibsAtom);
+export const NpmSearchComponent = memo(({type}) => {
+    const setNpmLibs = useSetRecoilState(npmLibsAtom(type));
     return (
         <BasePackageSearchComponent
             label="npm packages"
@@ -17,4 +18,4 @@ export const NpmSearchComponent = () => {
             setGlobalState={setNpmLibs}
         />
     );
-};
+})
