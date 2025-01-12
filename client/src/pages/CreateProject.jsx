@@ -92,7 +92,9 @@ export const CreateProject = memo(({type}) => {
         <Configurations type={env?"env":`service${serviceCount+1}`}/>
         <Environments type={env?"env":`service${serviceCount+1}`}/>
         <NetworkConfig type={env?"env":`service${serviceCount+1}`}/>
+        <div className="w-fit bg-green-500 text-white rounded-md">
         <Button label={"Review"} onClickFun={e => setReview(true)}/>
+        </div>
         <br />
         {(review && projName) && <CreateDockerfile type={env?"env":`service${serviceCount+1}`}/>}
     </div>

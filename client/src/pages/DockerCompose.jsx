@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { IoInformationCircleOutline } from "react-icons/io5"
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { Button } from "../components/common/Button";
 import { useNavigate } from "react-router-dom";
 import { dockerfileSelector } from "../store/selectors/dockerfileSelector";
 import { DockerfileCode } from "../components/DockerfileCode";
+import { serviceDelTrackerAtom } from "../store/atoms/serviceDelTrackerAtom";
 
 export const DockerCompose = () => {
     // obviously type=service
@@ -14,11 +15,10 @@ export const DockerCompose = () => {
     const handleBlur = () => setIsTouched(true);
     const navigate = useNavigate();
     const dockerfiles = useRecoilValue(dockerfileSelector);
-    // handle service deletion
-    const [testDockerfile, setTestDockerfile] = useRecoilState()
-    const delService = (index) => {
 
-    }
+    // handle service deletion
+    const setServiceDelTracker = useSetRecoilState(serviceDelTrackerAtom);
+    const delService = (index) => setServiceDelTracker(prevState => [...prevState, index]);
     return (
         <div className="font-Satoshi">
             <div className="flex items-center">
@@ -39,17 +39,19 @@ export const DockerCompose = () => {
                 <Button label={"Add Service"} onClickFun={() => navigate("/create-service")}/>
             </div>
             <div>
-                {dockerfiles.services.length > 0 && dockerfiles.services.map((service,key) => {
-                    return (
-                    <div key={key} className="my-4">
+                {dockerfiles.services.length > 0 && dockerfiles.services.map((service,key) => 
+                    service.dockerfile && service.name && (<div key={key} className="my-4">
                         <div className="flex items-center">
                             <span className="text-xl font-medium text-gray-500">Service Name : </span>
                             <span className="text-xl font-medium text-gray-500 px-2 mr-4">{service.name}</span>
                             <Button label={"Delete Service"} onClickFun={() => delService(key)}/>
                         </div>
                         <DockerfileCode dockerfile={service.dockerfile}/>
-                    </div>
-                    )})}
+                    </div>)
+                    )}
+            </div>
+            <div>
+                <Button label={"Save"}/>
             </div>
         </div>
     )

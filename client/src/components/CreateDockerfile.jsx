@@ -150,7 +150,7 @@ export const CreateDockerfile = memo(({type}) => {
     return (
         <div>
             <DockerfileCode dockerfile={dockerfile}/>
-            <div>
+            <div className="w-fit bg-green-500">
                 <Button label={env ? "Save" : "Continue"} onClickFun={saveProject}/>
             </div>
         </div>
