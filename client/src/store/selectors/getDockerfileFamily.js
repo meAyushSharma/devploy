@@ -8,6 +8,7 @@ import { pipLibsAtom } from "../atoms/libAtoms/pipLibsAtom";
 import { cargoLibsAtom } from "../atoms/libAtoms/cargoLibsAtom";
 import { gemLibsAtom } from "../atoms/libAtoms/gemLibsAtom";
 import { portAtom } from "../atoms/networkAtoms/portsAtom";
+import { projectNameAtom } from "../atoms/projectNameAtom";
 
 export const getDockerfileFamily = selectorFamily({
     key:"getDockerfileFamily",
@@ -23,6 +24,7 @@ export const getDockerfileFamily = selectorFamily({
         const gem = get(gemLibsAtom(id));
 
         const ports = get(portAtom(id)); //[{host:hostPort, container:contPort}]
+        const name = get(projectNameAtom(id));
 
         return {
             os:os,
@@ -33,7 +35,8 @@ export const getDockerfileFamily = selectorFamily({
             pip:pip,
             cargo:cargo,
             gem:gem,
-            ports:ports
+            ports:ports,
+            name:name
         }
     }
 })

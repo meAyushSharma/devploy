@@ -1,12 +1,19 @@
 import { memo } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { getDockerfileFamily } from "../store/selectors/getDockerfilefamily";
+import { IoCopy } from "react-icons/io5";
+import { Button } from "./common/Button";
+import { serviceCountAtom } from "../store/atoms/serviceCountAtom";
+import { testDockerfileAtom } from "../store/atoms/testDockerfileAtom";
+import { DockerfileCode } from "./DockerfileCode";
+import { useNavigate } from "react-router-dom";
 
 export const CreateDockerfile = memo(({type}) => {
     const input = useRecoilValue(getDockerfileFamily(type));
     const generateDockerfile = (input) => {
-        const { os, runtimes, databases, packageManagers, npm, pip, cargo, gem, ports } = input;
-        let dockerfile = `# Dynamically generated Dockerfile\n`;
+        const { os, runtimes, databases, packageManagers, npm, pip, cargo, gem, ports, name } = input;
+        let dockerfile = `# Dockerfile name : ${name}\n`;
+        dockerfile += `# Custom dynamically generated Dockerfile\n`;
 
         //1. add operating system
         dockerfile += os.length>0 ? `FROM ${os[0].value}:latest\n` : `FROM ubuntu:20.04\n`;
@@ -90,9 +97,12 @@ export const CreateDockerfile = memo(({type}) => {
                     // add to desired location
                     packageCommand && addPackagesToDockerfile(packageCommand, index);
                 } else {
-                    // runtime for package not found
+                    // runtime for package not found so 1. delete #$${index} 2. add default runtimes for respective package managers.
+                    const newDockerfile = dockerfile.replace(/#\$\d+/g, "");
+                    dockerfile = newDockerfile;
                     dockerfile += `\n# Setup for ${manager.value} (default runtime: ${runtimeForManager})\n`;
                     dockerfile += `FROM ${runtimeForManager}\n`;
+                    dockerfile += `RUN apt-get update && apt-get install -y curl git && apt-get clean\n`
                     dockerfile += packageCommand || "";
                 }
             })
@@ -121,17 +131,28 @@ export const CreateDockerfile = memo(({type}) => {
     }
 
     const dockerfile = generateDockerfile(input);
+    const [serviceCount, setServiceCount] = useRecoilState(serviceCountAtom);
+    const navigator = useNavigate();
+    const env = type === "env";
+    const [testDockerfile, setTestDockerfile] = useRecoilState(testDockerfileAtom(type));
 
+    const saveProject = () => {
+        if(env){
+            setTestDockerfile(dockerfile);
+            // save to local/server env
+        }else {
+            // take it to docker compose for further processes
+            setTestDockerfile(dockerfile);
+            setServiceCount(count => count+1);
+            navigator("/docker-compose");
+        }
+    }
     return (
         <div>
-            <pre>
-                <code>
-                    <span># Custom Dockerfile</span>
-                    <div>
-                        {dockerfile}
-                    </div>
-                </code>
-            </pre>
+            <DockerfileCode dockerfile={dockerfile}/>
+            <div>
+                <Button label={env ? "Save" : "Continue"} onClickFun={saveProject}/>
+            </div>
         </div>
     )
 })

@@ -1,5 +1,6 @@
 import { useRecoilState, useRecoilValue } from "recoil";
 import { memo, useEffect, useState } from "react";
+import { IoInformationCircleOutline } from "react-icons/io5";
 
 import { PackageManager } from "../components/package_manager/PackageManager";
 import { selectedPackageManagerAtom } from "../store/atoms/libAtoms/selectedPackageManagerAtom";
@@ -15,27 +16,48 @@ import { NetworkConfig } from "../components/netword_config/NetworkConfig";
 import { serviceCountAtom } from "../store/atoms/serviceCountAtom";
 import { Button } from "../components/common/Button";
 import { CreateDockerfile } from "../components/CreateDockerfile";
-// import { PackageSearchComponent } from "../components/PackageSearchComponent"; //! depreciated
+import { useDebounce } from "../hooks/useDebounce";
+import { projectNameAtom } from "../store/atoms/projectNameAtom";
 
 
-
-// * memo not needed
 export const CreateProject = memo(({type}) => {
-    // TODO : just fancy wrapper for "selectedPackageManagerAtom", nothing else
-    // const packageManagers = useRecoilValue(transformedPackageManagerSelector);
     //?for debugging purposes only ...
     console.log("am i re-rendering?");
     //? ...
-    const [projName, setProjName] = useState("");
+
+    // check whether service or enc
     const [serviceCount, setServiceCount] = useRecoilState(serviceCountAtom);
     const env = type === "env";
     const service = type === "service";
-    const saveProject = () => service && setServiceCount(count => count+1)
+
+    // project name
+    const idForName = env ? "env" : service ? `service${serviceCount+1}` : -1;
+    const [projName, setProjName] = useRecoilState(projectNameAtom(idForName));
+    const [isTouched, setIsTouched] = useState(false);
+    const handleBlur = () => setIsTouched(true);
+
+
+    // review 
     const [review, setReview] = useState(false);
+    // pm for selected managers
     const packageManagers = useRecoilValue(env ? selectedPackageManagerAtom(type) : selectedPackageManagerAtom(`service${serviceCount+1}`));
-    return <div>
-        <div>
-            <span>{env?"Environment":`Service${serviceCount+1}`} name : </span> <input type="text" onChange={e => setProjName(e.target.value)} value={projName} className="border-2 rounded"/>
+
+    return <div className="font-Satoshi">
+        <div className="flex items-center">
+            <span>{env?"Environment":`Service${serviceCount+1}`} name : </span>
+            <input 
+            type="text"
+            onBlur={handleBlur}
+            onChange={e => setProjName(e.target.value.trim())}
+            value={projName}
+            className={`border rounded text-lg font-medium px-2 text-center mx-2 ${projName ? 'border-blue-500':'border-rose-500 mx-2'} enabled:hover:border-gray-400`}
+            />
+            {!projName && isTouched && (
+                <div className="flex gap-1 items-center">
+                    <IoInformationCircleOutline className="text-rose-500"/>
+                    <span className="text-rose-500 text-sm">This field is required</span>
+                </div>
+                )}
         </div>
         <div className="text-xl font-medium text-gray-500 mt-4">Software and tools :</div>
         <div className="">
@@ -71,8 +93,6 @@ export const CreateProject = memo(({type}) => {
         <Environments type={env?"env":`service${serviceCount+1}`}/>
         <NetworkConfig type={env?"env":`service${serviceCount+1}`}/>
         <Button label={"Review"} onClickFun={e => setReview(true)}/>
-        <br />
-        <br />
         <br />
         {(review && projName) && <CreateDockerfile type={env?"env":`service${serviceCount+1}`}/>}
     </div>

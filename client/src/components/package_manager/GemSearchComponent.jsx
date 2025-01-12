@@ -10,9 +10,9 @@ export const GemSearchComponent = memo(({type}) => {
             label="gem packages"
             requestFor="gem"
             transformData={(data) => {
-                data.map(ele => ({
+                return data.map(ele => ({
                     label:`Name : ${ele.name} || ${ele.version} || Info : ${ele.info}`,
-                    value: ele.name
+                    value: `${ele.name}`
                 }));
             }}
             setGlobalState={setGemLibs}

@@ -22,6 +22,7 @@ router.get('/search', (req, res, next) => {
     console.log(`request for: ${requestFor} and query is: ${query}`);
     try {
         const response = await get(url);
+        // console.log(response);
         return res.json(response.data);
     } catch (error) {
         return res.status(500).json({ error: 'Error fetching data from Docker Hub' });

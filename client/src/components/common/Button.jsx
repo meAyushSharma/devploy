@@ -1,7 +1,7 @@
 import { memo } from "react";
 
 export const Button = memo(({label, onClickFun}) => {
-    return <div className="cursor-pointer border-2 p-3 w-fit" onClick={onClickFun}>
+    return <div className="cursor-pointer p-2 w-fit rounded-lg font-semibold bg-green-500 text-white shadow-md" onClick={onClickFun}>
         {label}
     </div>
 })

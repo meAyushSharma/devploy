@@ -8,6 +8,7 @@ import { About } from "./pages/About";
 import { Guide } from "./pages/Guide";
 import { Builds } from "./pages/Builds";
 import { CreateProject } from "./pages/CreateProject";
+import { DockerCompose } from "./pages/DockerCompose";
 
 function App() {
   return (
@@ -19,8 +20,9 @@ function App() {
             <Route path="/about" element={<Suspense fallback={<ErrorBoundary/>}><About/></Suspense>}></Route>
             <Route path="/guide" element={<Suspense fallback={<ErrorBoundary/>}><Guide/></Suspense>}></Route>
             <Route path="/builds" element={<Suspense fallback={<ErrorBoundary/>}><Builds/></Suspense>}></Route>
+            <Route path="/docker-compose" element={<Suspense fallback={<ErrorBoundary/>}><DockerCompose/></Suspense>}></Route>
             <Route path="/create-env" element={<Suspense fallback={<ErrorBoundary/>}><CreateProject type={"env"}/></Suspense>}></Route>
-            <Route path="/docker-compose" element={<Suspense fallback={<ErrorBoundary/>}><CreateProject type={"service"}/></Suspense>}></Route>
+            <Route path="/create-service" element={<Suspense fallback={<ErrorBoundary/>}><CreateProject type={"service"}/></Suspense>}></Route>
           </Routes>
         </BrowserRouter>
     </>
