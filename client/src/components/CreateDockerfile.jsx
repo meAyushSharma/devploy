@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { getDockerfileFamily } from "../store/selectors/getDockerfilefamily";
 import { IoCopy } from "react-icons/io5";
@@ -131,6 +131,9 @@ export const CreateDockerfile = memo(({type}) => {
     }
 
     const dockerfile = generateDockerfile(input);
+    useEffect(() => {
+        
+    })
     const [serviceCount, setServiceCount] = useRecoilState(serviceCountAtom);
     const navigator = useNavigate();
     const env = type === "env";
