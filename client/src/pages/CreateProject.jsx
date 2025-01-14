@@ -20,7 +20,8 @@ import { projectNameAtom } from "../store/atoms/projectNameAtom";
 
 import { envNameDuplicacy } from "../utils/envNameDuplicacy";
 import { createDirectory } from "../utils/createDirectory";
-import { dockerComposeFolderDuplicacy } from "../utils/dockerComposeFolderDuplicacy";
+import { getServiceNames } from "../store/selectors/getServiceNames";
+import { useDebounce } from "../hooks/useDebounce";
 
 
 
@@ -44,33 +45,32 @@ export const CreateProject = memo(({type}) => {
     // project name
     const idForName = whatType;
     const [projName, setProjName] = useRecoilState(projectNameAtom(idForName));
+    const debouncedName = useDebounce(projName, 1000);
     const [nameIsValid, setNameIsValid] = useState(null);
     const [isTouched, setIsTouched] = useState(false);
     const handleBlur = () => setIsTouched(true);
 
     // check environment (folder) dockerfiles duplicates
     useEffect(() => {
-        if(env) {
-            const fetchNames = async () => { 
-                const envNames = await envNameDuplicacy();
-                console.log("this is envNames: ", envNames);
-                if(envNames.includes(projName)) setNameIsValid(false);
-                else setNameIsValid(true);
-            }
-            fetchNames();
-        }else {
-            const fetchNames = async () => {
-                const dcFolderNames = await dockerComposeFolderDuplicacy();
-                console.log("this is dcFolderNames: ", dcFolderNames);
-                if(dcFolderNames.includes(projName)) setNameIsValid(false);
-                else setNameIsValid(true);
-            }
-            fetchNames();
+        const fetchNames = async () => { 
+            const envNames = await envNameDuplicacy();
+            console.log("this is envNames: ", envNames);
+            if(envNames.includes(debouncedName)) setNameIsValid(false);
+            else setNameIsValid(true);
         }
-    }, [env, projName, envNameDuplicacy, dockerComposeFolderDuplicacy, setNameIsValid])
+        env && fetchNames();
+    }, [env, debouncedName, envNameDuplicacy, setNameIsValid])
 
+    //? check for service names, must nat be same, use dockerfiles(get all components) or getServiceNames(get names only) => both have undeleted ones only.
+    const services = useRecoilValue(getServiceNames);
+    useEffect(() => {
+        service && debouncedName && (services.includes(debouncedName) ? setNameIsValid(false) : setNameIsValid(true));
+    }, [setNameIsValid, service, services, debouncedName]);
+
+    
     // review 
     const [review, setReview] = useState(false);
+
     // pm for selected managers
     const packageManagers = useRecoilValue(env ? selectedPackageManagerAtom(type) : selectedPackageManagerAtom(`service${serviceCount+1}`));
 

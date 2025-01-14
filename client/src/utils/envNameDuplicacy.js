@@ -6,9 +6,7 @@ export const envNameDuplicacy = async () => {
         const envFolder = await rootDir.getDirectoryHandle('environment', { create: true });
         const fileNames = [];
         for await (const [name, handle] of envFolder.entries()) {
-            if (handle.kind === 'file') {
-                fileNames.push(name); // Collect file names
-            }
+            if(handle.kind === 'file') fileNames.push(name);
         }
         return fileNames;
     } catch (err) {

@@ -1,4 +1,4 @@
-import { memo, useEffect } from "react";
+import { memo, useEffect, useMemo } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { getDockerfileFamily } from "../store/selectors/getDockerfilefamily";
 import { IoCopy } from "react-icons/io5";
@@ -11,9 +11,33 @@ import { useNavigate } from "react-router-dom";
 export const CreateDockerfile = memo(({type}) => {
     const input = useRecoilValue(getDockerfileFamily(type));
     const generateDockerfile = (input) => {
-        const { os, runtimes, databases, packageManagers, npm, pip, cargo, gem, ports, name } = input;
-        let dockerfile = `# Dockerfile name : ${name}\n`;
-        dockerfile += `# Custom dynamically generated Dockerfile\n`;
+        const { os, runtimes, databases, packageManagers, npm, pip, cargo, gem, ports, driver, bridge, ipvlan, macvlan, name } = input;
+        let dockerfile = `# Dockerfile name : ${name}\n\n`;
+        // add commands for network creation :
+        // dockerfile+=`# To create ${driver} network :\n`;
+        // switch(driver){
+        //     case "bridge":
+        //         dockerfile+=`# docker network create ${bridge}`;
+        //         break;
+        //     case "host":
+        //         dockerfile+=`# Simply use it when you run the image\n# docker run -it host <image-name>\n`;
+        //         break;
+        //     case "ipvlan":
+        //         dockerfile+=`# docker network create -d ipvlan ${ipvlan.pairs.map(pair => `\n# --subnet=${pair.subnet} --gateway=${pair.gateway}`)}`
+        //         dockerfile+=`\n# -o ipvlan_mode=${ipvlan.mode}\n# -o parent=${ipvlan.parent} ${ipvlan.name}\n`;
+        //         break;
+        //     case "macvlan":
+        //         dockerfile+=`# docker network create -d ipvlan ${macvlan.pairs.map(pair => `\n# --subnet=${pair.subnet} --gateway=${pair.gateway}`)}\n# -o macvlan_mode=${macvlan.mode}\n# -o parent=${macvlan.parent} ${macvlan.name}\n`;
+        //         break;
+        //     case "none":
+        //         dockerfile+=`# Simply use it when you run the image\n# docker run -it --network none <image-name>\n`;
+        //         break;
+        //     default:
+        //         dockerfile+=``;
+        // }
+        // // add commands for ports
+
+        // dockerfile += `\n\n\n# Custom dynamically generated Dockerfile\n`;
 
         //1. add operating system
         dockerfile += os.length>0 ? `FROM ${os[0].value}:latest\n` : `FROM ubuntu:20.04\n`;
@@ -130,29 +154,59 @@ export const CreateDockerfile = memo(({type}) => {
         return dockerfile;
     }
 
-    const dockerfile = generateDockerfile(input);
-    useEffect(() => {
-        
-    })
+    const dockerfile = useMemo(() => generateDockerfile(input) , [generateDockerfile, input])
+    // creation of dockerfile.json creation
+    const dockerfileJSON = {
+        dockerfile: dockerfile,
+        name: input.name,
+        ports: input.ports,
+        driver: input.driver,
+        bridge: input.bridge,
+        ipvlan: input.ipvlan,
+        macvlan: input.macvlan,
+        packageManagers: input.packageManagers,
+        npm:input.npm,
+        pip:input.pip,
+        cargo:input.cargo,
+        gem:input.gem
+    }
+   
     const [serviceCount, setServiceCount] = useRecoilState(serviceCountAtom);
     const navigator = useNavigate();
     const env = type === "env";
     const [testDockerfile, setTestDockerfile] = useRecoilState(testDockerfileAtom(type));
 
+    const saveEnvToLocal = (folderName, fileName, content) => {
+        const worker = new Worker(new URL('../utils/saveEnvDockerfileWorker.js', import.meta.url));
+        worker.postMessage({folderName, fileName, content});
+        
+        worker.onmessage = e => {
+            if(e.data.success){
+                // clear atoms before directing user to /builds
+                console.log("environment data saved successfully to local!");
+                // show alert to user
+                navigator("/builds")
+            }else {
+                console.error("the error saving environment data to local is: ", e.data.error);
+            }
+        }
+    }
+
     const saveProject = () => {
         if(env){
-            setTestDockerfile(dockerfile);
+            setTestDockerfile(dockerfileJSON);
             // save to local/server env
+            saveEnvToLocal("environment", input.name, dockerfileJSON);
         }else {
             // take it to docker compose for further processes
-            setTestDockerfile(dockerfile);
+            setTestDockerfile(dockerfileJSON);
             setServiceCount(count => count+1);
             navigator("/docker-compose");
         }
     }
     return (
         <div>
-            <DockerfileCode dockerfile={dockerfile}/>
+            <DockerfileCode dockerfile={dockerfileJSON}/>
             <div className="w-fit bg-green-500">
                 <Button label={env ? "Save" : "Continue"} onClickFun={saveProject}/>
             </div>

@@ -8,6 +8,6 @@ export const useDebounce = (inputvalue, delay=500) => {
             setDebounceValue(inputvalue);
         }, delay)
         return () => clearTimeout(int);
-    },[inputvalue]);
+    },[inputvalue, delay]);
     return debounceValue;
 }

@@ -4,23 +4,25 @@ import { testDockerfileAtom } from "../atoms/testDockerfileAtom";
 import { getServiceNames } from "./getServiceNames";
 import { serviceDelTrackerAtom } from "../atoms/serviceDelTrackerAtom";
 
+// this selector will contain all the dockerfiles there is for either instance be it environment or docker-compose, and since it contains all of either, there is no need to make selector family.
+
 export const dockerfileSelector = selector({
     key:"dockerfileSelector",
     get: ({get}) => {
         const dockerfiles = {environment:"", services:[]};
         const serviceCount = get(serviceCountAtom);
-        const envDockerfile = get(testDockerfileAtom("env"));
-        if(envDockerfile) dockerfiles.environment = envDockerfile;
+        const envDockerfileJSON = get(testDockerfileAtom("env"));
+        if(envDockerfileJSON) dockerfiles.environment = envDockerfileJSON;
         const serviceNames = get(getServiceNames);
         if(serviceCount>0 && serviceNames.length>0){
             const serviceDelTracker = get(serviceDelTrackerAtom); // array
             Array.from({length:serviceCount}).map((_,i) => {
                 if(!serviceDelTracker.includes(i)){
                     let service = `service${i+1}`;
-                    const dockerfile = get(testDockerfileAtom(service));
-                    dockerfiles.services.push({dockerfile:dockerfile, name:serviceNames[i]});
+                    const dockerfileJSON = get(testDockerfileAtom(service));
+                    dockerfiles.services.push({dockerfileDetails:dockerfileJSON, name:serviceNames[i]});
                 }else{
-                    dockerfiles.services.push({dockerfile:"", name:""})
+                    dockerfiles.services.push({dockerfileDetails:"", name:""})
                 }
             })
         }
