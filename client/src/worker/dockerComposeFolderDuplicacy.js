@@ -1,6 +1,6 @@
-// ON MAIN THREAD
+// ON WORKER
 
-export const dockerComposeFolderDuplicacy = async () => {
+self.addEventListener('message', async e => {
     try {
         const rootDir = await navigator.storage.getDirectory();
         const dockerComposeFolder = await rootDir.getDirectoryHandle('docker-compose', { create: true });
@@ -8,9 +8,9 @@ export const dockerComposeFolderDuplicacy = async () => {
         for await (const [name, handle] of dockerComposeFolder.entries()) {
             if (handle.kind === 'directory') folderNames.push(name)
         }
-        return folderNames;
+        self.postMessage({ success: true, names: folderNames });
     } catch (err) {
         console.error("Error checking docker-compose folder names: ", err);
-        return [];
+        self.postMessage({ success: false, error: err.message });
     }
-}
+})

@@ -1,6 +1,6 @@
-// ON MAIN THREAD
+// ON WORKER
 
-export const envNameDuplicacy = async () => {
+self.addEventListener('message', async e => {
     try {
         const rootDir = await navigator.storage.getDirectory();
         const envFolder = await rootDir.getDirectoryHandle('environment', { create: true });
@@ -8,9 +8,9 @@ export const envNameDuplicacy = async () => {
         for await (const [name, handle] of envFolder.entries()) {
             if(handle.kind === 'file') fileNames.push(name);
         }
-        return fileNames;
+        self.postMessage({ success: true, names: fileNames});
     } catch (err) {
         console.error("Error checking environment folder contents: ", err);
-        return [];
+        self.postMessage({ success: false, error: err.message });
     }
-}
+})

@@ -5,3 +5,5 @@ export default class WebWorker {
         return new Worker(URL.createObjectURL(blob));
     }
 }
+
+// not in use currently

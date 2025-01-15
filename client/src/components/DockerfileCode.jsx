@@ -21,7 +21,7 @@ export const DockerfileCode = memo(({dockerfile, delFun}) => {
                 </div>
                 </div>
             </code>
-            </pre>
+        </pre>
     </div>
     );
 });

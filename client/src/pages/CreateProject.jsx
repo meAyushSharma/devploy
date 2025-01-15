@@ -6,10 +6,6 @@ import { PackageManager } from "../components/package_manager/PackageManager";
 import { selectedPackageManagerAtom } from "../store/atoms/libAtoms/selectedPackageManagerAtom";
 
 import { DockerSearchComponent } from "../components/DockerSearchComponent";
-import { NpmSearchComponent } from "../components/package_manager/NpmSearchComponent";
-import { CargoSearchComponent } from "../components/package_manager/CargoSearchComponent";
-import { PipSearchComponent } from "../components/package_manager/PipSearchComponent";
-import { GemSearchComponent } from "../components/package_manager/GemSearchComponent";
 import { Environments } from "../components/environment/Environments";
 import { Configurations } from "../components/Configurations";
 import { NetworkConfig } from "../components/netword_config/NetworkConfig";
@@ -18,10 +14,10 @@ import { Button } from "../components/common/Button";
 import { CreateDockerfile } from "../components/CreateDockerfile";
 import { projectNameAtom } from "../store/atoms/projectNameAtom";
 
-import { envNameDuplicacy } from "../utils/envNameDuplicacy";
-import { createDirectory } from "../utils/createDirectory";
 import { getServiceNames } from "../store/selectors/getServiceNames";
 import { useDebounce } from "../hooks/useDebounce";
+import { renderPackageManager } from "../components/package_manager/renderPackageManager";
+import { useWorkerValidName } from "../hooks/useWorkerValidName";
 
 
 
@@ -29,12 +25,12 @@ export const CreateProject = memo(({type}) => {
     //?for debugging purposes only ...
     console.log("am i re-rendering?");
 
-
-    // create directory structure
-    useEffect(() => {
-        const dirCreate = async () => await createDirectory();
-        dirCreate();
-    }, [createDirectory]);
+    //? need to be made worker tailoured
+        // // create directory structure
+        // useEffect(() => {
+        //     const dirCreate = async () => await createDirectory();
+        //     dirCreate();
+        // }, [createDirectory]);
 
     // check whether : service or env
     const [serviceCount, setServiceCount] = useRecoilState(serviceCountAtom);
@@ -43,26 +39,16 @@ export const CreateProject = memo(({type}) => {
     const whatType = env ? "env" : service ? `service${serviceCount+1}` : -1;
 
     // project name
-    const idForName = whatType;
-    const [projName, setProjName] = useRecoilState(projectNameAtom(idForName));
+    const [projName, setProjName] = useRecoilState(projectNameAtom(whatType));
     const debouncedName = useDebounce(projName, 1000);
     const [nameIsValid, setNameIsValid] = useState(null);
-    const [isTouched, setIsTouched] = useState(false);
+    // check environment (folder) dockerfiles duplicates
+    const envNameisValid = useWorkerValidName({workerPath:'../worker/envNameDuplicacy.js', debouncedName});
+
+    const [isTouched, setIsTouched] = useState(false); // handles empty input
     const handleBlur = () => setIsTouched(true);
 
-    // check environment (folder) dockerfiles duplicates
-    useEffect(() => {
-        const fetchNames = async () => { 
-            const envNames = await envNameDuplicacy();
-            console.log("this is envNames: ", envNames);
-            if(envNames.includes(debouncedName)) setNameIsValid(false);
-            else setNameIsValid(true);
-        }
-        env && fetchNames();
-    }, [env, debouncedName, envNameDuplicacy, setNameIsValid])
-
-    //? check for service names, must nat be same, use dockerfiles(get all components) or getServiceNames(get names only) => both have undeleted ones only.
-    const services = useRecoilValue(getServiceNames);
+    const services = useRecoilValue(getServiceNames); // getServiceNames(get names only) => have undeleted ones only.
     useEffect(() => {
         service && debouncedName && (services.includes(debouncedName) ? setNameIsValid(false) : setNameIsValid(true));
     }, [setNameIsValid, service, services, debouncedName]);
@@ -90,38 +76,28 @@ export const CreateProject = memo(({type}) => {
                     <span className="text-rose-500 text-sm">This field is required</span>
                 </div>
             )}
-            {!nameIsValid && <div> invalid name, choose different</div>}
+            {env && projName && !envNameisValid && (
+                <div className="flex gap-1 items-center">
+                    <IoInformationCircleOutline className="text-rose-500"/>
+                    <span className="text-rose-500 text-sm">Name alredy exists</span>
+                </div>
+            )}
+            {service && projName && !nameIsValid && (
+                <div className="flex gap-1 items-center">
+                    <IoInformationCircleOutline className="text-rose-500"/>
+                <span className="text-rose-500 text-sm">Name alredy exists</span>
+            </div>
+            )}
         </div>
         <div className="text-xl font-medium text-gray-500 mt-4">Software and tools :</div>
-        <div className="">
-            <DockerSearchComponent label={"Operating System"} type={whatType}/>
-        </div>
+        <DockerSearchComponent label={"Operating System"} type={whatType}/>
         <DockerSearchComponent label={"Runtime(s)"} type={whatType}/>
         <DockerSearchComponent label={"Database(s)"} type={whatType}/>
         <div className="text-xl font-medium text-gray-500 mt-4">Framework and libraries :</div>
-        <div>
-            <PackageManager label={"Package Managers"} isMulti={true} type={whatType}/>
-        </div>
 
-        {/* //? depreciated :: */}
-        {/* {packageManagers.map(pm => <PackageSearchComponent requestFor={pm.value} label={pm.label} key={pm.label.split(":")[1]}/>)} */}
+        <PackageManager label={"Package Managers"} isMulti={true} type={whatType}/>
+        {packageManagers.map(pm => renderPackageManager(pm.value, whatType))}
 
-        {/* //todo : updated :: more modular */ }
-        {packageManagers.map(pm => {
-            const pmValue = pm.value;
-            switch(pmValue){
-                case "npm":
-                    return <NpmSearchComponent key={pmValue} type={whatType}/>
-                case "pip":
-                    return <PipSearchComponent key={pmValue} type={whatType}/>
-                case "cargo":
-                    return <CargoSearchComponent key={pmValue} type={whatType}/>
-                case "gem":
-                    return <GemSearchComponent key={pmValue} type={whatType}/>
-                default :
-                    return <div key={pmValue}>Wrong package manager chosen</div>;             
-            }
-        })}
         <Configurations type={whatType}/>
         <Environments type={whatType}/>
         <NetworkConfig type={whatType}/>
@@ -129,6 +105,6 @@ export const CreateProject = memo(({type}) => {
             <Button label={"Review"} onClickFun={e => setReview(state => !state)}/>
         </div>
         <br />
-        {review && projName && nameIsValid && <CreateDockerfile type={whatType}/>}
+        {review && debouncedName && ((env && envNameisValid) || (service && nameIsValid)) && <CreateDockerfile type={whatType}/>}
     </div>
 });
