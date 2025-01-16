@@ -13,6 +13,7 @@ import { selectedDriverAtom } from "../atoms/networkAtoms/selectedDriverAtom";
 import { bridgeAtom } from "../atoms/networkAtoms/bridgeAtom";
 import { ipvlanAtom } from "../atoms/networkAtoms/ipvlanAtom";
 import { macvlanAtom } from "../atoms/networkAtoms/macvlanAtom";
+import { envVariablesAtom } from "../atoms/envAtoms/envVariablesAtom";
 
 export const getDockerfileFamily = selectorFamily({
     key:"getDockerfileFamily",
@@ -33,6 +34,8 @@ export const getDockerfileFamily = selectorFamily({
         const ipvlan = get(ipvlanAtom(id)); //mode:"", pairs:[], parent:"", name:""
         const macvlan = get(macvlanAtom(id)); // same as above
 
+        const envVariables = get(envVariablesAtom(id)); // [{envValue:"", envName:""}]
+
         const name = get(projectNameAtom(id));
 
         return {
@@ -49,6 +52,7 @@ export const getDockerfileFamily = selectorFamily({
             bridge,
             ipvlan,
             macvlan,
+            envVariables,
             name
         }
     }

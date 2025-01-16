@@ -10,6 +10,7 @@ import { useDebounce } from "../hooks/useDebounce";
 import { useWorkerValidName } from "../hooks/useWorkerValidName";
 import { saveToLocal } from "../helper/saveToLocal";
 import { useResetAllAtoms } from "../hooks/useResetAllAtoms";
+import { generateCompose } from "../helper/generateCompose";
 
 export const DockerCompose = () => {
     // obviously type=service
@@ -22,6 +23,7 @@ export const DockerCompose = () => {
     const handleBlur = () => setIsTouched(true);
     
     const dockerfiles = useRecoilValue(dockerfileSelector); // dockerfiles:{environment:JSON, services:[{ dockerfileDetails:JSON, name:'useless' }]}
+    const composeFile = generateCompose(dockerfiles);
     // handle service deletion
     const setServiceDelTracker = useSetRecoilState(serviceDelTrackerAtom);
     const delService = (index) => setServiceDelTracker(prevState => [...prevState, index]);
@@ -36,6 +38,13 @@ export const DockerCompose = () => {
     const saveCompose = async () => {
         if (!nameIsValid) return;
         try {
+            const composeObj = {
+                workerPath: '../worker/saveDockerComposeDockerfileWorker.js',
+                parentFolderName: "docker-compose",
+                fileName: "docker-compose",
+                content: composeFile,
+                childFolderName: debouncedName,
+            };
             const savePromises = dockerfiles.services.map(async (service) => {
                 if(service.dockerfileDetails){
                     const obj = {
@@ -49,10 +58,12 @@ export const DockerCompose = () => {
                 }
                 return null;
             });
+            // save compose
+            await saveToLocal(composeObj);
             const results = await Promise.all(savePromises);
             if (results.every(event => event?.data?.success)) {
                 resetAllAtoms();
-                navigate("/builds");
+                navigate("/builds#compose");
             }else console.error("One or more saves failed");
         } catch (err) {
             console.error("Error in saveCompose: ", err);

@@ -1,6 +1,6 @@
 export const generateDockerfile = (input) => {
-    const { os, runtimes, databases, packageManagers, npm, pip, cargo, gem, ports, driver, bridge, ipvlan, macvlan, name } = input;
-    let dockerfile = `# Dockerfile name : ${name}\n\n`;
+    const { os, runtimes, databases, packageManagers, npm, pip, cargo, gem, ports, driver, bridge, ipvlan, macvlan, name, envVariables } = input;
+    let dockerfile = `# Dockerfile name : ${name}\n`;
     // add commands for network creation :
     // dockerfile+=`# To create ${driver} network :\n`;
     // switch(driver){
@@ -25,7 +25,7 @@ export const generateDockerfile = (input) => {
     // }
     // // add commands for ports
 
-    // dockerfile += `\n\n\n# Custom dynamically generated Dockerfile\n`;
+    dockerfile += `\n# Custom dynamically generated Dockerfile\n`;
 
     //1. add operating system
     dockerfile += os.length>0 ? `FROM ${os[0].value}:latest\n` : `FROM ubuntu:20.04\n`;
@@ -127,7 +127,10 @@ export const generateDockerfile = (input) => {
         databases.forEach(db => dockerfile += `FROM ${db.value}\n`);
     }
 
-    //5. expose ports
+    //5. add env variable(s)
+    envVariables.length>0 && (dockerfile+=`\n# Environment variables\n`) && envVariables.map(env => dockerfile+=`ENV ${env.envName}=${envValue}\n`)
+
+    //6. expose ports
     if(ports && ports.length>0){
         dockerfile += `\n# Exposed ports\n`;
         let exposedPorts=``;
@@ -135,7 +138,7 @@ export const generateDockerfile = (input) => {
         dockerfile+=`EXPOSE ${exposedPorts}`
     }
 
-    //6. command for bash
+    //7. command for bash
     dockerfile+=`\n# Command for bash\n`;
     dockerfile+=`CMD ["bash"]`;
 

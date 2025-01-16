@@ -8,6 +8,12 @@ export default {
     extend: {
       fontFamily: {
         'Satoshi': ['Satoshi', 'sans-serif']
+      },
+      backgroundImage: {
+        'empty-screen':"url('https://res.cloudinary.com/dubrgx4b1/image/upload/v1737031281/gjfzwbpiwysluosachu5.png')"
+      },
+      skew: {
+        
       }
     },
   },

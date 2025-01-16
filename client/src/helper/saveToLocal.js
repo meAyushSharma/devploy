@@ -1,35 +1,3 @@
-// const saveComposeToLocal = (parentFolderName, childFolderName, fileName, content) => {
-//     const worker = new Worker(new URL('../worker/saveDockerComposeDockerfileWorker.js', import.meta.url));
-//     worker.postMessage({parentFolderName, childFolderName, fileName, content});
-//     worker.onmessage = e => {
-//         if(e.data.success) {
-//             console.log("compose data save successfully to local");
-//             // clear atoms after data is saved
-//             const num = dockerfiles.services.length;
-//             resetServiceAtoms(num)
-//             navigate("/builds");
-//             // show alert
-//         }else {
-//             console.error("the error saving compose data to local is: ", e.data.error);
-//         }
-//     }
-// }
-
-// const saveEnvToLocal = (folderName, fileName, content) => {
-//     const worker = new Worker(new URL('../worker/saveEnvDockerfileWorker.js', import.meta.url));
-//     worker.postMessage({folderName, fileName, content});
-    
-//     worker.onmessage = e => {
-//         if(e.data.success){
-//             // clear atoms before directing user to /builds
-//             console.log("environment data saved successfully to local!");
-//             navigator("/builds")
-//         }else {
-//             console.error("the error saving environment data to local is: ", e.data.error);
-//         }
-//     }
-// }
-
 export const saveToLocal = ({workerPath, parentFolderName, fileName, content, childFolderName}) => {
     return new Promise((res, rej) => {
         const env = parentFolderName === "environment";

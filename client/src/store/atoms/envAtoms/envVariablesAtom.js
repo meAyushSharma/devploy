@@ -4,3 +4,5 @@ export const envVariablesAtom = atomFamily({
     key:"envVariablesAtom",
     default:[]
 })
+
+// [{envValue:"", envName:""}]

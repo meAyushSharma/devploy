@@ -28,7 +28,8 @@ export const CreateDockerfile = memo(({type}) => {
         npm:input.npm,
         pip:input.pip,
         cargo:input.cargo,
-        gem:input.gem
+        gem:input.gem,
+        envVariables:input.envVariables
     }
    
     const [serviceCount, setServiceCount] = useRecoilState(serviceCountAtom);
@@ -49,11 +50,10 @@ export const CreateDockerfile = memo(({type}) => {
                 childFolderName:"default"
             }
             const event = await saveToLocal(obj);
-            console.log("this is event: ", event)
             if(event.data.success){
                 console.log("Successfully saved env data on local");
                 resetEnvAtoms();
-                navigator("/builds");
+                navigator("/builds#env");
             } else console.error("the error saving environment data to local is: ", event.data.error);
         }else {
             // take it to docker compose for further processes
