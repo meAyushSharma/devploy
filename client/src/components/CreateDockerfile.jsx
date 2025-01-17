@@ -1,5 +1,5 @@
-import { memo, useEffect, useMemo, useState } from "react";
-import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil";
+import { memo, useMemo } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { getDockerfileFamily } from "../store/selectors/getDockerfilefamily";
 import { Button } from "./common/Button";
 import { serviceCountAtom } from "../store/atoms/serviceCountAtom";
@@ -12,6 +12,7 @@ import { useResetEnvAtoms } from "../hooks/useResetEnvAtoms";
 
 export const CreateDockerfile = memo(({type}) => {
     const input = useRecoilValue(getDockerfileFamily(type));
+    console.log("this is input: ", input)
     const dockerfile = useMemo(() => generateDockerfile(input) , [generateDockerfile, input]);
     const resetEnvAtoms = useResetEnvAtoms();
     
@@ -66,7 +67,7 @@ export const CreateDockerfile = memo(({type}) => {
     return (
         <div>
             <DockerfileCode dockerfile={dockerfileJSON}/>
-            <div className="w-fit bg-green-500">
+            <div className="w-fit">
                 <Button label={env ? "Save" : "Continue"} onClickFun={saveProject}/>
             </div>
         </div>

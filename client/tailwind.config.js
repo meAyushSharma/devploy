@@ -12,8 +12,9 @@ export default {
       backgroundImage: {
         'empty-screen':"url('https://res.cloudinary.com/dubrgx4b1/image/upload/v1737031281/gjfzwbpiwysluosachu5.png')"
       },
-      skew: {
-        
+      colors: {
+        "soft-white": "#fefffe",
+        "soft-dark":"#111",
       }
     },
   },

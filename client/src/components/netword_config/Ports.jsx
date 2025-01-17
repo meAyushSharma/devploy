@@ -15,10 +15,16 @@ export const Ports = memo(({type}) => {
             setHostPort("")
         }
     }
-    return <div className="flex justify-around">
-        <TextInput placeholder={"host port"} onChangeFun={(e) => setHostPort(e.target.value)} value={hostPort}/>
-        <span>:</span>
-        <TextInput placeholder={"container port"} onChangeFun={(e) => setContPort(e.target.value)} value={contPort}/>
-        <Button label={"Add"} onClickFun={addPort}/>
+    return <div className="my-4">
+        <div className="grid md:grid-cols-[1fr_4fr]">
+            <div className="flex text-lg font-medium text-gray-800">Expose Ports :</div>
+            <div className="grid md:grid-cols-[3fr_3fr_1fr] gap-4 items-center">
+                <TextInput placeholder={"host port"} onChangeFun={(e) => setHostPort(e.target.value)} value={hostPort}/>
+                <TextInput placeholder={"container port"} onChangeFun={(e) => setContPort(e.target.value)} value={contPort}/>
+                <div className="w-fit text-lg">
+                    <Button label={"Add Port"} onClickFun={addPort}/>
+                </div>
+            </div>
+        </div>
     </div>
 })

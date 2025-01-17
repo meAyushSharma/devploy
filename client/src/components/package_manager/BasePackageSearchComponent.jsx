@@ -20,9 +20,9 @@ export const BasePackageSearchComponent = memo(({ label, requestFor, transformDa
     }, [selectedOptions, setGlobalState]);
 
     return (
-        <div className="flex justify-evenly gap-2">
-             <div className="w-1/4 flex justify-between items-center pl-2 font-medium"><span>{label}</span><span>:</span></div>
-             <div className="w-3/4 p-2">
+        <div className="grid md:grid-cols-[1fr_3fr]">
+             <div className="flex items-center text-lg font-medium text-gray-800"><span>${label}</span><span>:</span></div>
+             <div className="m-1">
                 <Select
                     options={options}
                     isMulti={true}

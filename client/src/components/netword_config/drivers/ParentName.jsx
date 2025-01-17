@@ -4,9 +4,9 @@ import { TextInput } from "../../common/TextInput";
 
 export const ParentName = memo(({heading, placeholder, value, setParent, createLabel, onClickCreateFun}) => {
     return (
-        <div>
-            <span className="font-medium text-gray-800 text-lg m-2">{heading}</span>
-            <div className="flex gap-8">
+        <div className="grid grid-cols-[2fr_4fr_4fr]">
+            <span className="font-medium text-gray-800 text-lg place-content-center">{heading}</span>
+            <div className="flex gap-8 my-2">
                 <TextInput placeholder={placeholder} value={value} onChangeFun={e => setParent(e.target.value)}/>
                 <Button label={createLabel} onClickFun={onClickCreateFun}/>
             </div>

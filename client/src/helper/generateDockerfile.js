@@ -128,7 +128,7 @@ export const generateDockerfile = (input) => {
     }
 
     //5. add env variable(s)
-    envVariables.length>0 && (dockerfile+=`\n# Environment variables\n`) && envVariables.map(env => dockerfile+=`ENV ${env.envName}=${envValue}\n`)
+    envVariables.length>0 && (dockerfile+=`\n# Environment variables\n`) && envVariables.map(env => dockerfile+=`ENV ${env.envName}=${env.envValue}\n`)
 
     //6. expose ports
     if(ports && ports.length>0){

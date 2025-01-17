@@ -49,22 +49,22 @@ export const VlanDrivers = memo(({vlan, type}) => {
 
     return <div>
                 <div>
-                    <CreateName heading={"Create network name : "} placeholder={"network name"} value={name} onChangeFun={e => setName(e.target.value)} label={"Add/Update"} onClickFun={addNet} condition={config.name && <span>Network name is : {config.name}</span>}/>
+                    <CreateName heading={"Create network name : "} placeholder={"network name"} value={name} onChangeFun={e => setName(e.target.value)} label={"Add/Update"} onClickFun={addNet} condition={config.name && <span className="font-medium text-gray-800 items-center">Network name is : {config.name}</span>}/>
                 </div>
                 <div>
                     <NetworkModes heading={ipvlan?"IPvLAN modes : ":macvlan?"MACvLAN modes : ":""} id={"modes"} onChangeFun={updateMode} defaultValue={ipvlan?"l2":macvlan?"bridge":""} options={options}/>
                 </div>
-                <div>
+                <div className="border-2 border-violet-500/50 hover:border-violet-500/100 rounded-lg p-2 my-2">
                     <SubGate heading={"Subnet and Gateway Address : "} subValue={subnet} setSub={setSubnet} gateValue={gateway} setGate={setGateway} label={"Add pair"} onClickFun={addPair}/>
+                    {config.pairs.length>0 && 
+                        <div className="border-2 border-violet-500/50 hover:border-violet-500/100 rounded-lg p-2">
+                            {config.pairs.map((item, key) => <DelPair spanTextOneVal={item.subnet} spanTextTwoVal={item.gateway} label={"Delete"} onClickFun={() => delPair(key)} key={key} spanTextOne={"--subnet = "} spanTextTwo={"--gateway = "}/>)}
+                        </div>
+                    }
                 </div>
-                {config.pairs.length>0 && 
-                    <div>
-                        {config.pairs.map((item, key) => <DelPair spanTextOneVal={item.subnet} spanTextTwoVal={item.gateway} label={"Delete"} onClickFun={() => delPair(key)} key={key} spanTextOne={"--subnet="} spanTextTwo={"--gateway="}/>)}
-                    </div>
-                }
-                <div>
+                <div className="border-2 border-violet-500/50 hover:border-violet-500/100 rounded-lg p-2 mt-4">
                     <ParentName heading={"Parent name (host's network) : "} placeholder={"parent: eth0, eth0.10"} value={parent} setParent={setParent} createLabel={"Create/Update"} onClickCreateFun={createParent}/>
-                    {config.parent.length>0 && <DelPair spanTextOne={"-o parent="} spanTextOneVal={config.parent} label={"Delete"} onClickFun={delParent}/>}
+                    {config.parent.length>0 && <DelPair spanTextOne={"-o parent = "} spanTextOneVal={config.parent} label={"Delete"} onClickFun={delParent}/>}
                 </div>
             </div>
 })

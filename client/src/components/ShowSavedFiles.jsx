@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { FormattedCode } from "./FormattedCode";
 import { DockerfileCode } from "./DockerfileCode";
 import { removeLocalHelper } from "../helper/removeLocalHelper";
+import { Button } from "./common/Button";
 
 export const ShowSavedFiles = () => {
   console.log("how many times am i triggering ... ?");
@@ -57,11 +58,9 @@ export const ShowSavedFiles = () => {
   return (
     <div>
       <div className="flex">
-        <button onClick={() => setTrigger((state) => !state)}
-          className="bg-violet-500 p-2 text-white rounded-md font-medium ml-auto mr-4 hover:bg-violet-600"
-        >
-          Refresh
-        </button>
+        <div className="ml-auto mr-4">
+          <Button label={"Refresh"} onClickFun={() => setTrigger((state) => !state)}/>
+        </div>
       </div>
 
       <div>

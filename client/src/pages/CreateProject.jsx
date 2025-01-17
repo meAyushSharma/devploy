@@ -60,15 +60,15 @@ export const CreateProject = memo(({type}) => {
     // pm for selected managers
     const packageManagers = useRecoilValue(env ? selectedPackageManagerAtom(type) : selectedPackageManagerAtom(`service${serviceCount+1}`));
 
-    return <div className="font-Satoshi">
+    return <div className="font-Satoshi m-5 bg-soft-white">
         <div className="flex items-center">
-            <span>{env?"Environment":`Service${serviceCount+1}`} name : </span>
+            <span className="text-3xl font-semibold text-gray-700">{env?"Environment":`Service${serviceCount+1}`} name : </span>
             <input 
             type="text"
             onBlur={handleBlur}
             onChange={e => setProjName(e.target.value.trim())}
             value={projName}
-            className={`border rounded text-lg font-medium px-2 text-center mx-2 ${projName ? 'border-blue-500':'border-rose-500 mx-2'} enabled:hover:border-gray-400`}
+            className={`border rounded text-lg font-medium px-2 text-center text-gray-700 mx-2 ${projName ? 'border-violet-500':'border-rose-500 mx-2'} enabled:hover:border-gray-400`}
             />
             {!projName && isTouched && (
                 <div className="flex gap-1 items-center">
@@ -89,19 +89,21 @@ export const CreateProject = memo(({type}) => {
             </div>
             )}
         </div>
-        <div className="text-xl font-medium text-gray-500 mt-4">Software and tools :</div>
+        <div className="text-2xl font-semibold text-gray-700/80 mt-4">Software and tools :</div>
         <DockerSearchComponent label={"Operating System"} type={whatType}/>
         <DockerSearchComponent label={"Runtime(s)"} type={whatType}/>
         <DockerSearchComponent label={"Database(s)"} type={whatType}/>
-        <div className="text-xl font-medium text-gray-500 mt-4">Framework and libraries :</div>
+        <div className="text-2xl font-semibold text-gray-700/80 mt-4">Framework and libraries :</div>
 
         <PackageManager label={"Package Managers"} isMulti={true} type={whatType}/>
         {packageManagers.map(pm => renderPackageManager(pm.value, whatType))}
-
+        <div className="text-2xl font-semibold text-gray-700/80 mt-4 mb-2">
+            Choose Configurations :
+        </div>
         <Configurations type={whatType}/>
         <Environments type={whatType}/>
         <NetworkConfig type={whatType}/>
-        <div className="w-fit bg-green-500 text-white rounded-md">
+        <div className="w-fit text-xl">
             <Button label={"Review"} onClickFun={e => setReview(state => !state)}/>
         </div>
         <br />

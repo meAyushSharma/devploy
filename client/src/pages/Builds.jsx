@@ -1,19 +1,27 @@
 import { useNavigate } from "react-router-dom"
 import { ShowSavedFiles } from "../components/ShowSavedFiles"
+import { AiOutlineDocker } from "react-icons/ai";
+import { FaAngleDown } from "react-icons/fa6";
 
 export const Builds = () => {
     // bg-[#e8e9e8]
     // text-[#1b1b19]
     const navigate = useNavigate();
-    return <div className="font-Satoshi bg-[#fefffe] mx-6">
+    return <div className="font-Satoshi bg-soft-white mx-6">
 
         <div className="grid grid-rows-3 gap-3 m-4 text-[#232223]">
             <div className="flex flex-row min-h-[40vh] m-4">
                 <div className="p-4">
                     <div className="text-5xl font-bold text-gray-500 my-6">Code. Customize. Deploy. Seamlessly with the power of AI in your DevBox environment.</div>
-                    <div className="grid grid-cols-2">
-                        <div className="bg-violet-500 hover:bg-violet-600 p-3 text-white font-medium text-xl rounded-md w-fit cursor-pointer my-2" onClick={()=> navigate('/create-env') }>Create Custom Environment</div>
-                        <div className="bg-violet-500 hover:bg-violet-600 p-3 text-white font-medium text-xl rounded-md w-fit cursor-pointer my-2" onClick={()=> navigate('/create-env') }>Explore Environment Templates</div>
+                    <div className="flex border gap-3">
+                            <div className="flex items-center bg-violet-500 hover:bg-violet-600 pl-3 text-white font-medium text-xl rounded-md w-fit cursor-pointer my-2">
+                                <span  onClick={()=> navigate('/create-env') } className="hover:bg-violet-800 py-1 rounded px-1">Create Custom Environment</span>
+                                <span className="max-w-[15%] flex flex-col justify-center items-center px-2 ml-3 hover:bg-violet-800 mr-1 rounded-md">
+                                    <AiOutlineDocker className="text-3xl border-b-2"/>
+                                    <FaAngleDown  className="hover:bg-violet-950 text-xl w-[100%] rounded"/>
+                                </span>
+                            </div>
+                            <div className="bg-violet-500 hover:bg-violet-600 p-3 text-white font-medium text-xl rounded-md w-fit cursor-pointer my-2" onClick={()=> navigate('/create-env') }>Explore Environment Templates</div>
                     </div>
                 </div>
                 <div className="">

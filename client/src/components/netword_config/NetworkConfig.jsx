@@ -7,6 +7,7 @@ import { selectedDriverAtom } from "../../store/atoms/networkAtoms/selectedDrive
 import { Bridge } from "./drivers/Bridge";
 import { VlanDrivers } from "./drivers/VlanDrivers";
 import { memo } from "react";
+import { HostAndNone } from "./drivers/HostAndNone";
 
 export const NetworkConfig = memo(({type}) =>  {
     const show = useRecoilValue(netValidAtom(type));
@@ -18,12 +19,21 @@ export const NetworkConfig = memo(({type}) =>  {
             case "ipvlan":
             case "macvlan":
                 return <VlanDrivers vlan={driver} type={type}/>
+            case "host":
+            case "none":
+                return <HostAndNone network={driver}/>
+            default :
+                return <div>Choose wrong driver</div>
         }
     }
     return show && <div>
-        <Ports type={type}/>
-        <ShowPorts type={type}/>
-        <DriverOption type={type}/>
-        {driver && renderDriver(driver)}
+        <div className="border-2 border-violet-500/50 hover:border-violet-500/100 rounded-lg p-2 mb-4">
+            <Ports type={type}/>
+            <ShowPorts type={type}/>
+        </div>
+        <div className="border-2 border-violet-500/50 hover:border-violet-500/100 rounded-lg p-2 mb-4">
+            <DriverOption type={type}/>
+            {driver && renderDriver(driver)}
+        </div>
     </div>
 })
