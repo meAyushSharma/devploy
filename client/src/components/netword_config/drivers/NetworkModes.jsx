@@ -1,6 +1,6 @@
 import { memo } from "react";
 
-export const NetworkModes = memo(({heading, id, onChangeFun, dafaultValue, options}) => {
+const NetworkModes = memo(({heading, id, onChangeFun, dafaultValue, options}) => {
     return (
         <div className="grid grid-cols-[2fr_2fr_6fr] my-4">
             <label htmlFor={id} className="font-medium text-gray-800 text-lg">{heading}</label>
@@ -10,3 +10,5 @@ export const NetworkModes = memo(({heading, id, onChangeFun, dafaultValue, optio
         </div>
     )
 })
+
+export default NetworkModes;

@@ -4,7 +4,7 @@ import { memo, useMemo } from "react";
 import { IoCopy } from "react-icons/io5";
 import { MdDelete } from "react-icons/md";
 
-export const ShowPorts = memo(({type}) => {
+const ShowPorts = memo(({type}) => {
     const [ports, setPorts] = useRecoilState(portAtom(type));
     const delPort = (ind) => setPorts(ports => ports.filter((_,i) => i!=ind))
     let portStr = ``;
@@ -27,3 +27,5 @@ export const ShowPorts = memo(({type}) => {
     </div>
     )
 })
+
+export default ShowPorts;

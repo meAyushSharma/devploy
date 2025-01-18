@@ -1,10 +1,10 @@
 import { memo, useState } from "react"
 import { useSetRecoilState } from "recoil";
 import { portAtom } from "../../store/atoms/networkAtoms/portsAtom";
-import { TextInput } from "../common/TextInput";
-import { Button } from "../common/Button";
+import TextInput from "../common/TextInput";
+import Button from "../common/Button";
 
-export const Ports = memo(({type}) => {
+const Ports = memo(({type}) => {
     const [hostPort, setHostPort] = useState("");
     const [contPort, setContPort] = useState("");
     const setGlobalPort = useSetRecoilState(portAtom(type));
@@ -28,3 +28,5 @@ export const Ports = memo(({type}) => {
         </div>
     </div>
 })
+
+export default Ports;

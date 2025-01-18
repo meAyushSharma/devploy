@@ -1,3 +1,5 @@
-export const Guide = () => {
+const Guide = () => {
     return <></>
 }
+
+export default Guide;

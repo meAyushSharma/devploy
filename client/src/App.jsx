@@ -1,14 +1,23 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Suspense } from "react";
+import { Suspense, lazy } from "react";
 
-import { Navbar }  from "./components/Navbar";
-import { HomePage } from "./pages/HomePage";
-import { ErrorBoundary } from "./pages/ErrorBoundary";
-import { About } from "./pages/About";
-import { Guide } from "./pages/Guide";
-import { Builds } from "./pages/Builds";
-import { CreateProject } from "./pages/CreateProject";
-import { DockerCompose } from "./pages/DockerCompose";
+const CreateProject  = lazy(() => import("./pages/CreateProject"))
+const DockerCompose = lazy(() => import("./pages/DockerCompose"));
+const Builds = lazy(() => import("./pages/Builds"));
+const Navbar = lazy(() => import("./components/Navbar"));
+const HomePage = lazy(() => import("./pages/HomePage"));
+const ErrorBoundary = lazy(() => import("./pages/ErrorBoundary"));
+const About = lazy(() => import("./pages/About"));
+const Guide = lazy(() => import("./pages/Guide"));
+
+// import { Navbar }  from "./components/Navbar";
+// import { HomePage } from "./pages/HomePage";
+// import ErrorBoundary from "./pages/ErrorBoundary";
+// import { About } from "./pages/About";
+// import { Guide } from "./pages/Guide";
+// import { CreateProject } from "./pages/CreateProject";
+// import { DockerCompose } from "./pages/DockerCompose";
+// import { Builds } from "./pages/Builds";
 
 function App() {
   return (

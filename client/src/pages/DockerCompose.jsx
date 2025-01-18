@@ -1,18 +1,24 @@
 import { useState } from "react";
-import { IoInformationCircleOutline } from "react-icons/io5"
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { Button } from "../components/common/Button";
 import { useNavigate } from "react-router-dom";
-import { dockerfileSelector } from "../store/selectors/dockerfileSelector";
-import { DockerfileCode } from "../components/DockerfileCode";
-import { serviceDelTrackerAtom } from "../store/atoms/serviceDelTrackerAtom";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { MdDelete } from "react-icons/md";
+import { IoInformationCircleOutline } from "react-icons/io5"
+
+import Button from "../components/common/Button";
+import DockerfileCode from "../components/DockerfileCode";
+
 import { useDebounce } from "../hooks/useDebounce";
-import { useWorkerValidName } from "../hooks/useWorkerValidName";
-import { saveToLocal } from "../helper/saveToLocal";
 import { useResetAllAtoms } from "../hooks/useResetAllAtoms";
+import { useWorkerValidName } from "../hooks/useWorkerValidName";
+import { dockerfileSelector } from "../store/selectors/dockerfileSelector";
+import { serviceDelTrackerAtom } from "../store/atoms/serviceDelTrackerAtom";
+
+import { saveToLocal } from "../helper/saveToLocal";
 import { generateCompose } from "../helper/generateCompose";
 
-export const DockerCompose = () => {
+
+
+const DockerCompose = () => {
     // obviously type=service
     const navigate = useNavigate();
     //* handle project name : project name of docker compose is not global variable, so handle while keeping it in mind
@@ -72,7 +78,7 @@ export const DockerCompose = () => {
     
 
     return (
-        <div className="font-Satoshi">
+        <div className="font-Satoshi m-5 bg-soft-white">
             <div className="flex items-center">
                 <span className="text-xl font-medium text-gray-700">Project name : </span>
                 <input 
@@ -96,23 +102,28 @@ export const DockerCompose = () => {
                 )}
                 {/* {"Button to add services"} */}
             </div>
+            <div className="max-w-[10%] m-auto">
                 <Button label={"Add Service"} onClickFun={() => navigate("/create-service")}/>
+            </div>
             <div>
                 {/* {"this will come from  local storage "} */}
                 {dockerfiles.services.length > 0 && dockerfiles.services.map((service,key) => 
-                    service.dockerfileDetails && (<div key={key} className="my-4">
-                        <div className="flex items-center">
+                    service.dockerfileDetails && (<div key={key} className="my-4 border-2 border-violet-500/50 hover:border-violet-500/100 p-2 rounded-lg">
+                        <div className="flex items-center m-4">
                             <span className="text-xl font-medium text-gray-500">Service Name : </span>
                             <span className="text-xl font-medium text-gray-500 px-2 mr-4">{service.dockerfileDetails.name}</span>
-                            <Button label={"Delete Service"} onClickFun={() => delService(key)}/>
+                            {/* <Button label={"Delete Service"} onClickFun={() => delService(key)}/> */}
+                            <MdDelete onClick={() => delService(key)} className="cursor-pointer mx-2 text-xl text-slate-500 hover:text-slate-500/80"/>
                         </div>
                         <DockerfileCode dockerfile={service.dockerfileDetails}/>
                     </div>)
                     )}
             </div>
-            <div>
+            <div className="max-w-[10%] m-auto">
                 <Button label={"Save"} onClickFun={saveCompose}/>
             </div>
         </div>
     )
 }
+
+export default DockerCompose;

@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom"
-import { ShowSavedFiles } from "../components/ShowSavedFiles"
+
+import ShowSavedFiles from "../components/ShowSavedFiles"
+
 import { AiOutlineDocker } from "react-icons/ai";
 import { FaAngleDown } from "react-icons/fa6";
 
-export const Builds = () => {
+const Builds = () => {
     // bg-[#e8e9e8]
     // text-[#1b1b19]
     const navigate = useNavigate();
@@ -54,3 +56,5 @@ export const Builds = () => {
         </div>
     </div>
 }
+
+export default Builds;

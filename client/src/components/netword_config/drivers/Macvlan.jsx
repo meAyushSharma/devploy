@@ -1,12 +1,12 @@
 import { useRecoilState } from "recoil";
-import { CreateName } from "./CreateName"
 import { macvlanAtom } from "../../../store/atoms/networkAtoms/macvlanAtom";
-import { NetworkModes } from "./NetworkModes";
-import { DelPair } from "./DelPair";
-import { SubGate } from "./SubGate";
 import { useState } from "react";
+import CreateName from "./CreateName"
+import NetworkModes from "./NetworkModes";
+import DelPair from "./DelPair";
+import SubGate from "./SubGate";
 
-export const Macvlan = () => {
+const Macvlan = () => {
     const [name, setName] = useState("");
     const [subnet, setSubnet] = useState("");
     const [gateway, setGateway] = useState("");
@@ -34,3 +34,5 @@ export const Macvlan = () => {
     </div>
     )
 }
+
+export default Macvlan;

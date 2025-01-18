@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { memo } from "react";
 
-export const Navbar = memo(() => {
+const Navbar = () => {
     const navigate = useNavigate();
     return (
         <div className="font-Satoshi flex justify-between text-xl w-[90vw] m-auto border-b-2 rounded-lg">
@@ -22,4 +21,6 @@ export const Navbar = memo(() => {
             </div>
         </div>
     )
-});
+}
+export default Navbar;
+

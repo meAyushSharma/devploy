@@ -4,7 +4,7 @@ import { useRecoilState } from "recoil";
 import { selectedPackageManagerAtom } from "../../store/atoms/libAtoms/selectedPackageManagerAtom";
 
 
-export const PackageManager = memo(({label, isMulti=true, type}) => {
+const PackageManager = memo(({label, isMulti=true, type}) => {
 
     //? for testing purpose only...
     console.log("re-rendering PackageManager component");
@@ -33,3 +33,5 @@ export const PackageManager = memo(({label, isMulti=true, type}) => {
           </div>
     </div>
 })
+
+export default PackageManager;

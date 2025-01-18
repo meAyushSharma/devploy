@@ -2,7 +2,7 @@ import { memo, useEffect, useState } from "react";
 import { useAxios } from "../../hooks/useAxios";
 import Select from "react-select";
 
-export const BasePackageSearchComponent = memo(({ label, requestFor, transformData, setGlobalState }) => {
+const BasePackageSearchComponent = memo(({ label, requestFor, transformData, setGlobalState }) => {
     const [options, setOptions] = useState([]);
     const [inputValue, setInputValue] = useState(null);
     const [selectedOptions, setSelectedOptions] = useState([]);
@@ -36,3 +36,5 @@ export const BasePackageSearchComponent = memo(({ label, requestFor, transformDa
         </div>
     );
 })
+
+export default BasePackageSearchComponent;

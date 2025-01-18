@@ -1,8 +1,8 @@
 import { memo } from "react";
-import { Button } from "../../common/Button";
-import { TextInput } from "../../common/TextInput";
+import Button from "../../common/Button";
+import TextInput from "../../common/TextInput";
 
-export const ParentName = memo(({heading, placeholder, value, setParent, createLabel, onClickCreateFun}) => {
+const ParentName = memo(({heading, placeholder, value, setParent, createLabel, onClickCreateFun}) => {
     return (
         <div className="grid grid-cols-[2fr_4fr_4fr]">
             <span className="font-medium text-gray-800 text-lg place-content-center">{heading}</span>
@@ -13,3 +13,5 @@ export const ParentName = memo(({heading, placeholder, value, setParent, createL
         </div>
     )
 })
+
+export default ParentName;

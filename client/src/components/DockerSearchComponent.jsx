@@ -9,7 +9,7 @@ import {selectedOsAtom} from "../store/atoms/softwareAtoms/selectedOsAtom";
 import {selectedRuntimeAtom} from "../store/atoms/softwareAtoms/selectedRuntimeAtom";
 
 
-export const DockerSearchComponent = memo(({ label, type }) => {
+const DockerSearchComponent = memo(({ label, type }) => {
   const [inputValue, setInputValue] = useState(null);
   const [selectedOption, setSelectedOption] = useState([]);
 
@@ -45,3 +45,5 @@ export const DockerSearchComponent = memo(({ label, type }) => {
     </div>
   );
 });
+
+export default DockerSearchComponent;

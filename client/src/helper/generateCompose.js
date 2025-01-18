@@ -18,8 +18,10 @@ export const generateCompose = (dockerfiles) => {
                 dockerCompose+= ``;
         }
         // ports
-        dockerCompose+=`\t\tports:\n`;
-        service.dockerfileDetails.ports.map(port => dockerCompose+=`\t\t\t- ${port.host}:${port.container}\n` );
+        if(service.dockerfileDetails.ports.length>0) {
+            dockerCompose+=`\t\tports:\n`;
+            service.dockerfileDetails.ports.map(port => dockerCompose+=`\t\t\t- ${port.host}:${port.container}\n` );
+        }
     })
 
     dockerCompose+=`networks:\n`;

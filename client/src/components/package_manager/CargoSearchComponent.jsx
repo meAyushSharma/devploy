@@ -1,9 +1,9 @@
 import { useSetRecoilState } from "recoil";
-import { BasePackageSearchComponent } from "./BasePackageSearchComponent";
 import { cargoLibsAtom } from "../../store/atoms/libAtoms/cargoLibsAtom";
 import { memo } from "react";
+import BasePackageSearchComponent from "./BasePackageSearchComponent";
 
-export const CargoSearchComponent = memo(({type}) => {
+const CargoSearchComponent = memo(({type}) => {
     const setCargoLibs = useSetRecoilState(cargoLibsAtom(type));
     return (
         <BasePackageSearchComponent
@@ -19,3 +19,5 @@ export const CargoSearchComponent = memo(({type}) => {
         />
     );
 })
+
+export default CargoSearchComponent;

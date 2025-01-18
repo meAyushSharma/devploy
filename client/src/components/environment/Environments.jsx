@@ -1,12 +1,13 @@
 import { useRecoilState, useRecoilValue } from "recoil"
-import { envVariablesAtom } from "../../store/atoms/envAtoms/envVariablesAtom"
 import { memo, useState } from "react";
-import { ShowEnv } from "./ShowEnv";
+import { envVariablesAtom } from "../../store/atoms/envAtoms/envVariablesAtom"
 import { envValidAtom } from "../../store/atoms/envAtoms/envValidAtom";
-import { TextInput } from "../common/TextInput";
-import { Button } from "../common/Button";
 
-export const Environments = memo(({type}) => {
+import ShowEnv from "./ShowEnv";
+import TextInput from "../common/TextInput";
+import Button from "../common/Button";
+
+const Environments = memo(({type}) => {
     const show = useRecoilValue(envValidAtom(type));
     const [envVars, setEnvVars] = useRecoilState(envVariablesAtom(type));
     const [name, setName] = useState("");
@@ -35,3 +36,5 @@ export const Environments = memo(({type}) => {
     </div>
     )
 })
+
+export default Environments;

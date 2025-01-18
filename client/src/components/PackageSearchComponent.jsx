@@ -6,14 +6,14 @@ import React, { useEffect, useState } from "react";
 import Select from "react-select";
 
 import { useAxios } from "../hooks/useAxios";
-
-import { npmLibsAtom } from "../store/atoms/libAtoms/npmLibsAtom";
-import { pipLibsAtom } from "../store/atoms/libAtoms/pipLibsAtom";
-import { cargoLibsAtom } from "../store/atoms/libAtoms/cargoLibsAtom";
-import { gemLibsAtom } from "../store/atoms/libAtoms/gemLibsAtom";
 import { useSetRecoilState } from "recoil";
 
-export const PackageSearchComponent = React.memo(({requestFor, label}) => {
+import npmLibsAtom from "../store/atoms/libAtoms/npmLibsAtom";
+import pipLibsAtom from "../store/atoms/libAtoms/pipLibsAtom";
+import cargoLibsAtom from "../store/atoms/libAtoms/cargoLibsAtom";
+import gemLibsAtom from "../store/atoms/libAtoms/gemLibsAtom";
+
+const PackageSearchComponent = React.memo(({requestFor, label}) => {
     const [options, setOptions] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [inputValue, setInputValue] = useState(null);
@@ -102,3 +102,5 @@ export const PackageSearchComponent = React.memo(({requestFor, label}) => {
         />
     </div>
 })
+
+export default PackageSearchComponent;

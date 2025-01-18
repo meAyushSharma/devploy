@@ -1,15 +1,16 @@
 import { useRecoilValue } from "recoil";
-import { Ports } from "./Ports";
-import { ShowPorts } from "./ShowPorts";
 import { netValidAtom } from "../../store/atoms/networkAtoms/netValidAtom";
-import { DriverOption } from "./DriverOption";
 import { selectedDriverAtom } from "../../store/atoms/networkAtoms/selectedDriverAtom";
-import { Bridge } from "./drivers/Bridge";
-import { VlanDrivers } from "./drivers/VlanDrivers";
 import { memo } from "react";
-import { HostAndNone } from "./drivers/HostAndNone";
 
-export const NetworkConfig = memo(({type}) =>  {
+import Ports from "./Ports";
+import ShowPorts from "./ShowPorts";
+import DriverOption from "./DriverOption";
+import Bridge from "./drivers/Bridge";
+import VlanDrivers from "./drivers/VlanDrivers";
+import HostAndNone from "./drivers/HostAndNone";
+
+const NetworkConfig = memo(({type}) =>  {
     const show = useRecoilValue(netValidAtom(type));
     const driver = useRecoilValue(selectedDriverAtom(type));
     const renderDriver = (driver) => {
@@ -37,3 +38,5 @@ export const NetworkConfig = memo(({type}) =>  {
         </div>
     </div>
 })
+
+export default NetworkConfig;

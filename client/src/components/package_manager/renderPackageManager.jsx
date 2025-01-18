@@ -1,9 +1,9 @@
-import { CargoSearchComponent } from "./CargoSearchComponent"
-import { GemSearchComponent } from "./GemSearchComponent"
-import { NpmSearchComponent } from "./NpmSearchComponent"
-import { PipSearchComponent } from "./PipSearchComponent"
+import  CargoSearchComponent from "./CargoSearchComponent"
+import  GemSearchComponent from "./GemSearchComponent"
+import  NpmSearchComponent from "./NpmSearchComponent"
+import  PipSearchComponent from "./PipSearchComponent"
 
-export const renderPackageManager = (pmValue, whatType) => {
+const RenderPackageManager = (pmValue, whatType) => {
     switch(pmValue){
         case "npm":
             return <NpmSearchComponent key={pmValue} type={whatType}/>
@@ -17,3 +17,5 @@ export const renderPackageManager = (pmValue, whatType) => {
             return <div key={pmValue}>Wrong package manager chosen</div>;             
     }
 }
+
+export default RenderPackageManager;

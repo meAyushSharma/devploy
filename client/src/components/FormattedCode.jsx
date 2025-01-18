@@ -1,8 +1,10 @@
+import { memo } from "react";
 import { IoCopy } from "react-icons/io5";
 import { MdDelete } from "react-icons/md";
 
-export const FormattedCode = ({code, delFun}) => {
+const FormattedCode = memo(({code, delFun}) => {
     return (
+        <div className="min-w-[40vw]">
          <pre className="">
             <code>
                 <div className="flex font-Satoshi my-6">
@@ -20,5 +22,8 @@ export const FormattedCode = ({code, delFun}) => {
                 </div>
             </code>
         </pre>
+        </div>
     )
-}
+})
+
+export default FormattedCode;

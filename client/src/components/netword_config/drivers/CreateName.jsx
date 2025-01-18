@@ -1,10 +1,10 @@
 import { memo } from "react";
-import { TextInput } from "../../common/TextInput";
-import { Button } from "../../common/Button";
+import TextInput from "../../common/TextInput";
+import Button from "../../common/Button";
 
-export const CreateName = memo(({heading, placeholder, value, onChangeFun, label, onClickFun, condition}) => {
+const CreateName = memo(({heading, placeholder, value, onChangeFun, label, onClickFun, condition}) => {
         return <div className="border-2 border-violet-500/50 hover:border-violet-500/100 p-2 rounded-lg">
-            <div className="grid grid-cols-[2fr_4fr_4fr] my-2">
+            <div className="grid md:grid-cols-[2fr_4fr_4fr] my-2">
                     <span className="font-medium text-gray-800 text-lg place-content-center">{heading}</span>
                     <div className="flex gap-8 my-2">
                         <TextInput placeholder={placeholder} value={value} onChangeFun={onChangeFun}/>
@@ -14,3 +14,5 @@ export const CreateName = memo(({heading, placeholder, value, onChangeFun, label
                     {condition}
             </div>
 })
+
+export default CreateName;

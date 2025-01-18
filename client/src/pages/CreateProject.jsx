@@ -2,26 +2,26 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { memo, useEffect, useState } from "react";
 import { IoInformationCircleOutline } from "react-icons/io5";
 
-import { PackageManager } from "../components/package_manager/PackageManager";
 import { selectedPackageManagerAtom } from "../store/atoms/libAtoms/selectedPackageManagerAtom";
-
-import { DockerSearchComponent } from "../components/DockerSearchComponent";
-import { Environments } from "../components/environment/Environments";
-import { Configurations } from "../components/Configurations";
-import { NetworkConfig } from "../components/netword_config/NetworkConfig";
 import { serviceCountAtom } from "../store/atoms/serviceCountAtom";
-import { Button } from "../components/common/Button";
-import { CreateDockerfile } from "../components/CreateDockerfile";
 import { projectNameAtom } from "../store/atoms/projectNameAtom";
+
+import PackageManager from "../components/package_manager/PackageManager";
+import DockerSearchComponent from "../components/DockerSearchComponent";
+import Environments from "../components/environment/Environments";
+import Configurations from "../components/Configurations";
+import NetworkConfig from "../components/netword_config/NetworkConfig";
+import Button from "../components/common/Button";
+import CreateDockerfile from "../components/CreateDockerfile";
+import RenderPackageManager from "../components/package_manager/RenderPackageManager";
 
 import { getServiceNames } from "../store/selectors/getServiceNames";
 import { useDebounce } from "../hooks/useDebounce";
-import { renderPackageManager } from "../components/package_manager/renderPackageManager";
 import { useWorkerValidName } from "../hooks/useWorkerValidName";
 
 
 
-export const CreateProject = memo(({type}) => {
+const CreateProject = memo(({type}) => {
     //?for debugging purposes only ...
     console.log("am i re-rendering?");
 
@@ -58,7 +58,7 @@ export const CreateProject = memo(({type}) => {
     const [review, setReview] = useState(false);
 
     // pm for selected managers
-    const packageManagers = useRecoilValue(env ? selectedPackageManagerAtom(type) : selectedPackageManagerAtom(`service${serviceCount+1}`));
+    const packageManagers = useRecoilValue(selectedPackageManagerAtom(whatType));
 
     return <div className="font-Satoshi m-5 bg-soft-white">
         <div className="flex items-center">
@@ -96,17 +96,21 @@ export const CreateProject = memo(({type}) => {
         <div className="text-2xl font-semibold text-gray-700/80 mt-4">Framework and libraries :</div>
 
         <PackageManager label={"Package Managers"} isMulti={true} type={whatType}/>
-        {packageManagers.map(pm => renderPackageManager(pm.value, whatType))}
+        {packageManagers.map(pm => RenderPackageManager(pm.value, whatType))}
         <div className="text-2xl font-semibold text-gray-700/80 mt-4 mb-2">
             Choose Configurations :
         </div>
         <Configurations type={whatType}/>
         <Environments type={whatType}/>
         <NetworkConfig type={whatType}/>
-        <div className="w-fit text-xl">
-            <Button label={"Review"} onClickFun={e => setReview(state => !state)}/>
+        <div className="w-full text-xl">
+            <div className="max-w-[10%] ml-auto">
+                <Button label={"Review"} onClickFun={e => setReview(state => !state)}/>
+            </div>
         </div>
         <br />
         {review && debouncedName && ((env && envNameisValid) || (service && nameIsValid)) && <CreateDockerfile type={whatType}/>}
     </div>
-});
+})
+
+export default CreateProject;

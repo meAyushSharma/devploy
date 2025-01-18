@@ -2,7 +2,7 @@ import { useRecoilState } from "recoil"
 import { selectedDriverAtom } from "../../store/atoms/networkAtoms/selectedDriverAtom"
 import { memo } from "react";
 
-export const DriverOption = memo(({type}) => {
+const DriverOption = memo(({type}) => {
     const [driver, setSelectedDriver] = useRecoilState(selectedDriverAtom(type));
     const addDriver = e => setSelectedDriver(e.target.value);
     return (
@@ -18,3 +18,5 @@ export const DriverOption = memo(({type}) => {
         </div>
     )
 })
+
+export default DriverOption;

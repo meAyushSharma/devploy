@@ -4,8 +4,7 @@ import { memo, useMemo } from "react";
 import { MdDelete } from "react-icons/md";
 import { IoCopy } from "react-icons/io5"; // copy icon
 
-
-export const ShowEnv = memo(({type}) => {
+const ShowEnv = memo(({type}) => {
     const [envs, setEnvVars] = useRecoilState(envVariablesAtom(type));
     const delEnv = (index) => setEnvVars(envState => envState.filter((_, i) => i!=index));
     let envString=``;
@@ -28,3 +27,5 @@ export const ShowEnv = memo(({type}) => {
         </div>
     )
 })
+
+export default ShowEnv

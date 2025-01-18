@@ -1,16 +1,19 @@
 import { memo, useMemo } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
+import { useNavigate } from "react-router-dom";
+
 import { getDockerfileFamily } from "../store/selectors/getDockerfilefamily";
-import { Button } from "./common/Button";
 import { serviceCountAtom } from "../store/atoms/serviceCountAtom";
 import { testDockerfileAtom } from "../store/atoms/testDockerfileAtom";
-import { DockerfileCode } from "./DockerfileCode";
-import { useNavigate } from "react-router-dom";
-import { generateDockerfile } from "../helper/generateDockerfile";
-import { saveToLocal } from "../helper/saveToLocal";
 import { useResetEnvAtoms } from "../hooks/useResetEnvAtoms";
 
-export const CreateDockerfile = memo(({type}) => {
+import { generateDockerfile } from "../helper/generateDockerfile";
+import { saveToLocal } from "../helper/saveToLocal";
+
+import Button from "./common/Button";
+import DockerfileCode from "./DockerfileCode";
+
+const CreateDockerfile = memo(({type}) => {
     const input = useRecoilValue(getDockerfileFamily(type));
     console.log("this is input: ", input)
     const dockerfile = useMemo(() => generateDockerfile(input) , [generateDockerfile, input]);
@@ -65,11 +68,15 @@ export const CreateDockerfile = memo(({type}) => {
     }
 
     return (
-        <div>
+        <div className="my-4 border-2 border-violet-500/50 hover:border-violet-500/100 p-2 rounded-lg">
             <DockerfileCode dockerfile={dockerfileJSON}/>
-            <div className="w-fit">
-                <Button label={env ? "Save" : "Continue"} onClickFun={saveProject}/>
+            <div className="w-full">
+                <div className="max-w-[10%] ml-auto text-xl">
+                    <Button label={env ? "Save" : "Continue"} onClickFun={saveProject}/>
+                </div>
             </div>
         </div>
     )
 })
+
+export default CreateDockerfile;

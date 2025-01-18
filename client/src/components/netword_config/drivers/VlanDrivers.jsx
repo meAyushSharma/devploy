@@ -1,18 +1,19 @@
 import { useRecoilState } from "recoil";
 import { memo, useState } from "react";
+import isCidr from "is-cidr";
+import {ipVersion} from 'is-ip';
 
 import { ipvlanAtom } from "../../../store/atoms/networkAtoms/ipvlanAtom";
 import { macvlanAtom } from "../../../store/atoms/networkAtoms/macvlanAtom";
 
-import { CreateName } from "./CreateName";
-import { SubGate } from "./SubGate";
-import { DelPair } from "./DelPair";
-import { ParentName } from "./ParentName";
-import { NetworkModes } from "./NetworkModes";
-// import ip from "ip";
+import CreateName from "./CreateName";
+import SubGate from "./SubGate";
+import DelPair from "./DelPair";
+import ParentName from "./ParentName";
+import NetworkModes from "./NetworkModes";
 
 
-export const VlanDrivers = memo(({vlan, type}) => {
+const VlanDrivers = memo(({vlan, type}) => {
     const ipvlan = vlan==="ipvlan";
     const macvlan = vlan==="macvlan";
     const [config, setVlanConfig] = useRecoilState(ipvlan ? ipvlanAtom(type) : macvlan ? macvlanAtom(type) : null);
@@ -21,17 +22,18 @@ export const VlanDrivers = memo(({vlan, type}) => {
     const [parent, setParent] = useState("");
     const [name, setName] = useState("");
 
-    // const isGatewayInCidr = (gateway, cidr) => {
-    //     const [subnet, mask] = cidr.split('/');
-    //     return ip.cidrSubnet(`${subnet}/${mask}`).contains(gateway);
-    // };
+    const isSubnetValid = (subnet) => {
+        // const [subnet, mask] = cidr.split('/');
+        // return ip.cidrSubnet(`${subnet}/${mask}`).contains(gateway);
+        return isCidr(subnet)
+    };
     
     const delPair = (ind) => setVlanConfig(prevState => ({ ...prevState, pairs: prevState.pairs.filter((_,i) => i!=ind) }));
     const delParent = () => setVlanConfig(prevState => ({ ...prevState, parent:"" }));
     const addNet = () => setVlanConfig(prevState => ({ ...prevState, name:name }));
     const updateMode = e => setVlanConfig(prevState => ({ ...prevState, mode: e.target.value }));
     const addPair = () => {
-        if(subnet!="" && gateway!=""){
+        if(ipVersion(isCidr(subnet))){
             setVlanConfig(prevState => ({ ...prevState, pairs: [...prevState.pairs, {subnet:subnet, gateway:gateway}] }));
             setSubnet("");
             setGateway("");
@@ -67,4 +69,6 @@ export const VlanDrivers = memo(({vlan, type}) => {
                     {config.parent.length>0 && <DelPair spanTextOne={"-o parent = "} spanTextOneVal={config.parent} label={"Delete"} onClickFun={delParent}/>}
                 </div>
             </div>
-})
+});
+
+export default VlanDrivers;

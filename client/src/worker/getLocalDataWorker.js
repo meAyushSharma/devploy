@@ -1,6 +1,5 @@
 self.addEventListener("message", async e => {
   if (!e) return [];
-
   try {
     const rootDir = await navigator.storage.getDirectory();
     const { directoryHandle } = e.data;
@@ -25,7 +24,8 @@ self.addEventListener("message", async e => {
               let size = accessHandle.getSize();
               const dataView = new DataView(new ArrayBuffer(size));
               accessHandle.read(dataView);
-              const JSONdata = JSON.parse(textDecoder.decode(dataView));
+              const toBeJSON = textDecoder.decode(dataView)
+              const JSONdata = JSON.parse(toBeJSON);
               return {
                 name: handle.name,
                 kind: handle.kind,
@@ -68,29 +68,4 @@ self.addEventListener("message", async e => {
   } catch (err) {
     self.postMessage({ success: false, error: err });
   }
-
-  // try {
-  //     const rootDir = await navigator.storage.getDirectory();
-  //     const parentDirectoryHandle = await rootDir.getDirectoryHandle("environment", {create: true});
-  //     const directoryIterator = parentDirectoryHandle.values();
-  //     const directoryEntries = [];
-  //     for await (const handle of directoryIterator) {
-  //         if(handle.kind === 'file'){
-  // const accessHandle = await handle.createSyncAccessHandle();
-  // // const textEncoder = new TextEncoder();
-  // const textDecoder = new TextDecoder();
-  // let size = accessHandle.getSize();
-  // const dataView = new DataView(new ArrayBuffer(size));
-  // accessHandle.read(dataView);
-  // const JSONdata = JSON.parse(textDecoder.decode(dataView));
-  //             directoryEntries.push({ fileName: handle.name, content: JSONdata });
-  //         }
-  //     }
-  //     self.postMessage({
-  //         success: true,
-  //         allFiles: directoryEntries
-  //     })
-  // } catch (err) {
-  //     self.postMessage({success: false, error: err});
-  // }
 });
