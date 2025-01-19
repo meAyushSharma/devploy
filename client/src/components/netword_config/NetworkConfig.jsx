@@ -1,14 +1,14 @@
 import { useRecoilValue } from "recoil";
 import { netValidAtom } from "../../store/atoms/networkAtoms/netValidAtom";
 import { selectedDriverAtom } from "../../store/atoms/networkAtoms/selectedDriverAtom";
-import { memo } from "react";
+import { lazy, memo } from "react";
 
-import Ports from "./Ports";
-import ShowPorts from "./ShowPorts";
-import DriverOption from "./DriverOption";
-import Bridge from "./drivers/Bridge";
-import VlanDrivers from "./drivers/VlanDrivers";
-import HostAndNone from "./drivers/HostAndNone";
+const Ports = lazy(() => import("./Ports"))
+const ShowPorts = lazy(() => import("./ShowPorts"))
+const DriverOption = lazy(() => import("./DriverOption"))
+const Bridge = lazy(() => import("./drivers/Bridge"))
+const VlanDrivers = lazy(() => import("./drivers/VlanDrivers"))
+const HostAndNone = lazy(() => import("./drivers/HostAndNone"))
 
 const NetworkConfig = memo(({type}) =>  {
     const show = useRecoilValue(netValidAtom(type));

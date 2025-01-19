@@ -1,9 +1,9 @@
 import { useRecoilState, useRecoilValue } from "recoil"
-import { memo, useState } from "react";
+import { lazy, memo, useState } from "react";
 import { envVariablesAtom } from "../../store/atoms/envAtoms/envVariablesAtom"
 import { envValidAtom } from "../../store/atoms/envAtoms/envValidAtom";
 
-import ShowEnv from "./ShowEnv";
+const ShowEnv = lazy(() => import("./ShowEnv"))
 import TextInput from "../common/TextInput";
 import Button from "../common/Button";
 
@@ -28,7 +28,10 @@ const Environments = memo(({type}) => {
                 <TextInput placeholder={"env name"} onChangeFun={e => setName(e.target.value)} value={name}/>
                 <TextInput placeholder={"env value"} onChangeFun={e => setVal(e.target.value)} value={val}/>
                 <div className="w-fit text-lg">
-                    <Button label={"Add Env"} onClickFun={addEnv}/>
+                    {/* <Button label={"Add Env"} onClickFun={addEnv}/> */}
+                    <Button>
+                        <button onClick={addEnv}>Add Env</button>
+                    </Button>
                 </div>
             </div>
         </div>

@@ -1,7 +1,7 @@
 import { useSetRecoilState } from "recoil";
 import { pipLibsAtom } from "../../store/atoms/libAtoms/pipLibsAtom";
-import { memo } from "react";
-import  BasePackageSearchComponent  from "./BasePackageSearchComponent";
+import { lazy, memo } from "react";
+const BasePackageSearchComponent = lazy(() => import("./BasePackageSearchComponent"))
 
 const PipSearchComponent = memo(({type}) => {
     const setPipLibs = useSetRecoilState(pipLibsAtom(type));

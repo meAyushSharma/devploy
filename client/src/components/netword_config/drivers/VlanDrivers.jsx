@@ -1,16 +1,16 @@
 import { useRecoilState } from "recoil";
-import { memo, useState } from "react";
+import { lazy, memo, useState } from "react";
 import isCidr from "is-cidr";
 import {ipVersion} from 'is-ip';
 
 import { ipvlanAtom } from "../../../store/atoms/networkAtoms/ipvlanAtom";
 import { macvlanAtom } from "../../../store/atoms/networkAtoms/macvlanAtom";
 
-import CreateName from "./CreateName";
-import SubGate from "./SubGate";
-import DelPair from "./DelPair";
-import ParentName from "./ParentName";
-import NetworkModes from "./NetworkModes";
+const CreateName = lazy(() => import("./CreateName"))
+const SubGate = lazy(() => import("./SubGate"))
+const DelPair = lazy(() => import("./DelPair"))
+const ParentName = lazy(() => import("./ParentName"))
+const NetworkModes = lazy(() => import("./NetworkModes"))
 
 
 const VlanDrivers = memo(({vlan, type}) => {

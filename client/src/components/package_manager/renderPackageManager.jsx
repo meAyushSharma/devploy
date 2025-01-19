@@ -1,7 +1,9 @@
-import  CargoSearchComponent from "./CargoSearchComponent"
-import  GemSearchComponent from "./GemSearchComponent"
-import  NpmSearchComponent from "./NpmSearchComponent"
-import  PipSearchComponent from "./PipSearchComponent"
+import { lazy } from "react";
+
+const  CargoSearchComponent = lazy(() => import("./CargoSearchComponent"));
+const  GemSearchComponent = lazy(() => import("./GemSearchComponent"));
+const  NpmSearchComponent = lazy(() => import("./NpmSearchComponent"));
+const  PipSearchComponent = lazy(() => import("./PipSearchComponent"));
 
 const RenderPackageManager = (pmValue, whatType) => {
     switch(pmValue){

@@ -22,7 +22,11 @@ const Ports = memo(({type}) => {
                 <TextInput placeholder={"host port"} onChangeFun={(e) => setHostPort(e.target.value)} value={hostPort}/>
                 <TextInput placeholder={"container port"} onChangeFun={(e) => setContPort(e.target.value)} value={contPort}/>
                 <div className="w-fit text-lg">
-                    <Button label={"Add Port"} onClickFun={addPort}/>
+                    {/* <Button label={"Add Port"} onClickFun={addPort}/> */}
+                    <Button>
+                        <button onClick={addPort}>Add Port</button>
+                    </Button>
+                    
                 </div>
             </div>
         </div>

@@ -1,7 +1,7 @@
 import { useSetRecoilState } from "recoil";
 import { cargoLibsAtom } from "../../store/atoms/libAtoms/cargoLibsAtom";
-import { memo } from "react";
-import BasePackageSearchComponent from "./BasePackageSearchComponent";
+import { lazy, memo } from "react";
+const BasePackageSearchComponent = lazy(() => import("./BasePackageSearchComponent"))
 
 const CargoSearchComponent = memo(({type}) => {
     const setCargoLibs = useSetRecoilState(cargoLibsAtom(type));

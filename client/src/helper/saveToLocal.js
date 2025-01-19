@@ -19,7 +19,10 @@ export const saveToLocal = ({workerPath, parentFolderName, fileName, content, ch
         worker.onmessage = e => {
             worker.terminate();
             if(e.data.success) res(e);
-            else rej(new Error(e.data.error));
+            else{
+                console.log("the error is this: ", e.data.error);
+                rej(new Error(e.data.error));
+            }
         }
         worker.onerror = err => {
             worker.terminate();

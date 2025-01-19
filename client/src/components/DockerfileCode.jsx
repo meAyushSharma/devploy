@@ -1,5 +1,5 @@
-import { memo } from "react";
-import FormattedCode from "./FormattedCode";
+import { lazy, memo } from "react";
+const FormattedCode = lazy(() => import("./FormattedCode"))
 
 const DockerfileCode = memo(({dockerfile, delFun}) => {
 

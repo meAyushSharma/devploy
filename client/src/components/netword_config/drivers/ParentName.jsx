@@ -8,7 +8,10 @@ const ParentName = memo(({heading, placeholder, value, setParent, createLabel, o
             <span className="font-medium text-gray-800 text-lg place-content-center">{heading}</span>
             <div className="flex gap-8 my-2">
                 <TextInput placeholder={placeholder} value={value} onChangeFun={e => setParent(e.target.value)}/>
-                <Button label={createLabel} onClickFun={onClickCreateFun}/>
+                {/* <Button label={createLabel} onClickFun={onClickCreateFun}/> */}
+                <Button>
+                    <button onClick={onClickCreateFun}>{createLabel}</button>
+                </Button>
             </div>
         </div>
     )

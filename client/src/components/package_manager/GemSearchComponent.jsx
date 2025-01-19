@@ -1,7 +1,7 @@
 import { useSetRecoilState } from "recoil";
 import { gemLibsAtom } from "../../store/atoms/libAtoms/gemLibsAtom";
-import { memo } from "react";
-import BasePackageSearchComponent from "./BasePackageSearchComponent";
+import { lazy, memo } from "react";
+const BasePackageSearchComponent = lazy(() => import("./BasePackageSearchComponent"))
 
 const GemSearchComponent = memo(({type}) => {
     const setGemLibs = useSetRecoilState(gemLibsAtom(type));

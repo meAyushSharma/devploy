@@ -28,7 +28,7 @@ export const downloadComposeFileHelper = async ({folderName}) => {
                 const a = document.createElement("a");
                 const url = URL.createObjectURL(bundleBlob);
                 a.href = url;
-                a.download = "bundle.txt"; // Change to `.zip` if needed
+                a.download = "bundle.txt";
                 a.click();
                 URL.revokeObjectURL(url);
             } catch (err) {

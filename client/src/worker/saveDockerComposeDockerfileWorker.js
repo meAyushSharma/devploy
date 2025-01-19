@@ -2,7 +2,7 @@
 
 self.addEventListener('message', async e => {
     const { parentFolderName="docker-compose", childFolderName, fileName, content } = e.data;
-    console.log("this is e.data: ", e.data);
+    // console.log("this is e.data: ", e.data);
     try {
         const rootDir = await navigator.storage.getDirectory();
         const parentFolderHandle = await rootDir.getDirectoryHandle(parentFolderName, {create:true});
@@ -13,6 +13,7 @@ self.addEventListener('message', async e => {
         await writable.close();
         self.postMessage({ success: true });
     }catch (err) {
-        self.postMessage({ success: false, error: err.message });
+        console.log("the error saving compose is: ", err);
+        self.postMessage({ success: false, error: err });
     }
 })

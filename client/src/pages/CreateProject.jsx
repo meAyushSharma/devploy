@@ -1,19 +1,29 @@
 import { useRecoilState, useRecoilValue } from "recoil";
-import { memo, useEffect, useState } from "react";
+import { lazy, memo, useEffect, useState } from "react";
+
 import { IoInformationCircleOutline } from "react-icons/io5";
 
 import { selectedPackageManagerAtom } from "../store/atoms/libAtoms/selectedPackageManagerAtom";
 import { serviceCountAtom } from "../store/atoms/serviceCountAtom";
 import { projectNameAtom } from "../store/atoms/projectNameAtom";
 
-import PackageManager from "../components/package_manager/PackageManager";
-import DockerSearchComponent from "../components/DockerSearchComponent";
-import Environments from "../components/environment/Environments";
-import Configurations from "../components/Configurations";
-import NetworkConfig from "../components/netword_config/NetworkConfig";
-import Button from "../components/common/Button";
-import CreateDockerfile from "../components/CreateDockerfile";
-import RenderPackageManager from "../components/package_manager/RenderPackageManager";
+const DockerSearchComponent = lazy(() => import("../components/DockerSearchComponent"));
+const PackageManager = lazy(() => import("../components/package_manager/PackageManager"));
+const Environments = lazy(() => import("../components/environment/Environments"));
+const Configurations = lazy(() => import("../components/Configurations"));
+const NetworkConfig = lazy(() => import("../components/netword_config/NetworkConfig"));
+const Button = lazy(() => import("../components/common/Button"));
+const CreateDockerfile = lazy(() => import("../components/CreateDockerfile"));
+const RenderPackageManager = lazy(() => import("../components/package_manager/RenderPackageManager"));
+
+
+// import PackageManager from "../components/package_manager/PackageManager";
+// import Environments from "../components/environment/Environments";
+// import Configurations from "../components/Configurations";
+// import NetworkConfig from "../components/netword_config/NetworkConfig";
+// import Button from "../components/common/Button";
+// import CreateDockerfile from "../components/CreateDockerfile";
+// import RenderPackageManager from "../components/package_manager/RenderPackageManager";
 
 import { getServiceNames } from "../store/selectors/getServiceNames";
 import { useDebounce } from "../hooks/useDebounce";
@@ -25,12 +35,6 @@ const CreateProject = memo(({type}) => {
     //?for debugging purposes only ...
     console.log("am i re-rendering?");
 
-    //? need to be made worker tailoured
-        // // create directory structure
-        // useEffect(() => {
-        //     const dirCreate = async () => await createDirectory();
-        //     dirCreate();
-        // }, [createDirectory]);
 
     // check whether : service or env
     const [serviceCount, setServiceCount] = useRecoilState(serviceCountAtom);
@@ -42,6 +46,7 @@ const CreateProject = memo(({type}) => {
     const [projName, setProjName] = useRecoilState(projectNameAtom(whatType));
     const debouncedName = useDebounce(projName, 1000);
     const [nameIsValid, setNameIsValid] = useState(null);
+
     // check environment (folder) dockerfiles duplicates
     const envNameisValid = useWorkerValidName({workerPath:'../worker/envNameDuplicacy.js', debouncedName});
 
@@ -60,7 +65,8 @@ const CreateProject = memo(({type}) => {
     // pm for selected managers
     const packageManagers = useRecoilValue(selectedPackageManagerAtom(whatType));
 
-    return <div className="font-Satoshi m-5 bg-soft-white">
+    return (
+    <div className="font-Satoshi m-5 bg-soft-white">
         <div className="flex items-center">
             <span className="text-3xl font-semibold text-gray-700">{env?"Environment":`Service${serviceCount+1}`} name : </span>
             <input 
@@ -79,38 +85,44 @@ const CreateProject = memo(({type}) => {
             {env && projName && !envNameisValid && (
                 <div className="flex gap-1 items-center">
                     <IoInformationCircleOutline className="text-rose-500"/>
-                    <span className="text-rose-500 text-sm">Name alredy exists</span>
+                    <span className="text-rose-500 text-sm">Name already exists</span>
                 </div>
             )}
             {service && projName && !nameIsValid && (
                 <div className="flex gap-1 items-center">
                     <IoInformationCircleOutline className="text-rose-500"/>
-                <span className="text-rose-500 text-sm">Name alredy exists</span>
+                <span className="text-rose-500 text-sm">Name already exists</span>
             </div>
             )}
         </div>
+
+
         <div className="text-2xl font-semibold text-gray-700/80 mt-4">Software and tools :</div>
         <DockerSearchComponent label={"Operating System"} type={whatType}/>
         <DockerSearchComponent label={"Runtime(s)"} type={whatType}/>
         <DockerSearchComponent label={"Database(s)"} type={whatType}/>
-        <div className="text-2xl font-semibold text-gray-700/80 mt-4">Framework and libraries :</div>
 
+
+        <div className="text-2xl font-semibold text-gray-700/80 mt-4">Framework and libraries :</div>
         <PackageManager label={"Package Managers"} isMulti={true} type={whatType}/>
         {packageManagers.map(pm => RenderPackageManager(pm.value, whatType))}
-        <div className="text-2xl font-semibold text-gray-700/80 mt-4 mb-2">
-            Choose Configurations :
-        </div>
+
+
+        <div className="text-2xl font-semibold text-gray-700/80 mt-4 mb-2">Choose Configurations :</div>
         <Configurations type={whatType}/>
         <Environments type={whatType}/>
         <NetworkConfig type={whatType}/>
         <div className="w-full text-xl">
             <div className="max-w-[10%] ml-auto">
-                <Button label={"Review"} onClickFun={e => setReview(state => !state)}/>
+                <Button>
+                    <button onClick={e => setReview(state => !state)}>Review</button>
+                </Button>
             </div>
         </div>
         <br />
         {review && debouncedName && ((env && envNameisValid) || (service && nameIsValid)) && <CreateDockerfile type={whatType}/>}
     </div>
+    )
 })
 
 export default CreateProject;

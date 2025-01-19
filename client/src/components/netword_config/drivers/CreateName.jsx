@@ -8,7 +8,10 @@ const CreateName = memo(({heading, placeholder, value, onChangeFun, label, onCli
                     <span className="font-medium text-gray-800 text-lg place-content-center">{heading}</span>
                     <div className="flex gap-8 my-2">
                         <TextInput placeholder={placeholder} value={value} onChangeFun={onChangeFun}/>
-                        <Button label={label} onClickFun={onClickFun}/>
+                        {/* <Button label={label} onClickFun={onClickFun}/> */}
+                        <Button>
+                                <button onClick={onClickFun}>{label}</button>
+                        </Button>
                     </div>
             </div>
                     {condition}

@@ -1,6 +1,6 @@
 // ON WORKER
 
-self.addEventListener('message', async () => {
+self.addEventListener('message', async e => {
     try {
         const rootDir = await navigator.storage.getDirectory(); // get root
         const envFolder = await rootDir.getDirectoryHandle('environment', {create: true});

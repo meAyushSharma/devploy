@@ -12,7 +12,10 @@ const SubGate = memo(({heading, subValue, setSub, gateValue, setGate, label, onC
                         <TextInput placeholder={"gateway: 192.168.50.1"} value={gateValue} onChangeFun={e => setGate(e.target.value)}/>
                         <div className="w-full">
                             <div className="w-fit m-auto">
-                                <Button label={label} onClickFun={onClickFun}/>
+                                {/* <Button label={label} onClickFun={onClickFun}/> */}
+                                <Button>
+                                    <button onClick={onClickFun}>{label}</button>
+                                </Button>
                             </div>
                         </div>
                     </div>

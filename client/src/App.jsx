@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
 
 const CreateProject  = lazy(() => import("./pages/CreateProject"))
 const DockerCompose = lazy(() => import("./pages/DockerCompose"));
@@ -9,6 +9,8 @@ const HomePage = lazy(() => import("./pages/HomePage"));
 const ErrorBoundary = lazy(() => import("./pages/ErrorBoundary"));
 const About = lazy(() => import("./pages/About"));
 const Guide = lazy(() => import("./pages/Guide"));
+const Skeleton = lazy(() => import("./components/Skeleton"))
+// import DockerLoader from "./components/loader/DockerLoader";
 
 // import { Navbar }  from "./components/Navbar";
 // import { HomePage } from "./pages/HomePage";
@@ -20,18 +22,34 @@ const Guide = lazy(() => import("./pages/Guide"));
 // import { Builds } from "./pages/Builds";
 
 function App() {
+      useEffect(() => {
+        const createDirectory = () => {
+          const worker = new Worker(new URL('./worker/createDirectory.js', import.meta.url));
+          worker.postMessage({});
+          worker.onmessage = e => {
+            worker.terminate();
+            if(e.data.success) {
+              console.log("successfully created directory structure");
+            }else{
+              console.error("error occured during opfs directory structure creation: ", e.data.error);
+            }
+          }
+        }
+        createDirectory();
+      }, []);
+
   return (
     <>
         <BrowserRouter>
           <Navbar/>
           <Routes>
-            <Route path="/" element={<Suspense fallback={<ErrorBoundary/>}><HomePage/></Suspense>}></Route>
-            <Route path="/about" element={<Suspense fallback={<ErrorBoundary/>}><About/></Suspense>}></Route>
-            <Route path="/guide" element={<Suspense fallback={<ErrorBoundary/>}><Guide/></Suspense>}></Route>
-            <Route path="/builds" element={<Suspense fallback={<ErrorBoundary/>}><Builds/></Suspense>}></Route>
-            <Route path="/docker-compose" element={<Suspense fallback={<ErrorBoundary/>}><DockerCompose/></Suspense>}></Route>
-            <Route path="/create-env" element={<Suspense fallback={<ErrorBoundary/>}><CreateProject type={"env"}/></Suspense>}></Route>
-            <Route path="/create-service" element={<Suspense fallback={<ErrorBoundary/>}><CreateProject type={"service"}/></Suspense>}></Route>
+            <Route path="/" element={<Suspense fallback={<Skeleton num={20}/>}><HomePage/></Suspense>}></Route>
+            <Route path="/about" element={<Suspense fallback={<Skeleton num={20}/>}><About/></Suspense>}></Route>
+            <Route path="/guide" element={<Suspense fallback={<Skeleton num={20}/>}><Guide/></Suspense>}></Route>
+            <Route path="/builds" element={<Suspense fallback={<Skeleton num={20}/>}><Builds/></Suspense>}></Route>
+            <Route path="/docker-compose" element={<Suspense fallback={<Skeleton num={20}/>}><DockerCompose/></Suspense>}></Route>
+            <Route path="/create-env" element={<Suspense fallback={<Skeleton num={20}/>}><CreateProject type={"env"}/></Suspense>}></Route>
+            <Route path="/create-service" element={<Suspense fallback={<Skeleton num={20}/>}><CreateProject type={"service"}/></Suspense>}></Route>
           </Routes>
         </BrowserRouter>
     </>

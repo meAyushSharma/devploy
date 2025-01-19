@@ -1,10 +1,11 @@
 import { useRecoilState } from "recoil";
+import { lazy, useState } from "react";
 import { macvlanAtom } from "../../../store/atoms/networkAtoms/macvlanAtom";
-import { useState } from "react";
-import CreateName from "./CreateName"
-import NetworkModes from "./NetworkModes";
-import DelPair from "./DelPair";
-import SubGate from "./SubGate";
+
+const CreateName = lazy(() => import("./CreateName"))
+const NetworkModes = lazy(() => import("./NetworkModes"))
+const DelPair = lazy(() => import("./DelPair"))
+const SubGate = lazy(() => import("./SubGate"))
 
 const Macvlan = () => {
     const [name, setName] = useState("");

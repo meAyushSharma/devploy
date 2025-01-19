@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { lazy, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState, useRecoilState } from "recoil";
+
+import { FaSave } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { IoInformationCircleOutline } from "react-icons/io5"
+import { MdAddBox } from "react-icons/md";
 
 import Button from "../components/common/Button";
-import DockerfileCode from "../components/DockerfileCode";
+const DockerfileCode = lazy(() => import("../components/DockerfileCode"))
 
 import { useDebounce } from "../hooks/useDebounce";
 import { useResetAllAtoms } from "../hooks/useResetAllAtoms";
@@ -31,16 +34,19 @@ const DockerCompose = () => {
     const dockerfiles = useRecoilValue(dockerfileSelector); // dockerfiles:{environment:JSON, services:[{ dockerfileDetails:JSON, name:'useless' }]}
     const composeFile = generateCompose(dockerfiles);
     // handle service deletion
-    const setServiceDelTracker = useSetRecoilState(serviceDelTrackerAtom);
+    const [serviceDelTracker, setServiceDelTracker] = useRecoilState(serviceDelTrackerAtom);
     const delService = (index) => setServiceDelTracker(prevState => [...prevState, index]);
 
     // debugging purpose only 
     console.log("this is dockerfiles: ", dockerfiles);
+
+    // reset all atoms upon save
     const n = dockerfiles.services.length;
     const resetAllAtoms = useResetAllAtoms(n);
 
+    const saveToggle = (n-serviceDelTracker.length);
 
-    // save compose to local
+    // save compose files
     const saveCompose = async () => {
         if (!nameIsValid) return;
         try {
@@ -51,8 +57,9 @@ const DockerCompose = () => {
                 content: composeFile,
                 childFolderName: debouncedName,
             };
-            const savePromises = dockerfiles.services.map(async (service) => {
-                if(service.dockerfileDetails){
+    
+            const savePromises = dockerfiles.services.map(async (service, index) => {
+                if (service.dockerfileDetails) {
                     const obj = {
                         workerPath: '../worker/saveDockerComposeDockerfileWorker.js',
                         parentFolderName: "docker-compose",
@@ -60,19 +67,36 @@ const DockerCompose = () => {
                         content: service.dockerfileDetails,
                         childFolderName: debouncedName,
                     };
-                    return saveToLocal(obj);
+    
+                    try {
+                        return await saveToLocal(obj); // Attempt to save
+                    } catch (error) {
+                        console.error(`Error saving service at index ${index}:`, error);
+                        return { data: { success: false }, error };
+                    }
                 }
-                return null;
+                console.warn(`Service at index ${index} does not have dockerfileDetails.`);
+                return { data: { success: true } }; // No operation, treated as successful
             });
-            // save compose
-            await saveToLocal(composeObj);
+    
+            try {
+                await saveToLocal(composeObj);
+            } catch (error) {
+                console.error("Error saving compose file:", error);
+                return;
+            }
+            // Save service files
             const results = await Promise.all(savePromises);
-            if (results.every(event => event?.data?.success)) {
+            const failedResults = results.filter(event => !event?.data?.success);
+            if (failedResults.length > 0) {
+                console.error(`Failed saves:`, failedResults);
+                alert("Some services could not be saved. Check the console for details.");
+            } else {
                 resetAllAtoms();
                 navigate("/builds#compose");
-            }else console.error("One or more saves failed");
+            }
         } catch (err) {
-            console.error("Error in saveCompose: ", err);
+            console.error("Unexpected error in saveCompose:", err);
         }
     };
     
@@ -80,7 +104,7 @@ const DockerCompose = () => {
     return (
         <div className="font-Satoshi m-5 bg-soft-white">
             <div className="flex items-center">
-                <span className="text-xl font-medium text-gray-700">Project name : </span>
+                <span className="text-3xl font-bold text-gray-700 my-4">Project name : </span>
                 <input 
                 type="text"
                 onBlur={handleBlur}
@@ -102,8 +126,15 @@ const DockerCompose = () => {
                 )}
                 {/* {"Button to add services"} */}
             </div>
-            <div className="max-w-[10%] m-auto">
-                <Button label={"Add Service"} onClickFun={() => navigate("/create-service")}/>
+            <div className="max-w-[15%] ml-auto">
+                <div className="w-fit">
+                    <Button>
+                        <button onClick={() => navigate("/create-service")} className="flex gap-2 items-center p-1">
+                            <MdAddBox className="text-lg"/>
+                            Add Service
+                        </button>
+                    </Button>
+                </div>
             </div>
             <div>
                 {/* {"this will come from  local storage "} */}
@@ -118,10 +149,27 @@ const DockerCompose = () => {
                         <DockerfileCode dockerfile={service.dockerfileDetails}/>
                     </div>)
                     )}
+                    {dockerfiles.services.length == 0 && (
+                        <div className="w-[80vw] h-[60vh] bg-[url('./assets/docker-compose-empty.png')] bg-center bg-contain bg-no-repeat rounded-lg m-auto my-6">
+                            {/* <span className="text-5xl font-bold text-gray-700">
+                                ADD SERVICES
+                            </span> */}
+                        </div>
+                    )}
             </div>
-            <div className="max-w-[10%] m-auto">
-                <Button label={"Save"} onClickFun={saveCompose}/>
+            {saveToggle>0 && ( 
+            <div className="max-w-[15%] ml-auto">
+                <div className="w-fit">
+                    <Button>
+                        <button onClick={saveCompose} className="flex gap-2 items-center p-1">
+                            <FaSave className="text-lg"/>
+                            Save File
+                        </button>
+                    </Button>
+                </div>
             </div>
+            )}
+           
         </div>
     )
 }

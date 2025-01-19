@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { lazy, memo, useMemo } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useNavigate } from "react-router-dom";
 
@@ -11,7 +11,7 @@ import { generateDockerfile } from "../helper/generateDockerfile";
 import { saveToLocal } from "../helper/saveToLocal";
 
 import Button from "./common/Button";
-import DockerfileCode from "./DockerfileCode";
+const DockerfileCode = lazy(() => import("./DockerfileCode"));
 
 const CreateDockerfile = memo(({type}) => {
     const input = useRecoilValue(getDockerfileFamily(type));
@@ -72,7 +72,9 @@ const CreateDockerfile = memo(({type}) => {
             <DockerfileCode dockerfile={dockerfileJSON}/>
             <div className="w-full">
                 <div className="max-w-[10%] ml-auto text-xl">
-                    <Button label={env ? "Save" : "Continue"} onClickFun={saveProject}/>
+                    <Button>
+                        <button onClick={saveProject}>{env ? "Save" : "Continue"}</button>
+                    </Button>
                 </div>
             </div>
         </div>

@@ -1,36 +1,20 @@
-import { useEffect, useMemo, useState } from "react";
+import { lazy, useEffect, useMemo, useState } from "react";
 import { removeLocalHelper } from "../helper/removeLocalHelper";
 import { downloadEnvFileHelper } from "../helper/downloadFileHelper";
-
-import { FaCloudDownloadAlt } from "react-icons/fa";
-
-import FormattedCode from "./FormattedCode";
-import DockerfileCode from "./DockerfileCode";
-import Button from "./common/Button";
-import { MdDelete } from "react-icons/md";
 import { downloadComposeFileHelper } from "../helper/downloadComposeFileHelper";
+
+import { MdDelete } from "react-icons/md";
+import { FaCloudDownloadAlt } from "react-icons/fa";
+import { IoRefreshCircleSharp } from "react-icons/io5";
+
+import Button from "./common/Button";
+const FormattedCode = lazy(() => import("./FormattedCode"));
+const DockerfileCode = lazy(() => import("./DockerfileCode"));
 
 const ShowSavedFiles = () => {
   console.log("how many times am i triggering ... ?");
   const [dataObj, setDataObj] = useState(null);
   const [trigger, setTrigger] = useState(false);
-      // check compatibility :
-    const [compatible, setCompatible] = useState(false);
-    useEffect(() => {
-        const fetchData = async () => {
-        try {
-            const worker = new Worker(new URL("../worker/removeCompatibilityCheck.js", import.meta.url));
-            worker.postMessage({});
-            worker.onmessage = (e) => {
-            worker.terminate();
-            if (e.data.success) setCompatible(true);
-            };
-        } catch (err) {
-            console.error("Error in checkCompatibility of remove:", err);
-        }
-        };
-        fetchData();
-    }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,10 +46,16 @@ const ShowSavedFiles = () => {
     }
 
   return (
-    <div>
+    <div className="border-t-4 border-gray-700/70 rounded-lg my-6">
       <div className="flex">
-        <div className="ml-auto mr-4">
-          <Button label={"Refresh"} onClickFun={() => setTrigger((state) => !state)}/>
+        <div className="ml-auto mr-6 mt-6">
+          {/* <Button label={"Refresh"} onClickFun={() => setTrigger((state) => !state)}/> */}
+          <Button>
+              <button onClick={() => setTrigger((state) => !state)} className="text-lg flex items-center gap-1 p-1">
+                <IoRefreshCircleSharp className="text-2xl"/>
+                Refresh
+              </button>
+          </Button>
         </div>
       </div>
 
