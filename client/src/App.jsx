@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Suspense, lazy, useEffect } from "react";
 
-const CreateProject  = lazy(() => import("./pages/CreateProject"))
+const DevAi = lazy(() => import("./pages/DevAi"));
+const CreateProject  = lazy(() => import("./pages/CreateProject"));
 const DockerCompose = lazy(() => import("./pages/DockerCompose"));
 const Builds = lazy(() => import("./pages/Builds"));
 const Navbar = lazy(() => import("./components/Navbar"));
@@ -9,7 +10,7 @@ const HomePage = lazy(() => import("./pages/HomePage"));
 const ErrorBoundary = lazy(() => import("./pages/ErrorBoundary"));
 const About = lazy(() => import("./pages/About"));
 const Guide = lazy(() => import("./pages/Guide"));
-const Skeleton = lazy(() => import("./components/Skeleton"))
+const Skeleton = lazy(() => import("./components/Skeleton"));
 // import DockerLoader from "./components/loader/DockerLoader";
 
 // import { Navbar }  from "./components/Navbar";
@@ -50,6 +51,7 @@ function App() {
             <Route path="/docker-compose" element={<Suspense fallback={<Skeleton num={20}/>}><DockerCompose/></Suspense>}></Route>
             <Route path="/create-env" element={<Suspense fallback={<Skeleton num={20}/>}><CreateProject type={"env"}/></Suspense>}></Route>
             <Route path="/create-service" element={<Suspense fallback={<Skeleton num={20}/>}><CreateProject type={"service"}/></Suspense>}></Route>
+            <Route path="/ask-devai" element={<Suspense fallback={<Skeleton num={20}/>}><DevAi/></Suspense>}></Route>
           </Routes>
         </BrowserRouter>
     </>

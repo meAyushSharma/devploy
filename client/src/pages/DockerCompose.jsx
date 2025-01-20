@@ -129,10 +129,8 @@ const DockerCompose = () => {
             <div className="max-w-[15%] ml-auto">
                 <div className="w-fit">
                     <Button>
-                        <button onClick={() => navigate("/create-service")} className="flex gap-2 items-center p-1">
-                            <MdAddBox className="text-lg"/>
-                            Add Service
-                        </button>
+                        <MdAddBox className="text-xl"/>
+                        <button onClick={() => navigate("/create-service")}>Add Service</button>
                     </Button>
                 </div>
             </div>
@@ -161,10 +159,8 @@ const DockerCompose = () => {
             <div className="max-w-[15%] ml-auto">
                 <div className="w-fit">
                     <Button>
-                        <button onClick={saveCompose} className="flex gap-2 items-center p-1">
-                            <FaSave className="text-lg"/>
-                            Save File
-                        </button>
+                        <FaSave className="text-lg"/>
+                        <button onClick={saveCompose} className="text-lg">Save File</button>
                     </Button>
                 </div>
             </div>

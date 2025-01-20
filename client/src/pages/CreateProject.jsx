@@ -2,6 +2,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { lazy, memo, useEffect, useState } from "react";
 
 import { IoInformationCircleOutline } from "react-icons/io5";
+import { MdReviews } from "react-icons/md";
 
 import { selectedPackageManagerAtom } from "../store/atoms/libAtoms/selectedPackageManagerAtom";
 import { serviceCountAtom } from "../store/atoms/serviceCountAtom";
@@ -105,7 +106,7 @@ const CreateProject = memo(({type}) => {
 
         <div className="text-2xl font-semibold text-gray-700/80 mt-4">Framework and libraries :</div>
         <PackageManager label={"Package Managers"} isMulti={true} type={whatType}/>
-        {packageManagers.map(pm => RenderPackageManager(pm.value, whatType))}
+        {packageManagers.map(pm => <RenderPackageManager pmValue={pm.value} whatType={whatType}/>)}
 
 
         <div className="text-2xl font-semibold text-gray-700/80 mt-4 mb-2">Choose Configurations :</div>
@@ -115,6 +116,7 @@ const CreateProject = memo(({type}) => {
         <div className="w-full text-xl">
             <div className="max-w-[10%] ml-auto">
                 <Button>
+                    <MdReviews />
                     <button onClick={e => setReview(state => !state)}>Review</button>
                 </Button>
             </div>

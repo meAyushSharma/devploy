@@ -2,6 +2,9 @@ import { lazy, memo, useMemo } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useNavigate } from "react-router-dom";
 
+import { FaSave } from "react-icons/fa";
+import { VscDebugContinue } from "react-icons/vsc";
+
 import { getDockerfileFamily } from "../store/selectors/getDockerfilefamily";
 import { serviceCountAtom } from "../store/atoms/serviceCountAtom";
 import { testDockerfileAtom } from "../store/atoms/testDockerfileAtom";
@@ -73,6 +76,7 @@ const CreateDockerfile = memo(({type}) => {
             <div className="w-full">
                 <div className="max-w-[10%] ml-auto text-xl">
                     <Button>
+                        {env ? <FaSave/> : <VscDebugContinue />}
                         <button onClick={saveProject}>{env ? "Save" : "Continue"}</button>
                     </Button>
                 </div>
