@@ -14,11 +14,12 @@ import { generateDockerfile } from "../helper/generateDockerfile";
 import { saveToLocal } from "../helper/saveToLocal";
 
 import Button from "./common/Button";
+import axios from "axios";
 const DockerfileCode = lazy(() => import("./DockerfileCode"));
 
 const CreateDockerfile = memo(({type}) => {
     const input = useRecoilValue(getDockerfileFamily(type));
-    console.log("this is input: ", input)
+    // console.log("this is input: ", input)
     const dockerfile = useMemo(() => generateDockerfile(input) , [generateDockerfile, input]);
     const resetEnvAtoms = useResetEnvAtoms();
     
@@ -70,6 +71,17 @@ const CreateDockerfile = memo(({type}) => {
         }
     }
 
+    const test = async () => {
+        const sentData = await axios.post("http://localhost:3007/api/v1/docker/deploy-env", {data: JSON.stringify(dockerfileJSON)}, {
+            headers:{
+                "Content-Type":"application/json"
+            }
+        })
+        const reply = await sentData.data();
+        if(reply.success)
+            console.log("the response is: ", reply.msg)
+    }
+
     return (
         <div className="my-4 border-2 border-violet-500/50 hover:border-violet-500/100 p-2 rounded-lg">
             <DockerfileCode dockerfile={dockerfileJSON}/>
@@ -79,6 +91,7 @@ const CreateDockerfile = memo(({type}) => {
                         {env ? <FaSave/> : <VscDebugContinue />}
                         <button onClick={saveProject}>{env ? "Save" : "Continue"}</button>
                     </Button>
+                    <button onClick={test}>{env && "Test"}</button>
                 </div>
             </div>
         </div>

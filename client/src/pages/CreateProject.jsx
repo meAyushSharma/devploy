@@ -51,10 +51,12 @@ const CreateProject = memo(({type}) => {
     // check environment (folder) dockerfiles duplicates
     const envNameisValid = useWorkerValidName({workerPath:'../worker/envNameDuplicacy.js', debouncedName});
 
-    const [isTouched, setIsTouched] = useState(false); // handles empty input
+     // handles empty input
+    const [isTouched, setIsTouched] = useState(false);
     const handleBlur = () => setIsTouched(true);
 
-    const services = useRecoilValue(getServiceNames); // getServiceNames(get names only) => have undeleted ones only.
+    // getServiceNames(get names only) => have undeleted ones only.
+    const services = useRecoilValue(getServiceNames);
     useEffect(() => {
         service && debouncedName && (services.includes(debouncedName) ? setNameIsValid(false) : setNameIsValid(true));
     }, [setNameIsValid, service, services, debouncedName]);

@@ -1,15 +1,18 @@
 const express = require("express");
-const Docker = require('dockerode');
-
+const catchAsync = require("../utils/catchAsync");
+const { envDeploy } = require("../controllers/dockerEnvDeployController");
 const dockerRouter = express.Router();
-const docker = new Docker({ host: 'localhost', port: 2375 });
+// const Docker = require('dockerode');
+// const docker = new Docker({ host: 'localhost', port: 2375 });
 
-dockerRouter.get('/containers', async (req, res) => {
-  const containers=await docker.listContainers();
-  console.log(containers);
-  return res.json({
-    containers: containers.map(container => ({id: container.Id, name: container.Names}))
-  });
-});
+// dockerRouter.get('/containers', async (req, res) => {
+//   const containers=await docker.listContainers();
+//   console.log(containers);
+//   return res.json({
+//     containers: containers.map(container => ({id: container.Id, name: container.Names}))
+//   });
+// });
 
-module.exports = {dockerRouter}
+dockerRouter.post('/deploy-env', catchAsync(envDeploy));
+
+module.exports = { dockerRouter }

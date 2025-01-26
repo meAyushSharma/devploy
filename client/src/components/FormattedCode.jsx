@@ -6,7 +6,7 @@ const FormattedCode = memo(({code, delFun}) => {
     return (
         <div className="min-w-[40vw]">
          <pre className="">
-            <code>
+            <code language="javascript">
                 <div className="flex font-Satoshi my-6">
                     <div className="w-1 bg-gray-500 rounded-lg ml-2"></div>
                     <div className="bg-slate-900 min-w-[40vw] p-8 text-white font-medium rounded-md ml-2 hover:shadow-2xl cursor-pointer overflow-x-auto text-wrap">

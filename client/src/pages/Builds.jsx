@@ -2,18 +2,20 @@ import { useNavigate } from "react-router-dom"
 
 import ShowSavedFiles from "../components/ShowSavedFiles"
 
-import { AiOutlineDocker } from "react-icons/ai";
-import { FaAngleDown } from "react-icons/fa6";
 import { FaBrain } from "react-icons/fa6";
 import { FaOctopusDeploy } from "react-icons/fa";
 import { LuContainer } from "react-icons/lu";
+import { useEffect } from "react";
 
 const Builds = () => {
-    // bg-[#e8e9e8]
-    // text-[#1b1b19]
     const navigate = useNavigate();
-    return <div className="font-Satoshi bg-soft-white mx-6">
+    const isGuestLoggedIn = localStorage.getItem("isGuestLoggedIn") === "true";
+    useEffect(() => {
+        if(!isGuestLoggedIn) navigate("/signup");
+    }, [isGuestLoggedIn, navigate])
 
+    return ( isGuestLoggedIn &&
+    <div className="font-Satoshi bg-soft-white mx-6">
         <div className="grid grid-rows-3 gap-3 m-4 text-[#232223]">
             <div className="flex flex-row min-h-[40vh] m-4">
                 <div className="p-4">
@@ -71,7 +73,7 @@ const Builds = () => {
         <div className="">
             <ShowSavedFiles/>
         </div>
-    </div>
+    </div>)
 }
 
 export default Builds;

@@ -12,7 +12,7 @@ const DockerfileCode = memo(({dockerfile, delFun}) => {
             case "ipvlan":
                 return `$ docker network create -d ipvlan ${dockerfile.ipvlan.pairs.map(pair => ` --subnet=${pair.subnet} --gateway=${pair.gateway}`)} -o ipvlan_mode=${dockerfile.ipvlan.mode} -o parent=${dockerfile.ipvlan.parent} ${dockerfile.ipvlan.name}`;
             case "macvlan":
-                return `$ docker network create -d ipvlan ${dockerfile.macvlan.pairs.map(pair => ` --subnet=${pair.subnet} --gateway=${pair.gateway}`)} -o macvlan_mode=${dockerfile.macvlan.mode} -o parent=${dockerfile.macvlan.parent} ${dockerfile.macvlan.name}`;
+                return `$ docker network create -d macvlan ${dockerfile.macvlan.pairs.map(pair => ` --subnet=${pair.subnet} --gateway=${pair.gateway}`)} -o macvlan_mode=${dockerfile.macvlan.mode} -o parent=${dockerfile.macvlan.parent} ${dockerfile.macvlan.name}`;
             case "none":
                 return `$ docker run -it --network none [image-name](${dockerfile.name})`;
             default:

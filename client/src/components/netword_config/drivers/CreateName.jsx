@@ -7,7 +7,9 @@ const CreateName = memo(({heading, placeholder, value, onChangeFun, label, onCli
             <div className="grid md:grid-cols-[2fr_4fr_4fr] my-2">
                     <span className="font-medium text-gray-800 text-lg place-content-center">{heading}</span>
                     <div className="flex gap-8 my-2">
-                        <TextInput placeholder={placeholder} value={value} onChangeFun={onChangeFun}/>
+                        <TextInput>
+                                <input type="text" placeholder={placeholder} onChange={onChangeFun} value={value} className="w-full p-1 rounded-lg text-black placeholder-gray-800"/>
+                        </TextInput>
                         {/* <Button label={label} onClickFun={onClickFun}/> */}
                         <Button>
                                 <button onClick={onClickFun}>{label}</button>

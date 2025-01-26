@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-export const useAxios = (url) => {
+export const useAxios = (url, time=700) => {
     const controller = new AbortController();
 
     const [data, setData] = useState(null);
@@ -28,7 +28,7 @@ export const useAxios = (url) => {
                 setIsLoading(false);
             }
         }
-        const debouncedValue = setTimeout(fetchData, 700);
+        const debouncedValue = setTimeout(fetchData, time);
         return () => {
             clearTimeout(debouncedValue);
             controller.abort();

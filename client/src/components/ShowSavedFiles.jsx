@@ -110,7 +110,7 @@ const ShowSavedFiles = () => {
                                         } */}
 
         <div>
-            <span className="text-2xl font-semibold text-gray-700" id="#compose">Compose Builds : </span>
+            <span className="text-2xl font-semibold text-gray-700 cursor-pointer" id="#compose">Compose Builds : </span>
             <div className="min-h-[50vh]">
                 {!dataObj ||
                 Object.entries(dataObj.data["docker-compose"].entries).length == 0 && (<div className="h-[50vh] bg-empty-screen bg-contain bg-center bg-no-repeat"></div>)}

@@ -25,8 +25,12 @@ const Environments = memo(({type}) => {
         <div className="grid md:grid-cols-[1fr_4fr] my-4">
             <div className="flex items-center text-lg font-medium text-gray-800">Environment variable(s) :</div>
             <div className="grid md:grid-cols-[3fr_3fr_1fr] gap-4 items-center">
-                <TextInput placeholder={"env name"} onChangeFun={e => setName(e.target.value)} value={name}/>
-                <TextInput placeholder={"env value"} onChangeFun={e => setVal(e.target.value)} value={val}/>
+                <TextInput>
+                    <input type="text" placeholder={"env name"} onChange={e => setName(e.target.value)} value={name} className="w-full p-1 rounded-lg text-black placeholder-gray-800"/>
+                </TextInput>
+                <TextInput>
+                    <input type="text" placeholder={"env value"} onChange={e => setVal(e.target.value)} value={val} className="w-full p-1 rounded-lg text-black placeholder-gray-800"/>
+                </TextInput>
                 <div className="w-fit text-lg">
                     {/* <Button label={"Add Env"} onClickFun={addEnv}/> */}
                     <Button>
