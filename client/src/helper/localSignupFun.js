@@ -1,11 +1,12 @@
 export const localSignupFun = ({ username, localPassword, setLocalAuth, choosenPic }) => {
     try{
-        console.log("here we are at localSignupFun")
         if(username && localPassword){
-            setLocalAuth(state => ({ ...state, username, password:localPassword, choosenPic }));
-            const localAuthObj = { username, localPassword, choosenPic }
-            localStorage.setItem("localAuthToken", JSON.stringify(localAuthObj));
-            console.log("this is localAuthObj: ", localStorage.getItem("localAuthToken"));
+            const localObj = localStorage.getItem("localAuthObj");
+            
+            setLocalAuth(state => ({ ...state, username, password:localPassword, profile_pic:choosenPic }));
+            const localAuthObj = { username, localPassword, profile_pic:choosenPic }
+            localStorage.setItem("localAuthObj", JSON.stringify(localAuthObj));
+            console.log("this is localAuthObj: ", localStorage.getItem("localAuthObj"));
             return true;
         }
     }catch(err) {

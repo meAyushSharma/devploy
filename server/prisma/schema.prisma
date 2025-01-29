@@ -14,9 +14,31 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  email String @unique
-  username String?
-  name String?
-  password String
+  id              Int @id @default(autoincrement())
+  email           String @unique
+  password        String?
+  username        String?
+  name            String?
+  google_id       String? @unique
+  is_google_user  Boolean @default(false)
+  profile_pic     String?
+  environments    Environment[]
+  composes        Compose[]
+  created_at      DateTime @default(now())
+}
+
+model Environment {
+  id              Int       @id       @default(autoincrement())
+  name            String?
+  userId          Int
+  user            User      @relation(fields: [userId], references: [id])
+  created_at      DateTime @default(now())
+}
+
+model Compose {
+  id              Int       @id       @default(autoincrement())
+  name            String?
+  userId          Int
+  user            User      @relation(fields: [userId], references: [id])
+  created_at      DateTime @default(now())
 }

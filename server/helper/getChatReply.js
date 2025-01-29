@@ -16,13 +16,18 @@ const generatePrompt = (query) => {
 }
 
 module.exports.getChatReply = async (PROMPT) => {
-    const prompt = generatePrompt(PROMPT);
-    console.log("this is prompt:     ", prompt)
-    const chatCompletion = await AI_CLIENT.chat.completions.create({
-      messages: [{ role: "assistant", content: prompt }],
-      model: AI_MODEL,
-    });
-    const content = chatCompletion.choices[0]?.message?.content?? "";
-    console.log(`the content from ai is::: \n ${content}`);
-    return content;
+    try {
+        const prompt = generatePrompt(PROMPT);
+        console.log(`this is prompt:\n`, prompt)
+        const chatCompletion = await AI_CLIENT.chat.completions.create({
+        messages: [{ role: "assistant", content: prompt }],
+        model: AI_MODEL,
+        });
+        const content = chatCompletion.choices[0]?.message?.content?? "";
+        console.log(`the content from ai is::: \n ${content}`);
+        return content;
+    }catch (err) {
+        console.error("The error in getting reply from AI is: ", err);
+        return null;
+    }
 };

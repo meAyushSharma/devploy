@@ -1,20 +1,15 @@
 const { getChatReply } = require("../helper/getChatReply");
+const ExpressError = require("../utils/ExpressError");
 
-module.exports.askDevai = async (req, res) => {
+module.exports.askDevai = async (req, res, next) => {
     try {
         const {query} = req.body;
-        console.log("this is query: ", query)
+        console.log(`This is user message array:\n`, query);
         const reply = await getChatReply(query);
-        return res.status(200).json({
-            msg: reply,
-            success: true
-        })
+        if(reply) return res.status(200).json({ msg: reply, success: true })
+        else throw new ExpressError("Failed to get reply from AI <(＿　＿)>", 500);
+
     }catch (err) {
-        console.error("the error in askDevai is: ", err);
-        return res.status(500).json({
-            msg: "Some error occured in askDevai",
-            success: false,
-            error: err
-        })
+        next(err)
     }
 }

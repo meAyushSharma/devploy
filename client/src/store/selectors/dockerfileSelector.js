@@ -20,7 +20,7 @@ export const dockerfileSelector = selector({
                 if(!serviceDelTracker.includes(i)){
                     let service = `service${i+1}`;
                     const dockerfileJSON = get(testDockerfileAtom(service));
-                    dockerfiles.services.push({dockerfileDetails:dockerfileJSON, name:serviceNames[i]});
+                    dockerfiles.services.push({dockerfileDetails:dockerfileJSON, name:serviceNames[i]}); // name not needed : depreciated
                 }else{
                     dockerfiles.services.push({dockerfileDetails:"", name:""})
                 }

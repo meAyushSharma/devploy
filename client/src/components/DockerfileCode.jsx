@@ -64,7 +64,7 @@ const DockerfileCode = memo(({dockerfile, delFun}) => {
                     {dockerfile.driver && getNetworkCommand(dockerfile)}
                 </span>
                 <span>
-                    $ docker --net={getNetName(dockerfile)} run -it {dockerfile.ports.length>0 && `-p ${dockerfile.ports.map(port => `${port.host} : ${port.container}`)}`} --name [container-name] [image-name]({dockerfile.name}) 
+                    $ docker run --network {getNetName(dockerfile)} -it {dockerfile.ports.length>0 && `-p ${dockerfile.ports.map(port => `${port.host} : ${port.container}`)}`} --name [container-name] [image-name]({dockerfile.name}) 
                 </span>
             </div>
         </div>

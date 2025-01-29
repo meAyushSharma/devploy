@@ -19,15 +19,13 @@ const ShowSavedFiles = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const worker = new Worker(
-          new URL("../worker/getLocalDataWorker.js", import.meta.url)
-        );
+        const worker = new Worker(new URL("../worker/getLocalDataWorker.js", import.meta.url));
         worker.postMessage({ directoryHandle: "" }); // directoryHandle can be: "environment" OR "docker-compose"
         worker.onmessage = (e) => {
           worker.terminate();
           if (e.data.success) {
             setDataObj(e.data);
-            console.log("inside", e.data);
+            // console.log("inside", e.data);
           } else console.error("Error from worker:", e.data.error);
         };
       } catch (err) {
@@ -59,10 +57,10 @@ const ShowSavedFiles = () => {
         </div>
       </div>
 
-      <div>
+      <div className="my-4">
         <span className="text-2xl font-semibold text-gray-700 cursor-pointer" id="#env">Environments Builds:{" "}</span>
         <div className="min-h-[50vh] perspective-normal	hover:perspective">
-            {!dataObj || Object.entries(dataObj.data.environment.entries).length == 0 && (<div className="h-[50vh] border bg-empty-screen bg-contain bg-center bg-no-repeat"></div>)}
+            {!dataObj || Object.entries(dataObj.data.environment.entries).length == 0 && (<div className="h-[50vh] border rounded-md my-4 bg-empty-screen bg-contain bg-center bg-no-repeat"></div>)}
             {dataObj?.success &&
             Object.entries(dataObj.data.environment.entries).length > 0 &&
             Object.entries(dataObj.data.environment.entries).map(([key, fileDetails]) => 
@@ -109,11 +107,11 @@ const ShowSavedFiles = () => {
                                         
                                         } */}
 
-        <div>
+        <div className="my-4">
             <span className="text-2xl font-semibold text-gray-700 cursor-pointer" id="#compose">Compose Builds : </span>
             <div className="min-h-[50vh]">
                 {!dataObj ||
-                Object.entries(dataObj.data["docker-compose"].entries).length == 0 && (<div className="h-[50vh] bg-empty-screen bg-contain bg-center bg-no-repeat"></div>)}
+                Object.entries(dataObj.data["docker-compose"].entries).length == 0 && (<div className="h-[50vh] border rounded-md my-4 bg-empty-screen bg-contain bg-center bg-no-repeat"></div>)}
                 {dataObj?.success &&
                 Object.entries(dataObj.data["docker-compose"].entries).length > 0 &&
                 Object.entries(dataObj.data["docker-compose"].entries).map((project, projectIndex) => {

@@ -4,15 +4,17 @@ const router = express.Router();
 const { userRouter } = require("./userRoutes");
 const { dockerRouter } = require("./dockerRoutes");
 const { devaiRouter } = require("./devaiRoutes");
+const { authRouter } = require("./authRoutes");
 
 const { registrySearchController } = require("../controllers/registrySearchController");
-const { crossOriginMiddleware } = require("../middlewares/crossOriginMiddleware");
 const catchAsync = require("../utils/catchAsync");
+const { authMiddleware } = require("../middlewares/authMiddleware");
 
 router.use('/user', userRouter);
-router.use('/docker', dockerRouter);
-router.use('/devai', devaiRouter);
+router.use('/docker', catchAsync(authMiddleware), dockerRouter);
+router.use('/devai', catchAsync(authMiddleware), devaiRouter);
+router.use('/auth', authRouter);
 
-router.get('/search', crossOriginMiddleware, catchAsync(registrySearchController))
+router.get('/search', catchAsync(registrySearchController))
 
 module.exports = { router };

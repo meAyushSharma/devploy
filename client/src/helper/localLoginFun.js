@@ -1,10 +1,9 @@
 export const localLoginFun = ({username, password}) => {
     try{
-        const val = localStorage.getItem("localAuthToken");
+        const val = localStorage.getItem("localAuthObj");
         if(val) {
             const user = JSON.parse(val);
-            if(user.username === username && user.localPassword === password){
-                localStorage.setItem("isGuestLoggedIn", "true");
+            if(user.username == username && user.localPassword == password){
                 console.log("user successfully logged in!");
                 return {
                     success: true

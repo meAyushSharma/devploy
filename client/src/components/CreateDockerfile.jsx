@@ -61,7 +61,7 @@ const CreateDockerfile = memo(({type}) => {
             if(event.data.success){
                 console.log("Successfully saved env data on local");
                 resetEnvAtoms();
-                navigator("/builds#env");
+                navigator("/builds");
             } else console.error("the error saving environment data to local is: ", event.data.error);
         }else {
             // take it to docker compose for further processes
@@ -86,10 +86,10 @@ const CreateDockerfile = memo(({type}) => {
         <div className="my-4 border-2 border-violet-500/50 hover:border-violet-500/100 p-2 rounded-lg">
             <DockerfileCode dockerfile={dockerfileJSON}/>
             <div className="w-full">
-                <div className="max-w-[10%] ml-auto text-xl">
+                <div className="max-w-[10%] ml-auto text-xl" onClick={saveProject}>
                     <Button>
-                        {env ? <FaSave/> : <VscDebugContinue />}
-                        <button onClick={saveProject}>{env ? "Save" : "Continue"}</button>
+                        {env ? <FaSave/> : <VscDebugContinue/>}
+                        <button>{env ? "Save" : "Continue"}</button>
                     </Button>
                     <button onClick={test}>{env && "Test"}</button>
                 </div>

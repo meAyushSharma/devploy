@@ -108,7 +108,7 @@ const CreateProject = memo(({type}) => {
 
         <div className="text-2xl font-semibold text-gray-700/80 mt-4">Framework and libraries :</div>
         <PackageManager label={"Package Managers"} isMulti={true} type={whatType}/>
-        {packageManagers.map(pm => <RenderPackageManager pmValue={pm.value} whatType={whatType}/>)}
+        {packageManagers.map((pm, key) => <RenderPackageManager pmValue={pm.value} whatType={whatType} key={key}/>)}
 
 
         <div className="text-2xl font-semibold text-gray-700/80 mt-4 mb-2">Choose Configurations :</div>
@@ -116,10 +116,10 @@ const CreateProject = memo(({type}) => {
         <Environments type={whatType}/>
         <NetworkConfig type={whatType}/>
         <div className="w-full text-xl">
-            <div className="max-w-[10%] ml-auto">
+            <div className="max-w-[10%] ml-auto" onClick={e => setReview(state => !state)}>
                 <Button>
-                    <MdReviews />
-                    <button onClick={e => setReview(state => !state)}>Review</button>
+                    <MdReviews/>
+                    <button>Review</button>
                 </Button>
             </div>
         </div>

@@ -1,12 +1,12 @@
 import { memo, useEffect, useState } from "react";
-import { useAxios } from "../../hooks/useAxios";
 import Select from "react-select";
+import { useFetchRegistry } from "../../hooks/useFetchRegistry";
 
 const BasePackageSearchComponent = memo(({ label, requestFor, transformData, setGlobalState }) => {
     const [options, setOptions] = useState([]);
     const [inputValue, setInputValue] = useState(null);
     const [selectedOptions, setSelectedOptions] = useState([]);
-    const { data, isLoading } = useAxios(inputValue?`http://localhost:3007/api/v1/search?q=${inputValue}&requestFor=${requestFor}`:null);
+    const { data, isLoading, error } = useFetchRegistry({ inputValue: inputValue ? inputValue : null, requestFor });
     useEffect(() => {
         if (data) {
             const transformedOptions = transformData(data);
@@ -15,9 +15,14 @@ const BasePackageSearchComponent = memo(({ label, requestFor, transformData, set
     }, [data, transformData]);
 
     useEffect(() => {
-        // console.log("global state updated: ", selectedOptions);
         setGlobalState(selectedOptions);
     }, [selectedOptions, setGlobalState]);
+
+    useEffect(() => {
+        if(error) {
+            alert(`The error is: ${error.message}`);
+        }
+    }, [error]);
 
     return (
         <div className="grid md:grid-cols-[1fr_3fr]">

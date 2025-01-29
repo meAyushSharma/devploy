@@ -15,6 +15,7 @@ export default {
       colors: {
         "soft-white": "#fefffe",
         "soft-dark":"#111",
+        "format-code-dark":"#17191E"
       }
     },
   },

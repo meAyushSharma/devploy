@@ -2,7 +2,7 @@ import { memo, useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import Select from "react-select";
 
-import { useDockerFetch } from "../hooks/useDockerFetch";
+import { useFetchRegistry } from "../hooks/useFetchRegistry";
 
 import {selectedDatabaseAtom} from "../store/atoms/softwareAtoms/selectedDatabaseAtom";
 import {selectedOsAtom} from "../store/atoms/softwareAtoms/selectedOsAtom";
@@ -17,7 +17,7 @@ const DockerSearchComponent = memo(({ label, type }) => {
   const setRuntime = useSetRecoilState(selectedRuntimeAtom(type));
   const setDatabase = useSetRecoilState(selectedDatabaseAtom(type));
 
-  const { options, isLoading } = useDockerFetch(inputValue ? `http://localhost:3007/api/v1/search?q=${inputValue}&requestFor=docker` : null);
+  const { data, isLoading, error } = useFetchRegistry({inputValue : inputValue ? inputValue : null , requestFor : "docker"});
   
   useEffect(() => {
         if(label === "Runtime(s)") setRuntime(selectedOption)
@@ -30,7 +30,7 @@ const DockerSearchComponent = memo(({ label, type }) => {
       <div className="flex items-center text-lg font-medium text-gray-800"><span>{label}</span><span>:</span></div>
       <div className="m-1">
       <Select
-        options={options}
+        options={data}
         isMulti={true}
         onInputChange={(newValue) => setInputValue(newValue)}
         onChange={(selected) => {

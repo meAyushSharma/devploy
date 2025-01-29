@@ -1,12 +1,15 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 import Button from "../common/Button";
 import TextInput from "../common/TextInput";
 import { localSignupFun } from "../../helper/localSignupFun";
-import { redirect, useNavigate } from "react-router-dom";
 import { localLoginFun } from "../../helper/localLoginFun";
+import { profilePicUrls } from "../../utils/profilePicUrls";
 
 const GuestMode = ({setLocalAuth, category}) => {
     const type = category === "Signup";
+    const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [localPassword, setLocalPassword] = useState("");
 
@@ -14,18 +17,18 @@ const GuestMode = ({setLocalAuth, category}) => {
   const [choosenPic, setChoosenPic] = useState(0);
 
   const profilePics = {
-    1: "bg-[url('./assets/p1.png')]",
-    2: "bg-[url('./assets/p2.png')]",
-    3: "bg-[url('./assets/p3.png')]",
-    4: "bg-[url('./assets/p4.png')]",
-    5: "bg-[url('./assets/p5.png')]",
-    6: "bg-[url('./assets/p6.png')]",
-    7: "bg-[url('./assets/p7.png')]",
-    8: "bg-[url('./assets/p8.png')]",
-    9: "bg-[url('./assets/p9.png')]",
-    10: "bg-[url('./assets/p10.png')]",
-    11: "bg-[url('./assets/p11.png')]",
-    12: "bg-[url('./assets/p12.png')]",
+    1: { backgroundImage: `url(${profilePicUrls[1]})` },
+    2: { backgroundImage: `url(${profilePicUrls[2]})` },
+    3: { backgroundImage: `url(${profilePicUrls[3]})` },
+    4: { backgroundImage: `url(${profilePicUrls[4]})` },
+    5: { backgroundImage: `url(${profilePicUrls[5]})` },
+    6: { backgroundImage: `url(${profilePicUrls[6]})` },
+    7: { backgroundImage: `url(${profilePicUrls[7]})` },
+    8: { backgroundImage: `url(${profilePicUrls[8]})` },
+    9: { backgroundImage: `url(${profilePicUrls[9]})` },
+    10: { backgroundImage: `url(${profilePicUrls[10]})` },
+    11: { backgroundImage: `url(${profilePicUrls[11]})` },
+    12: { backgroundImage: `url(${profilePicUrls[12]})` },
   };
 
   const RenderProfilePic = () => {
@@ -35,37 +38,40 @@ const GuestMode = ({setLocalAuth, category}) => {
       </div>
     ) : (
       <div
-        className={`w-[7vw] h-[7vw] rounded-full ${profilePics[choosenPic]} bg-contain bg-no-repeat bg-center border-4 border-violet-300`}
+        className={`w-[7vw] h-[7vw] rounded-full bg-contain bg-no-repeat bg-center border-4 border-violet-300`}
+        style={profilePics[choosenPic]}
       ></div>
     );
   };
 
   const authFun = () => {
     if(type) {
-      //signup fun
+      // guest = signup mode
       if(username && localPassword){
-        const success = localSignupFun({ username, localPassword, setLocalAuth, choosenPic });
+        const success = localSignupFun({ username:username.trim(), localPassword:localPassword.trim(), setLocalAuth, choosenPic: profilePicUrls[choosenPic==0 ? 7 : choosenPic] });
         if(success){
             setUsername("");
             setLocalPassword("");
             setChoosenPic(0);
+            Cookies.set("localAuthToken", "true", {expires: 7, path: "/"});
             console.log("successfully saved localAuthData!");
-            redirect("/")
+            navigate("/")
         }else {
             // alert user of failure;
         }
       }
     }else {
-        // login fun
+        // guest = login mode
         if(username && localPassword){
-          const obj = localLoginFun({ username, password: localPassword })
+          const obj = localLoginFun({ username:username.trim(), password: localPassword.trim() })
           if(obj.success){
             setUsername("");
             setLocalPassword("");
-            redirect("/")
+            Cookies.set("localAuthToken", "true", {expires:7, path: "/" });
+            navigate("/")
           }else{
             if(obj.redirect != "no"){
-              redirect(obj.redirect);
+              navigate(obj.redirect);
             }else{
             // alert of cause
             }
@@ -93,10 +99,9 @@ const GuestMode = ({setLocalAuth, category}) => {
         <div className="flex flex-wrap justify-center my-2 border-2 border-violet-500 rounded-lg p-1">
           {Array.from({ length: 12 }).map((_, key) => (
             <div
-              className={`w-[7vw] h-[7vw] cursor-pointer ${
-                profilePics[key + 1]
-              } bg-contain bg-no-repeat bg-center bg-violet-500 m-1 rounded-full border-4 border-violet-500 hover:border-violet-700`}
+              className={`w-[7vw] h-[7vw] cursor-pointer bg-contain bg-no-repeat bg-center bg-violet-500 m-1 rounded-full border-4 border-violet-500 hover:border-violet-700`}
               key={key}
+              style={profilePics[key+1]}
               onClick={(e) => setChoosenPic(key + 1)}
             ></div>
           ))}
@@ -105,7 +110,7 @@ const GuestMode = ({setLocalAuth, category}) => {
       <div>
         <div className="grid md:grid-cols-[1fr_3fr] gap-2 my-2">
           <div className="flex items-center justify-between text-lg font-medium text-gray-700">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="username">Username<span className="text-rose-500">*</span></label>
             {":"}
           </div>
           <TextInput>
@@ -121,7 +126,7 @@ const GuestMode = ({setLocalAuth, category}) => {
         </div>
         <div className="grid md:grid-cols-[1fr_3fr] gap-2 my-2">
           <div className="flex items-center justify-between text-lg font-medium text-gray-700">
-            <label htmlFor="localPassword">Password</label>
+            <label htmlFor="localPassword">Password<span className="text-rose-500">*</span></label>
             {":"}
           </div>
           <TextInput>

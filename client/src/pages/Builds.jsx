@@ -1,20 +1,22 @@
+import { lazy, useEffect } from "react";
 import { useNavigate } from "react-router-dom"
-
-import ShowSavedFiles from "../components/ShowSavedFiles"
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
+const ShowSavedFiles = lazy(() => import("../components/ShowSavedFiles"));
 
 import { FaBrain } from "react-icons/fa6";
 import { FaOctopusDeploy } from "react-icons/fa";
 import { LuContainer } from "react-icons/lu";
-import { useEffect } from "react";
 
 const Builds = () => {
     const navigate = useNavigate();
-    const isGuestLoggedIn = localStorage.getItem("isGuestLoggedIn") === "true";
+    const isGuestLoggedIn = Cookies.get("localAuthToken") === "true"; // local
+    const isUserLoggedIn =  Cookies.get("isUserRegistered") === "true"; // server
     useEffect(() => {
-        if(!isGuestLoggedIn) navigate("/signup");
-    }, [isGuestLoggedIn, navigate])
+        if(!(isGuestLoggedIn || isUserLoggedIn)) navigate("/signup");
+    }, [isGuestLoggedIn, navigate, isUserLoggedIn])
 
-    return ( isGuestLoggedIn &&
+    return ( (isGuestLoggedIn || isUserLoggedIn) &&
     <div className="font-Satoshi bg-soft-white mx-6">
         <div className="grid grid-rows-3 gap-3 m-4 text-[#232223]">
             <div className="flex flex-row min-h-[40vh] m-4">
@@ -39,14 +41,34 @@ const Builds = () => {
                             </div>
                     </div>
                 </div>
-                <div className="">
-                    <div className="w-[40vw] h-[40vh] bg-[url('./assets/docker_whale.png')] bg-contain bg-center bg-no-repeat border text-lg text-gray-500">$docker -t build my-environment .</div>
+                <div className="cursor-pointer">
+                    <div className="w-[40vw] h-[40vh] bg-[url('./assets/docker_whale.png')] bg-contain bg-center bg-no-repeat border rounded-lg text-lg text-gray-500 relative group scale-100 hover:scale-105 hover:border-2 hover:shadow transition-all ease-in-out">
+                    <div className="absolute inset-0 group-hover:backdrop-blur-sm group-hover:bg-white/30 transition-all duration-300"></div>
+                    <div className="relative p-2 opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100 transition-all grid text-gray-800 text-sm"> 
+                        <span>$docker -t build my-environment .</span>
+                        <span>$ docker run -d -p 8080:80 my-environment</span>
+                        <span>$ docker ps</span>
+                        <span>$ docker exec -it container_id bash</span>
+                        <span>$ docker-compose down</span>
+                        <span>$ docker-compose up</span>
+                    </div>
+                    </div>
                 </div>
             </div>
 
             <div className="flex flex-row min-h-[40vh] m-4">
-                <div>
-                    <div className="w-[45vw] h-[40vh] bg-[url('./assets/element_leo_transparent.png')] bg-cover bg-center bg-no-repeat"></div>
+                <div className="cursor-pointer mr-5">
+                    <div className="w-[45vw] h-[40vh] bg-[url('./assets/element_leo_transparent.png')] bg-cover bg-center bg-no-repeat border rounded-lg text-lg text-gray-500 relative group scale-100 hover:scale-105 hover:border-2 hover:shadow transition-all ease-in-out">
+                        <div className="absolute inset-0 group-hover:backdrop-blur-sm group-hover:bg-white/30 transition-all duration-300"></div>
+                        <div className="relative p-2 opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100 transition-all grid text-gray-800 text-sm"> 
+                            <span>$ docker-compose up</span>
+                            <span>$ docker-compose down</span>
+                            <span>$ docker-compose logs -f</span>
+                            <span>$ docker-compose up --build</span>
+                            <span>$ docker-compose ps</span>
+                            <span>$ docker-compose stop</span>
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <div className="text-5xl font-bold text-gray-500 my-6">Define. Orchestrate. Simplify. Effortless setups with Docker Compose in DevBox.</div>
@@ -65,8 +87,18 @@ const Builds = () => {
                         Containerize Your Application
                     </div>
                 </div>
-                <div>
-                    <div className="w-[35vw] h-[50vh] bg-[url('./assets/cube_single.png')] bg-contain bg-left bg-no-repeat border-2 mx-2"></div>
+                <div className="cursor-pointer mr-5">
+                    <div className="w-[35vw] h-[50vh] bg-[url('./assets/cube_single.png')] bg-contain bg-left bg-no-repeat border-2 mx-2 border rounded-lg text-lg text-gray-500 relative group scale-100 hover:scale-105 hover:border-2 hover:shadow transition-all ease-in-out">
+                        <div className="absolute inset-0 group-hover:backdrop-blur-sm group-hover:bg-white/30 transition-all duration-300"></div>
+                        <div className="relative p-2 opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100 transition-all grid text-gray-800 text-sm"> 
+                            <span>$ docker run --name my-container -d -p 8080:80 nginx:latest</span>
+                            <span>$ docker-compose down</span>
+                            <span>{"$ docker inspect --format='{{json .State}}' container_id"}</span>
+                            <span>{"$ docker cp ./local-file.txt container_id:/app/local-file.txt"}</span>
+                            <span>$ docker run -it ubuntu:latest /bin/bash</span>
+                            <span>$ docker restart container_id && docker logs -f container_id</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

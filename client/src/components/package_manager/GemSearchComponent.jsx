@@ -11,7 +11,7 @@ const GemSearchComponent = memo(({type}) => {
             requestFor="gem"
             transformData={(data) => {
                 return data.map(ele => ({
-                    label:`Name : ${ele.name} || ${ele.version} || Info : ${ele.info}`,
+                    label:`Name : ${ele.name} || ${ele.version}`,
                     value: `${ele.name}`
                 }));
             }}

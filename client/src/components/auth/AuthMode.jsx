@@ -1,10 +1,10 @@
-import { useRecoilState } from "recoil"
 import { useState } from "react";
-import { authAtom } from "../../store/atoms/authAtoms/authAtom"
 import TextInput from "../common/TextInput";
 import Button from "../common/Button";
 import { authSignupFun } from "../../helper/authSignupFun";
 import { useNavigate } from "react-router-dom";
+import { clearOpfsStorage } from "../../helper/clearOpfsStorage";
+import { authLoginFun } from "../../helper/authLoginFun";
 
 const AuthMode = ({setAuth, category}) => {
     const type = category === "Signup";
@@ -15,19 +15,48 @@ const AuthMode = ({setAuth, category}) => {
 
     const authFun = async () => {
         if(type) {
-            const success = await authSignupFun({email, password, name, setAuth});
+            // auth = signup mode
+            // via server
+        if(email.trim() && password.trim()){
+            const success = await authSignupFun({email:email.trim(), password:password.trim(), name:name.trim(), setAuth});
             if(success){
                 // alert user added successfully
                 setEmail("");
                 setPassword("");
                 setName("");
-                navigate("/")
+                localStorage.removeItem("localAuthToken");
+                navigate("/");
+                // const obj = await clearOpfsStorage();
+                // if(obj.success){
+                //     console.log("successfully cleared opfs directory and created anew!");
+                // }else {
+                //     console.log("error during clearing opfs in authSignup: ", obj.error);
+                // }
             }else{
                 // alert user of failure
             }
+        }
         }else {
-            // login fun
-            
+            // auth = login mode
+            // via server
+            if(email.trim() && password.trim()){
+                const success = await authLoginFun({email:email.trim(), password:password.trim(), setAuth});
+                if(success){
+                    setEmail("");
+                    setPassword("");
+                    setName(""); //not necessary
+                    localStorage.removeItem("localAuthToken");
+                    navigate("/");
+                    // const obj = await clearOpfsStorage();
+                    // if(obj.success){
+                    //     console.log("successfully cleared opfs directory and created anew!");
+                    // }else {
+                    //     console.log("error during clearing opfs in authSignup: ", obj.error);
+                    // }
+                }else {
+                    // alert user of failure
+                }
+            }
         }
     }
     return (
