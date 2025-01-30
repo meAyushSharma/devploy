@@ -13,6 +13,8 @@ const dockerRouter = express.Router();
 //   });
 // });
 
+// queries related to docker deployment, containerization
+
 dockerRouter.post('/deploy-env', catchAsync(envDeploy));
 
 module.exports = { dockerRouter }

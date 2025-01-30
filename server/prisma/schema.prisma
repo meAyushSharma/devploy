@@ -3,6 +3,7 @@
 
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// npx prisma migrate dev --name <name>
 
 generator client {
   provider = "prisma-client-js"
@@ -30,15 +31,17 @@ model User {
 model Environment {
   id              Int       @id       @default(autoincrement())
   name            String?
+  value           String
   userId          Int
   user            User      @relation(fields: [userId], references: [id])
-  created_at      DateTime @default(now())
+  created_at      DateTime  @default(now())
 }
 
 model Compose {
   id              Int       @id       @default(autoincrement())
   name            String?
+  value           String
   userId          Int
   user            User      @relation(fields: [userId], references: [id])
-  created_at      DateTime @default(now())
+  created_at      DateTime  @default(now())
 }

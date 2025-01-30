@@ -10,7 +10,7 @@ const { registrySearchController } = require("../controllers/registrySearchContr
 const catchAsync = require("../utils/catchAsync");
 const { authMiddleware } = require("../middlewares/authMiddleware");
 
-router.use('/user', userRouter);
+router.use('/user', catchAsync(authMiddleware), userRouter);
 router.use('/docker', catchAsync(authMiddleware), dockerRouter);
 router.use('/devai', catchAsync(authMiddleware), devaiRouter);
 router.use('/auth', authRouter);

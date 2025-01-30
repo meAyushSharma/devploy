@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const statusCodes = require("../utils/statusCodes");
 
 module.exports.authMiddleware = async (req, res, next) => {
     try{
@@ -6,7 +7,7 @@ module.exports.authMiddleware = async (req, res, next) => {
         const registerToken = req.cookies["registerToken"];
         const googleToken = req.cookies["googleToken"];
         const authToken = registerToken || googleToken;
-        if(!authToken) return res.status(401).json({
+        if(!authToken) return res.status(statusCodes.Unauthorized).json({
             success:false,
             msg:"Authentication failed",
             error:"Authentication token not found"
@@ -18,7 +19,7 @@ module.exports.authMiddleware = async (req, res, next) => {
     }catch(err) {
         console.log("Error in authenticating user is: ", err);
         if (!res.headersSent) {
-            return res.status(401).json({
+            return res.status(statusCodes.Unauthorized).json({
                 success: false,
                 msg: "Invalid or expired authentication token",
                 error: err.message

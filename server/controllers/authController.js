@@ -1,23 +1,31 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const zod = require("zod");
 const { OAuth2Client, UserRefreshClient, auth } = require('google-auth-library');
-const { PrismaClient } = require("@prisma/client");
 const { checkUserExists, createUser } = require("../helper/authHelper");
 const ExpressError = require("../utils/ExpressError");
 const statusCodes = require("../utils/statusCodes");
 
-const prisma = new PrismaClient();
-const User = prisma.user;
+const User = require("../models/userModel");
 
 const oAuth2Client = new OAuth2Client(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
     'postmessage',
-  );
+);
+
+const registerBody = zod.object({
+    email : zod.string().email().nonempty(),
+    password : zod.string().min(8),
+    name : zod.string(),
+    profile_pic : zod.string().url(),
+})
 
 module.exports.registerUser = async (req, res, next) => {
     try{
         const { email, password, name, profile_pic } = req.body;
+        const { success, data } = registerBody.safeParse(req.body);
+        if(!success) throw new ExpressError("Invalid Signup Credentials ━┳━ ━┳━", statusCodes["Bad Request"], {error: "zod deemed invalid: signup creds"})
         if(!email || !password) throw new ExpressError("Signup Credentials not provided (┬┬﹏┬┬)", statusCodes["Bad Request"], {error:"Missing credentials"});
 
         const hashedPass = bcrypt.hashSync(password, 10);
@@ -30,7 +38,7 @@ module.exports.registerUser = async (req, res, next) => {
         const jwtToken = jwt.sign(JSON.stringify(user), process.env.JWT_SECRET || "random-secret");
         res.cookie("registerToken", jwtToken, { /* httpOnly:true, */ maxAge: 7 * 24 * 60 * 60 * 1000 })
         res.cookie("isUserRegistered", "true", { maxAge: 7 * 24 * 60 * 60 * 1000 });
-        return res.status(201).json({ success: true, msg, redirect:"/" });
+        return res.status(statusCodes.Ok).json({ success: true, msg });
 
     }catch(err){
         console.log("Error during creation of user: ", err);
@@ -38,14 +46,21 @@ module.exports.registerUser = async (req, res, next) => {
     }
 }
 
+const loginBody = zod.object({
+    email : zod.string().email().nonempty(),
+    password : zod.string().min(8)
+})
+
 module.exports.loginUser = async (req, res, next) => {
     try {
         const { email, password } = req.body;
+        const { success, data } = loginBody.safeParse(req.body);
+        if(!success) throw new ExpressError("Invalid Login credentials ━┳━ ━┳━", statusCodes["Bad Request"], {error: "zod deemed invalid: login creds"})
         if(!email || !password) throw new ExpressError("Login Credentials not provided (┬┬﹏┬┬)", statusCodes["Bad Request"], {error:"Missing credentials"});
 
         const user = await checkUserExists({email, User});
 
-        if(!user) throw new ExpressError("user login failed (┬┬﹏┬┬)", statusCodes["Not Found"], {redirect: "/signup", error: "User not exists"})
+        if(!user) throw new ExpressError("user login failed (┬┬﹏┬┬)", statusCodes["Not Found"], {error: "User not exists"})
         console.log("this is user inside loginAuth: ", user);
 
         const passCheck = bcrypt.compareSync(password, user.password);
@@ -55,7 +70,7 @@ module.exports.loginUser = async (req, res, next) => {
         res.cookie("registerToken", jwtToken, { /* httpOnly:true,*/ maxAge: 7 * 24 * 60 * 60 * 1000 })
         res.cookie("isUserRegistered", "true", { maxAge: 7 * 24 * 60 * 60 * 1000 });
 
-        return res.status(201).json({ success: true, msg:"User loggedin successfully!", redirect:"/" });
+        return res.status(statusCodes.Ok).json({ success: true, msg:"User loggedin successfully!" });
     }
 
     catch(err){
@@ -80,7 +95,7 @@ module.exports.googleAuth = async (req, res, next) => {
             const googleToken = jwt.sign(JSON.stringify(user), process.env.JWT_SECRET || "random-secret");
             res.cookie("isUserRegistered", "true", { maxAge: 7 * 24 * 60 * 60 * 1000 })
             res.cookie("googleToken", googleToken, { maxAge: 7 * 24 * 60 * 60 * 1000 })
-            return res.status(201).json({ msg:`${user.email} loggedin successfully`, success:true, redirect:"/" })
+            return res.status(statusCodes.Ok).json({ msg:`${user.email} loggedin successfully`, success:true })
 
         // 3. if user not exists => create new user, create tokens and set cookies => signup
         }else {
@@ -92,7 +107,7 @@ module.exports.googleAuth = async (req, res, next) => {
             const googleToken = jwt.sign(JSON.stringify(user), process.env.JWT_SECRET || "random-secret");
             res.cookie("googleToken", googleToken, { maxAge : 7 * 24 * 60 * 60 * 1000 });
             res.cookie("isUserRegistered", "true", { maxAge : 7 * 24 * 60 * 60 * 1000 });
-            return res.status(201).json({ success : true, msg, redirect:"/" });
+            return res.status(statusCodes.Ok).json({ success : true, msg });
         }
     }catch(err) {
         console.log("error during googleAuth is: ", err);
