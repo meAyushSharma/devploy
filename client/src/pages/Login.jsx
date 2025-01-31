@@ -19,7 +19,7 @@ const Login = () => {
     const navigate = useNavigate();
     const isRegistered = isUserRegistered || isGuestRegistered;
     useEffect(() => {
-        isRegistered=="true" && navigate("/");
+        isRegistered == "true" && navigate("/")
     }, [isRegistered, navigate]);
     
     return !isRegistered && (

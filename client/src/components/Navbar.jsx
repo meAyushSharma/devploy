@@ -38,6 +38,7 @@ const Navbar = () => {
         Cookies.remove("googleToken")
         Cookies.remove("localAuthToken", { path: "/" });
         Cookies.remove("isUserRegistered")
+        if(isUserRegistered === "true") localStorage.removeItem("localAuthObj");
         setEmail("");
         navigate("/signup")
     }

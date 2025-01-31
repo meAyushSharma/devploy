@@ -116,10 +116,10 @@ const CreateProject = memo(({type}) => {
         <Environments type={whatType}/>
         <NetworkConfig type={whatType}/>
         <div className="w-full text-xl">
-            <div className="max-w-[10%] ml-auto" onClick={e => setReview(state => !state)}>
+            <div className="max-w-[10%] ml-auto text-xl mr-[3vw]">
                 <Button>
                     <MdReviews/>
-                    <button>Review</button>
+                    <button onClick={e => setReview(state => !state)}>Review</button>
                 </Button>
             </div>
         </div>

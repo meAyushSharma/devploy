@@ -1,14 +1,16 @@
 import { useRecoilValue } from "recoil";
-import { IoSend } from "react-icons/io5";
+import { useEffect, useRef } from "react";
 import useChat from "../hooks/useChat";
-import { IoLogoDocker } from "react-icons/io5";
+import { IoSend } from "react-icons/io5";
 import { FiLoader } from "react-icons/fi";
 import FormattedCode from "../components/FormattedCode";
-import {userDetailsAtom} from "../store/atoms/userDetailsAtom";
+import { userDetailsAtom } from "../store/atoms/userDetailsAtom";
 
 const DevAi = () => {
     const userDetails = useRecoilValue(userDetailsAtom);
     const {messages, isLoading, error, query, setQuery, sendQuery} = useChat();
+    const messageRef = useRef(null);
+    useEffect(() => { messageRef.current?.scrollIntoView({behavior : "smooth"}) }, [messages])
 
     return (
         <div className="font-Satoshi">
@@ -44,6 +46,7 @@ const DevAi = () => {
                                     <div className="bg-[url('./assets/cube_single.png')] bg-violet-500 rounded-full w-[50px] h-[50px] bg-contain bg-no-repeat bg-center text-3xl grid place-content-center text-white">
                                         {/* <IoLogoDocker /> */}
                                     </div>
+                                    <div ref={ messageRef }/>
                                 </div>
                             )
                         }

@@ -1,13 +1,18 @@
 import { lazy, useEffect, useMemo, useState } from "react";
-import { removeLocalHelper } from "../helper/removeLocalHelper";
+import Cookies from "js-cookie";
 import { downloadEnvFileHelper } from "../helper/downloadFileHelper";
 import { downloadComposeFileHelper } from "../helper/downloadComposeFileHelper";
 
 import { MdDelete } from "react-icons/md";
 import { FaCloudDownloadAlt } from "react-icons/fa";
 import { IoRefreshCircleSharp } from "react-icons/io5";
+import { FaSoundcloud } from "react-icons/fa";
+import { FiLoader } from "react-icons/fi";
+import { BsDatabaseFillDown } from "react-icons/bs";
 
 import Button from "./common/Button";
+import { useDeleteFileData } from "../hooks/useDeleteFileData";
+import { useSetLocalData } from "../hooks/useSetLocalData";
 const FormattedCode = lazy(() => import("./FormattedCode"));
 const DockerfileCode = lazy(() => import("./DockerfileCode"));
 
@@ -15,6 +20,8 @@ const ShowSavedFiles = () => {
   console.log("how many times am i triggering ... ?");
   const [dataObj, setDataObj] = useState(null);
   const [trigger, setTrigger] = useState(false);
+
+  const isUserRegistered = Cookies.get("isUserRegistered") === "true";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,19 +42,20 @@ const ShowSavedFiles = () => {
     fetchData();
   }, [trigger]);
 
-    const delFun = async (parentFolder, handle) => {
-        const success = await removeLocalHelper(parentFolder, handle);
-        if(success){
-            setTrigger(state => !state);
-            console.log("removed successfully");
-        }
-    }
+    const { delFun, isDeleting, error } = useDeleteFileData({setTrigger});
+    const { setFetchedData, isFetching, fetchError } = useSetLocalData();
 
   return (
     <div className="border-t-4 border-gray-700/70 rounded-lg my-6">
       <div className="flex">
-        <div className="ml-auto mr-6 mt-6">
+        <div className="ml-auto mr-6 mt-6 flex gap-3">
           {/* <Button label={"Refresh"} onClickFun={() => setTrigger((state) => !state)}/> */}
+          {isUserRegistered && <Button disabled={isFetching}>
+              <button onClick={ setFetchedData } className={`text-lg flex items-center gap-2 p-1`}>
+              {!isFetching ? <BsDatabaseFillDown className="text-2xl"/> : <FiLoader className="animate-spin m-1"/>}
+                DB Refresh
+              </button>
+          </Button>}
           <Button>
               <button onClick={() => setTrigger((state) => !state)} className="text-lg flex items-center gap-1 p-1">
                 <IoRefreshCircleSharp className="text-2xl"/>
@@ -60,7 +68,7 @@ const ShowSavedFiles = () => {
       <div className="my-4">
         <span className="text-2xl font-semibold text-gray-700 cursor-pointer" id="#env">Environments Builds:{" "}</span>
         <div className="min-h-[50vh] perspective-normal	hover:perspective">
-            {!dataObj || Object.entries(dataObj.data.environment.entries).length == 0 && (<div className="h-[50vh] border rounded-md my-4 bg-empty-screen bg-contain bg-center bg-no-repeat"></div>)}
+            {!dataObj || Object.entries(dataObj.data.environment.entries).length == 0 && (<div className="h-[50vh] border rounded-md my-4 bg-empty-screen bg-image-basic"></div>)}
             {dataObj?.success &&
             Object.entries(dataObj.data.environment.entries).length > 0 &&
             Object.entries(dataObj.data.environment.entries).map(([key, fileDetails]) => 
@@ -69,11 +77,19 @@ const ShowSavedFiles = () => {
                     <DockerfileCode dockerfile={fileDetails.jsonContent}/>
                     <div className="flex justify-center">
                       <div className="flex w-fit p-2 rounded-lg bg-gray-400 cursor-pointer mb-4 text-center gap-4">
-                        <button onClick={() => delFun("environment", fileDetails.handle)} className="inline-flex gap-2 justify-center whitespace-nowrap rounded-lg px-3.5 py-2.5 text-sm font-medium text-slate-200 dark:text-slate-800 bg-gradient-to-r from-slate-800 to-slate-700 dark:from-slate-200 dark:to-slate-100 dark:hover:bg-slate-100 shadow focus:outline-none focus:ring focus:ring-slate-500/50 focus-visible:outline-none focus-visible:ring focus-visible:ring-slate-500/50 relative before:absolute before:inset-0 before:rounded-[inherit] before:bg-[linear-gradient(45deg,transparent_25%,theme(colors.white/.5)_50%,transparent_75%,transparent_100%)] dark:before:bg-[linear-gradient(45deg,transparent_25%,theme(colors.white)_50%,transparent_75%,transparent_100%)] before:bg-[length:250%_250%,100%_100%] before:bg-[position:200%_0,0_0] before:bg-no-repeat before:[transition:background-position_0s_ease] hover:before:bg-[position:-100%_0,0_0] hover:before:duration-[1500ms]">
-                          <MdDelete className="text-xl"/>Delete File</button>
-                        <button onClick={() => downloadEnvFileHelper({fileName:fileDetails.handle.name})} className="inline-flex gap-2 justify-center whitespace-nowrap rounded-lg px-3.5 py-2.5 text-sm font-medium text-slate-200 dark:text-slate-800 bg-gradient-to-r from-slate-800 to-slate-700 dark:from-slate-200 dark:to-slate-100 dark:hover:bg-slate-100 shadow focus:outline-none focus:ring focus:ring-slate-500/50 focus-visible:outline-none focus-visible:ring focus-visible:ring-slate-500/50 relative before:absolute before:inset-0 before:rounded-[inherit] before:bg-[linear-gradient(45deg,transparent_25%,theme(colors.white/.2)_50%,transparent_75%,transparent_100%)] dark:before:bg-[linear-gradient(45deg,transparent_25%,theme(colors.white)_50%,transparent_75%,transparent_100%)] before:bg-[length:250%_250%,100%_100%] before:bg-[position:200%_0,0_0] before:bg-no-repeat before:[transition:background-position_0s_ease] hover:before:bg-[position:-100%_0,0_0] hover:before:duration-[1500ms]">
+                        <button 
+                        onClick={() => delFun({ parentFolder : "environment", handle : fileDetails.handle, delId : fileDetails.id, type: "env" })} 
+                        className="shiny-btn"
+                        style={{cursor:`${isDeleting ? "not-allowed" : "pointer"}`, pointerEvents:`${isDeleting ? "none" : "auto"}`}}
+                        >
+                          {!isDeleting ? <MdDelete className="text-xl"/> : <FiLoader className="animate-spin"/>}Delete File</button>
+                        <button onClick={() => downloadEnvFileHelper({fileName:fileDetails.handle.name})} className="shiny-btn">
                            <FaCloudDownloadAlt className="text-xl"/>
                            Download
+                        </button>
+                        <button className="shiny-btn">
+                          <FaSoundcloud className="text-xl"/>
+                           Deploy
                         </button>
                       </div>
                     </div>
@@ -111,22 +127,25 @@ const ShowSavedFiles = () => {
             <span className="text-2xl font-semibold text-gray-700 cursor-pointer" id="#compose">Compose Builds : </span>
             <div className="min-h-[50vh]">
                 {!dataObj ||
-                Object.entries(dataObj.data["docker-compose"].entries).length == 0 && (<div className="h-[50vh] border rounded-md my-4 bg-empty-screen bg-contain bg-center bg-no-repeat"></div>)}
-                {dataObj?.success &&
+                Object.entries(dataObj.data["docker-compose"].entries).length == 0 && (<div className="h-[50vh] border rounded-md my-4 bg-empty-screen bg-image-basic"></div>)}
+              {
+                dataObj?.success &&
                 Object.entries(dataObj.data["docker-compose"].entries).length > 0 &&
                 Object.entries(dataObj.data["docker-compose"].entries).map((project, projectIndex) => {
-                  return (<div key={projectIndex} className="border-4 border-indigo-500/50 hover:border-indigo-500/100 m-6 rounded-lg">
+                  // console.log("this is project[1] : ", project[1].entries["docker-compose.json"].id);
+                  return (
+                  <div key={projectIndex} className="border-4 border-indigo-500/50 hover:border-indigo-500/100 m-6 rounded-lg">
                         <h3 className="text-2xl font-medium text-gray-700 ml-6 my-4">Project name : {project[0]}</h3>
                         {Object.entries(project[1].entries).map((item, itemIndex) => {
                             return (                                
                             <div  key={itemIndex}>
                                 <div className="text-xl font-medium text-gray-700 m-6 border hover:bg-slate-200 w-fit p-1 rounded cursor-pointer">Name : {item[1].name.split('.json')[0]}</div>
                                 {item[1].name === 'docker-compose.json' ? (
-                                  <div>
+                                  <div className="grid md:grid-cols-[1fr_1fr]">
                                     <FormattedCode code={item[1].jsonContent} delFun={""}/>
-                                    <div className="text-lg font-medium text-gray-700 ml-6 my-4 grid">
-                                      <span className="text-xl">Command for docker compose :</span>
-                                      <span>
+                                    <div className="text-lg font-medium text-gray-700 ml-6 my-4 grid h-fit">
+                                      <span className="text-xl md:my-4 p-1 h-fit">Command for docker compose :</span>
+                                      <span className="md:gap-2">
                                         $ docker compose up
                                       </span>
                                     </div>
@@ -135,18 +154,20 @@ const ShowSavedFiles = () => {
                             </div>
                             )
                         })}
-                        <div className="flex justify-center">
+                    <div className="flex justify-center">
                       <div className="flex w-fit p-2 rounded-lg bg-gray-400 cursor-pointer mb-4 text-center gap-4">
-                        <button onClick={() => delFun("docker-compose", project[1].handle)} className="inline-flex gap-2 justify-center whitespace-nowrap rounded-lg px-3.5 py-2.5 text-sm font-medium text-slate-200 dark:text-slate-800 bg-gradient-to-r from-slate-800 to-slate-700 dark:from-slate-200 dark:to-slate-100 dark:hover:bg-slate-100 shadow focus:outline-none focus:ring focus:ring-slate-500/50 focus-visible:outline-none focus-visible:ring focus-visible:ring-slate-500/50 relative before:absolute before:inset-0 before:rounded-[inherit] before:bg-[linear-gradient(45deg,transparent_25%,theme(colors.white/.5)_50%,transparent_75%,transparent_100%)] dark:before:bg-[linear-gradient(45deg,transparent_25%,theme(colors.white)_50%,transparent_75%,transparent_100%)] before:bg-[length:250%_250%,100%_100%] before:bg-[position:200%_0,0_0] before:bg-no-repeat before:[transition:background-position_0s_ease] hover:before:bg-[position:-100%_0,0_0] hover:before:duration-[1500ms]">
-                          <MdDelete className="text-xl"/>Delete Folder</button>
-                        <button onClick={() => downloadComposeFileHelper({folderName:project[0]})} className="inline-flex gap-2 justify-center whitespace-nowrap rounded-lg px-3.5 py-2.5 text-sm font-medium text-slate-200 dark:text-slate-800 bg-gradient-to-r from-slate-800 to-slate-700 dark:from-slate-200 dark:to-slate-100 dark:hover:bg-slate-100 shadow focus:outline-none focus:ring focus:ring-slate-500/50 focus-visible:outline-none focus-visible:ring focus-visible:ring-slate-500/50 relative before:absolute before:inset-0 before:rounded-[inherit] before:bg-[linear-gradient(45deg,transparent_25%,theme(colors.white/.2)_50%,transparent_75%,transparent_100%)] dark:before:bg-[linear-gradient(45deg,transparent_25%,theme(colors.white)_50%,transparent_75%,transparent_100%)] before:bg-[length:250%_250%,100%_100%] before:bg-[position:200%_0,0_0] before:bg-no-repeat before:[transition:background-position_0s_ease] hover:before:bg-[position:-100%_0,0_0] hover:before:duration-[1500ms]">
-                           <FaCloudDownloadAlt className="text-xl"/>
-                           Download
+
+                        <button onClick={() => delFun({parentFolder : "docker-compose", handle : project[1].handle, delId: project[1].entries["docker-compose.json"].id, type : "compose"})} className="shiny-btn">
+                          {!isDeleting ? <MdDelete className="text-xl"/> : <FiLoader className="animate-spin"/>}Delete Folder
                         </button>
+                        <button onClick={() => downloadComposeFileHelper({folderName:project[0]})} className="shiny-btn">
+                           <FaCloudDownloadAlt className="text-xl"/>Download
+                        </button>
+
                       </div>
                     </div>
-                    </div>)
-            }
+                  </div>)
+                }
             )}
             </div>
         </div>

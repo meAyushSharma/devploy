@@ -1,3 +1,5 @@
+//! depreciated
+
 import axios from "axios";
 import { profilePicUrls } from "../utils/profilePicUrls";
 

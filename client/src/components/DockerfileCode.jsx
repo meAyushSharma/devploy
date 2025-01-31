@@ -48,22 +48,22 @@ const DockerfileCode = memo(({dockerfile, delFun}) => {
     //     envVariables:input.envVariables
     // }
     return (
-    <div className="">
-        <div>
+    <div className="grid md:grid-cols-[1fr_1fr]">
+        <div className="">
             <FormattedCode code={dockerfile.dockerfile} delFun={delFun ? delFun : ""}/>
         </div>
-        <div className="grid font-medium text-gray-700 text-lg m-4">
-            <div className="text-xl">
+        <div className="grid font-medium text-gray-700 text-lg h-fit m-2">
+            <div className="text-xl h-fit p-1 md:my-4">
                 Commands to run :
             </div>
-            <div className="grid">
-                <span>
+            <div className="grid md:gap-2">
+                <span className="">
                     $ docker build -t [image-name]({dockerfile.name}) [.](location of dockerfile)
                 </span>
-                <span>
+                <span className="">
                     {dockerfile.driver && getNetworkCommand(dockerfile)}
                 </span>
-                <span>
+                <span className="">
                     $ docker run --network {getNetName(dockerfile)} -it {dockerfile.ports.length>0 && `-p ${dockerfile.ports.map(port => `${port.host} : ${port.container}`)}`} --name [container-name] [image-name]({dockerfile.name}) 
                 </span>
             </div>

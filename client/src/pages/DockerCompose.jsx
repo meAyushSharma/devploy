@@ -6,6 +6,7 @@ import { FaSave } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { IoInformationCircleOutline } from "react-icons/io5"
 import { MdAddBox } from "react-icons/md";
+import { FiLoader } from "react-icons/fi";
 
 import Button from "../components/common/Button";
 const DockerfileCode = lazy(() => import("../components/DockerfileCode"))
@@ -18,6 +19,9 @@ import { serviceDelTrackerAtom } from "../store/atoms/serviceDelTrackerAtom";
 
 import { saveToLocal } from "../helper/saveToLocal";
 import { generateCompose } from "../helper/generateCompose";
+import { saveToDB } from "../helper/saveToDB";
+import { useSaveCompose } from "../hooks/useSaveCompose";
+import { userModeSelector } from "../store/selectors/userModeSelector";
 
 
 
@@ -36,9 +40,10 @@ const DockerCompose = () => {
     // handle service deletion
     const [serviceDelTracker, setServiceDelTracker] = useRecoilState(serviceDelTrackerAtom);
     const delService = (index) => setServiceDelTracker(prevState => [...prevState, index]);
+    const isUserRegistered = useRecoilValue(userModeSelector);
 
     // debugging purpose only 
-    console.log("this is dockerfiles: ", dockerfiles);
+    // console.log("this is dockerfiles: ", dockerfiles);
 
     // reset all atoms upon save
     const n = dockerfiles.services.length;
@@ -46,61 +51,17 @@ const DockerCompose = () => {
 
     const saveToggle = (n-serviceDelTracker.length);
 
-    // save compose files
-    const saveCompose = async () => {
-        if (!nameIsValid) return;
-        try {
-            const composeObj = {
-                workerPath: '../worker/saveDockerComposeDockerfileWorker.js',
-                parentFolderName: "docker-compose",
-                fileName: "docker-compose",
-                content: composeFile,
-                childFolderName: debouncedName,
-            };
+    const { saveComposeToDB, isSaving } = useSaveCompose({
+        saveToDB,
+        saveToLocal,
+        dockerfiles,
+        composeFile,
+        debouncedName,
+        nameIsValid,
+        resetAllAtoms,
+        isUserRegistered
+    });
     
-            const savePromises = dockerfiles.services.map(async (service, index) => {
-                if (service.dockerfileDetails) {
-                    const obj = {
-                        workerPath: '../worker/saveDockerComposeDockerfileWorker.js',
-                        parentFolderName: "docker-compose",
-                        fileName: service.dockerfileDetails.name,
-                        content: service.dockerfileDetails,
-                        childFolderName: debouncedName,
-                    };
-    
-                    try {
-                        return await saveToLocal(obj); // Attempt to save
-                    } catch (error) {
-                        console.error(`Error saving service at index ${index}:`, error);
-                        return { data: { success: false }, error };
-                    }
-                }
-                console.warn(`Service at index ${index} does not have dockerfileDetails.`);
-                return { data: { success: true } }; // No operation, treated as successful
-            });
-    
-            try {
-                await saveToLocal(composeObj);
-            } catch (error) {
-                console.error("Error saving compose file:", error);
-                return;
-            }
-            // Save service files
-            const results = await Promise.all(savePromises);
-            const failedResults = results.filter(event => !event?.data?.success);
-            if (failedResults.length > 0) {
-                console.error(`Failed saves:`, failedResults);
-                alert("Some services could not be saved. Check the console for details.");
-            } else {
-                resetAllAtoms();
-                navigate("/builds#compose");
-            }
-        } catch (err) {
-            console.error("Unexpected error in saveCompose:", err);
-        }
-    };
-    
-
     return (
         <div className="font-Satoshi m-5 bg-soft-white">
             <div className="flex items-center">
@@ -127,9 +88,9 @@ const DockerCompose = () => {
                 {/* {"Button to add services"} */}
             </div>
             <div className="max-w-[15%] ml-auto">
-                <div className="w-fit">
+                <div className="w-fit text-lg">
                     <Button>
-                        <MdAddBox className="text-xl"/>
+                        <MdAddBox className="text-2xl"/>
                         <button onClick={() => navigate("/create-service")}>Add Service</button>
                     </Button>
                 </div>
@@ -149,18 +110,16 @@ const DockerCompose = () => {
                     )}
                     {dockerfiles.services.length == 0 && (
                         <div className="w-[80vw] h-[60vh] bg-[url('./assets/docker-compose-empty.png')] bg-center bg-contain bg-no-repeat rounded-lg m-auto my-6">
-                            {/* <span className="text-5xl font-bold text-gray-700">
-                                ADD SERVICES
-                            </span> */}
                         </div>
                     )}
             </div>
             {saveToggle>0 && ( 
             <div className="max-w-[15%] ml-auto">
-                <div className="w-fit">
+                <div className="w-fit ml-auto text-xl mr-[3vw]">
                     <Button>
-                        <FaSave className="text-lg"/>
-                        <button onClick={saveCompose} className="text-lg">Save File</button>
+                    <button onClick={saveComposeToDB} 
+                        className="flex items-center gap-2 px-1" 
+                        style={{cursor:`${isSaving ? "not-allowed" : "pointer"}`, pointerEvents:`${isSaving ? "none" : "auto"}`}}>{!isSaving ? <FaSave/> : <FiLoader className="animate-spin"/>}Save File</button>
                     </Button>
                 </div>
             </div>

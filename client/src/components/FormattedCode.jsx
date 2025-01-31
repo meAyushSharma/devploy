@@ -4,7 +4,7 @@ import { MdDelete } from "react-icons/md";
 
 const FormattedCode = memo(({code, delFun}) => {
     return (
-        <div className="min-w-[40vw]">
+        <div className="min-w-[40vw] max-w-[100%]">
          <pre className="">
             <code language="javascript">
                 <div className="flex font-Satoshi my-6">

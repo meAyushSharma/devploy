@@ -22,7 +22,7 @@ const Builds = () => {
             <div className="flex flex-row min-h-[40vh] m-4">
                 <div className="p-4">
                     <div className="text-5xl font-bold text-gray-500 my-6">Code. Customize. Deploy. Seamlessly with the power of AI in your DevBox environment.</div>
-                    <div className="flex border items-center justify-between">
+                    <div className="flex items-center justify-between">
                             <div className="flex items-center p-2 bg-violet-500 text-white font-medium text-xl rounded-md cursor-pointer h-fit">
                                 <span  onClick={()=> navigate('/create-env') } className="bg-violet-700/80 hover:bg-violet-800 p-2 rounded mr-1">
                                     Create Custom Environment

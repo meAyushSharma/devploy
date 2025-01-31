@@ -1,3 +1,5 @@
+//! depreciated
+
 import axios from "axios";
 
 export const authLoginFun = async ({email, password, setAuth}) => {

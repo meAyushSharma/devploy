@@ -1,3 +1,5 @@
+//! depreciated
+
 import { atom } from "recoil";
 
 export const localAuthAtom = atom({

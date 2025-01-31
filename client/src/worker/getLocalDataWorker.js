@@ -18,22 +18,23 @@ self.addEventListener("message", async e => {
         if (handle.kind === "file") {
           fileHandles.push({ handle, nestedPath });
           directoryEntryPromises.push(
-            handle.getFile().then(async (file) => {
+            handle.getFile().then(async (fileInstance) => {
               const accessHandle = await handle.createSyncAccessHandle();
               const textDecoder = new TextDecoder();
               let size = accessHandle.getSize();
               const dataView = new DataView(new ArrayBuffer(size));
               accessHandle.read(dataView);
               const toBeJSON = textDecoder.decode(dataView)
-              const JSONdata = JSON.parse(toBeJSON);
+              const { file, id } = JSON.parse(toBeJSON);
               return {
                 name: handle.name,
                 kind: handle.kind,
-                size: file.size,
-                type: file.type,
-                lastModified: file.lastModified,
+                size: fileInstance.size,
+                type: fileInstance.type,
+                lastModified: fileInstance.lastModified,
                 relativePath: nestedPath,
-                jsonContent: JSONdata,
+                jsonContent: file,
+                id : id,
                 handle,
               };
             })

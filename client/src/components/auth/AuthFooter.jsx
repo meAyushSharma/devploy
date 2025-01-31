@@ -1,39 +1,40 @@
+import { useEffect } from "react";
 import Button from "../common/Button";
 import { FaGoogle } from "react-icons/fa6";
-import { useGoogleLogin } from '@react-oauth/google';
-import axios from "axios";
+import { FiLoader } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { useGoogleAuth } from "../../hooks/useGoogleAuth";
+import { clearStorageHelper } from "../../helper/clearStorageHelper";
 
 const AuthFooter = ({category}) => {
     const type = category === "Signup";
     const navigate = useNavigate();
-    const login = useGoogleLogin({
-        onSuccess: async ({code}) => {
-            const res = await axios.post('http://localhost:3007/api/v1/auth/google', {code}, {
-            headers:{ "Content-Type":"application/json" }, 
-            withCredentials:true });
+    const { data, isLoading, error, logUserIn } = useGoogleAuth();
 
-            if(res.data.success){
-                console.log(res.data.msg);
+    useEffect(() => {
+        const afterGoogleAuth = async () => {
+            console.log(data?.msg);
+            const clearStorageObj = await clearStorageHelper({workerPath: "../worker/clearOpfsStorage.js"});
+            if(clearStorageObj?.data?.success) {
+                console.log("Google Authentication successfull, cleared opfs storage");
                 navigate("/");
-            }else{
-                console.log(res.data.msg);
-                console.error("Error during googleAuth is: ", res.data.error);
+            } else {
+                console.error("Some error occured during clearing of opfs storage: ", clearStorageObj?.data);
+                alert("failure");
             }
-            // const authObj = jwtDecode(res.data.tokens.id_token);
-            // console.log(authObj);
-            // const response = await axios.post("http://localhost:3007/api/v1/auth/google/refresh-token", {refreshToken: res.data.tokens.refresh_token}, {headers:{"Content-Type":"application/json"}, withCredentials:true})
-            // console.log(response.data);
-        },
-        flow:"auth-code",
-        onError: (err) => console.log("error is: ", err)
-      });
+        }
+
+        data && data?.success && afterGoogleAuth();
+        data && !data?.success &&  console.error("Error during googleAuth is (from backend): ", data?.error);
+
+    }, [data])
+
     return (
     <div>
         <div className="w-full h-[2px] bg-gray-500 my-4"></div>
-        <div onClick={() => login()}>
+        <div onClick={logUserIn} style={{cursor:`${isLoading ? "not-allowed" : "pointer"}`, pointerEvents:`${isLoading ? "none" : "auto"}`}}>
             <Button>
-                Signup/Login with <FaGoogle />
+               {isLoading ? <FiLoader className="animate-spin m-1"/> : <div className="flex items-center gap-3">Signup/Login with <FaGoogle /></div>} 
             </Button>
         </div>
         <div className="text-sm font-medium text-gray-700 text-center mt-2">

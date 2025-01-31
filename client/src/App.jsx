@@ -25,21 +25,21 @@ const Signup = lazy(() => import("./pages/Signup"));
 // import { Builds } from "./pages/Builds";
 
 function App() {
-      useEffect(() => {
-        const createDirectory = () => {
-          const worker = new Worker(new URL('./worker/createDirectory.js', import.meta.url));
-          worker.postMessage({});
-          worker.onmessage = e => {
-            worker.terminate();
-            if(e.data.success) {
-              console.log("successfully created directory structure");
-            }else{
-              console.error("error occured during opfs directory structure creation: ", e.data.error);
-            }
-          }
-        }
-        createDirectory();
-      }, []);
+      // useEffect(() => {
+      //   const createDirectory = () => {
+      //     const worker = new Worker(new URL('./worker/createDirectory.js', import.meta.url));
+      //     worker.postMessage({});
+      //     worker.onmessage = e => {
+      //       worker.terminate();
+      //       if(e.data.success) {
+      //         console.log("successfully created directory structure");
+      //       }else{
+      //         console.error("error occured during opfs directory structure creation: ", e.data.error);
+      //       }
+      //     }
+      //   }
+      //   createDirectory();
+      // }, []);
 
   return (
     <>

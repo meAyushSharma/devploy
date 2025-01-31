@@ -16,7 +16,7 @@ export const useFetchRegistry = ({inputValue, requestFor}) => {
             setIsLoading(true);
 
             try{
-                if(requestFor === "docker"){
+                if(forDocker){
                     const query = await searchRegistryService.fetchRegistry({q : inputValue, requestFor});
                     const data = query.data;
                     const formattedData = data.results.map(res => ({
