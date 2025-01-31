@@ -15,6 +15,6 @@ router.use('/docker', catchAsync(authMiddleware), dockerRouter);
 router.use('/devai', catchAsync(authMiddleware), devaiRouter);
 router.use('/auth', authRouter);
 
-router.get('/search', catchAsync(registrySearchController))
+router.get('/search', catchAsync(registrySearchController));
 
 module.exports = { router };

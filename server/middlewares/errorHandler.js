@@ -8,7 +8,6 @@ module.exports.errorHandler = (err, req, res, next) => {
     res.status(statusCode).json({
         success : false,
         msg : message,
-        error : err.error || err,
-        redirect: err.redirect || null
+        error : err.error || err || "Something went wrong at server",
     });
 };

@@ -31,7 +31,7 @@ module.exports.registerUser = async (req, res, next) => {
         const hashedPass = bcrypt.hashSync(password, 10);
         const { user, error, msg } = await createUser({authObj:false, email, password: hashedPass, name, profile_pic, User});
 
-        if(error) throw new ExpressError(error.message, statusCodes["Server Error"]);
+        if(error) throw new ExpressError(error.message, statusCodes["Server Error"], {error : "error is mentioned in msg"});
         console.log(`User created in DB:\n`, user);
         if(!user) throw new ExpressError(msg, statusCodes["Not Found"], {error: "User not found"});
 
@@ -82,7 +82,7 @@ module.exports.loginUser = async (req, res, next) => {
 module.exports.googleAuth = async (req, res, next) => {
     try{
         const { tokens } = await oAuth2Client.getToken(req.body.code);
-        if(!tokens) throw new ExpressError("Google Auth token Missing", statusCodes["Bad Request"]);
+        if(!tokens) throw new ExpressError("Google Auth token Missing", statusCodes["Bad Request"], {error: "error mentioned in msg"});
         const authObj = jwt.decode(tokens.id_token);
 
         // 1. check if user exists
