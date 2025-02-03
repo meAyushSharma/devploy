@@ -1,34 +1,10 @@
 export const generateDockerfile = (input) => {
     const { os, runtimes, databases, packageManagers, npm, pip, cargo, gem, ports, driver, bridge, ipvlan, macvlan, name, envVariables } = input;
     let dockerfile = `# Dockerfile name : ${name}\n`;
-    // add commands for network creation :
-    // dockerfile+=`# To create ${driver} network :\n`;
-    // switch(driver){
-    //     case "bridge":
-    //         dockerfile+=`# docker network create ${bridge}`;
-    //         break;
-    //     case "host":
-    //         dockerfile+=`# Simply use it when you run the image\n# docker run -it host <image-name>\n`;
-    //         break;
-    //     case "ipvlan":
-    //         dockerfile+=`# docker network create -d ipvlan ${ipvlan.pairs.map(pair => `\n# --subnet=${pair.subnet} --gateway=${pair.gateway}`)}`
-    //         dockerfile+=`\n# -o ipvlan_mode=${ipvlan.mode}\n# -o parent=${ipvlan.parent} ${ipvlan.name}\n`;
-    //         break;
-    //     case "macvlan":
-    //         dockerfile+=`# docker network create -d ipvlan ${macvlan.pairs.map(pair => `\n# --subnet=${pair.subnet} --gateway=${pair.gateway}`)}\n# -o macvlan_mode=${macvlan.mode}\n# -o parent=${macvlan.parent} ${macvlan.name}\n`;
-    //         break;
-    //     case "none":
-    //         dockerfile+=`# Simply use it when you run the image\n# docker run -it --network none <image-name>\n`;
-    //         break;
-    //     default:
-    //         dockerfile+=``;
-    // }
-    // // add commands for ports
-
     dockerfile += `\n# Custom dynamically generated Dockerfile\n`;
 
     //1. add operating system
-    dockerfile += os.length>0 ? `FROM ${os[0].value}:latest\n` : `FROM ubuntu:20.04\n`;
+    dockerfile += os.length>0 ? `FROM ${os[0].value}:${os[0].tag}\n` : `FROM alpine:3.21\n`;
 
     //2. add runtime(s)
     const defaultRuntimes = {
@@ -46,8 +22,9 @@ export const generateDockerfile = (input) => {
     if(runtimes && runtimes.length>0){
         runtimesArray.forEach((runtime, index) => {
             dockerfile += `\n#Setup for ${runtime.value}\n`;
-            dockerfile += `FROM ${runtime.value}:latest\n`;
-            dockerfile += `RUN apt-get update && apt-get install -y curl git && apt-get clean\n#$${index}`;
+            dockerfile += `FROM ${runtime.value}:${runtime.tag}\n`;
+            dockerfile += `\n# Following tag will update system and install dependencies, it is for ubuntu and similar systems, change it accordingly\n`
+            dockerfile += `\nRUN apt-get update && apt-get install -y curl git && apt-get clean\n\n#$${index}\n`;
         });
     }
 
@@ -124,7 +101,7 @@ export const generateDockerfile = (input) => {
     //4. add database(s)
     if(databases && databases.length>0){
         dockerfile += `\n# Database setup for database(s)\n`;
-        databases.forEach(db => dockerfile += `FROM ${db.value}\n`);
+        databases.forEach(db => dockerfile += `FROM ${db.value}:${db.tag}\n`);
     }
 
     //5. add env variable(s)

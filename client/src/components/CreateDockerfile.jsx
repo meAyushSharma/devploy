@@ -6,7 +6,7 @@ import { FaSave } from "react-icons/fa";
 import { FiLoader } from "react-icons/fi";
 import { VscDebugContinue } from "react-icons/vsc";
 
-import { getDockerfileFamily } from "../store/selectors/getDockerfilefamily";
+import { getDockerfileFamily } from "../store/selectors/getDockerfileFamily";
 import { serviceCountAtom } from "../store/atoms/serviceCountAtom";
 import { testDockerfileAtom } from "../store/atoms/testDockerfileAtom";
 import { useResetEnvAtoms } from "../hooks/useResetEnvAtoms";

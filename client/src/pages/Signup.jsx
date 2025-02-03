@@ -20,6 +20,7 @@ const Singup = () => {
     const navigate = useNavigate();
     const isRegistered = isUserRegistered || isGuestRegistered;
     useEffect(() => {
+        isRegistered=="true";
         isRegistered=="true" && navigate("/")
     }, [isRegistered, navigate]);
     

@@ -53,9 +53,25 @@ const GuestMode = ({setLocalAuth, category}) => {
             setUsername("");
             setLocalPassword("");
             setChoosenPic(0);
-            Cookies.set("localAuthToken", "true", {expires: 7, path: "/"});
-            console.log("successfully saved localAuthData!");
-            navigate("/")
+            const createDirectory = () => {
+              const worker = new Worker(new URL('./worker/createDirectory.js', import.meta.url));
+              worker.postMessage({});
+              worker.onmessage = e => {
+                worker.terminate();
+                if(e.data.success) {
+                  console.log("successfully created directory structure");
+                  Cookies.set("localAuthToken", "true", {expires: 7, path: "/"});
+                  console.log("successfully saved localAuthData!");
+                  navigate("/")
+                }else{
+                  console.error("error occured during opfs directory structure creation: ", e.data.error);
+                  Cookies.set("localAuthToken", "true", {expires: 7, path: "/"});
+                  console.log("successfully saved localAuthData!");
+                  navigate("/");
+                }
+              }
+            }
+            createDirectory();
         }else {
             // alert user of failure;
         }

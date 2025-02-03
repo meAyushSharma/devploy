@@ -5,19 +5,21 @@ import { IoSend } from "react-icons/io5";
 import { FiLoader } from "react-icons/fi";
 import FormattedCode from "../components/FormattedCode";
 import { userDetailsAtom } from "../store/atoms/userDetailsAtom";
+import { userModeSelector } from "../store/selectors/userModeSelector";
 
 const DevAi = () => {
+    const isUserRegistered = useRecoilValue(userModeSelector);
     const userDetails = useRecoilValue(userDetailsAtom);
     const {messages, isLoading, error, query, setQuery, sendQuery} = useChat();
     const messageRef = useRef(null);
     useEffect(() => { messageRef.current?.scrollIntoView({behavior : "smooth"}) }, [messages])
 
-    return (
+    return ( 
         <div className="font-Satoshi">
             <div className="text-9xl font-bold text-center text-format-code-dark mt-10 mb-[20vh]">
                 DEVAì
             </div>
-            <div className="w-[90vw] border-4 border-violet-700/60 m-auto rounded-lg">
+            <div className="w-[90vw] border-4 border-violet-700/60 m-auto rounded-lg mb-4">
                 <div className="min-h-[60vh] h-[65vh] overflow-y-auto" style={{"scrollbarWidth": "thin"}}>
                     {messages.length == 0 && (
                         <div className="bg-violet-500/60 bg-[url('./assets/docker-compose-empty.png')] bg-contain bg-no-repeat bg-center h-[60vh] m-4 rounded-lg grid p-2">
@@ -52,7 +54,7 @@ const DevAi = () => {
                         }
                     })}
                 </div>
-                <div>
+                {isUserRegistered ? <div>
                     <div className="m-4 rounded-lg font-medium">
                         <label htmlFor="ask-devai" className="text-sm font-semibold text-gray-700 m-2">Ask DevAì : </label>
                         <div className="mx-2 flex items-center mb-6">
@@ -62,11 +64,13 @@ const DevAi = () => {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> : (
+                    <div className="text-xl font-medium text-gray-500 text-center my-3">Please create your registered account to use DevAi</div>
+                )}
             </div>
-            <div className="w-fit m-auto text-sm my-2 text-gray-500 mb-10">
+            {isUserRegistered && <div className="w-fit m-auto text-sm my-2 text-gray-500 mb-10">
                 Information provided by Ai can be wrong, user descretion is required.
-            </div>
+            </div>}
         </div>
     )
 }

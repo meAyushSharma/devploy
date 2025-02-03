@@ -38,9 +38,27 @@ const Navbar = () => {
         Cookies.remove("googleToken")
         Cookies.remove("localAuthToken", { path: "/" });
         Cookies.remove("isUserRegistered")
-        if(isUserRegistered === "true") localStorage.removeItem("localAuthObj");
-        setEmail("");
-        navigate("/signup")
+        if(isUserRegistered === "true"){
+            const createDirectory = () => {
+                const worker = new Worker(new URL('./worker/createDirectory.js', import.meta.url));
+                worker.postMessage({});
+                worker.onmessage = e => {
+                  worker.terminate();
+                  if(e.data.success) {
+                    console.log("successfully created directory structure");
+                    localStorage.removeItem("localAuthObj");
+                    setEmail("");
+                    navigate("/signup")
+                  }else{
+                    console.error("error occured during opfs directory structure creation: ", e.data.error);
+                  }
+                }
+              }
+              createDirectory();
+        }else{
+            setEmail("");
+            navigate("/signup");
+        }
     }
 
     return (

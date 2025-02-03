@@ -6,7 +6,7 @@ const { dockerRouter } = require("./dockerRoutes");
 const { devaiRouter } = require("./devaiRoutes");
 const { authRouter } = require("./authRoutes");
 
-const { registrySearchController } = require("../controllers/registrySearchController");
+const { registrySearchController, tagSearchRegistry } = require("../controllers/registrySearchController");
 const catchAsync = require("../utils/catchAsync");
 const { authMiddleware } = require("../middlewares/authMiddleware");
 
@@ -16,5 +16,6 @@ router.use('/devai', catchAsync(authMiddleware), devaiRouter);
 router.use('/auth', authRouter);
 
 router.get('/search', catchAsync(registrySearchController));
+router.get("/get-tags", catchAsync(tagSearchRegistry));
 
 module.exports = { router };

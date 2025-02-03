@@ -49,22 +49,22 @@ const DockerfileCode = memo(({dockerfile, delFun}) => {
     // }
     return (
     <div className="grid md:grid-cols-[1fr_1fr]">
-        <div className="">
+        <div className="mr-3">
             <FormattedCode code={dockerfile.dockerfile} delFun={delFun ? delFun : ""}/>
         </div>
         <div className="grid font-medium text-gray-700 text-lg h-fit m-2">
-            <div className="text-xl h-fit p-1 md:my-4">
+            <div className="md:text-2xl h-fit md:my-4">
                 Commands to run :
             </div>
             <div className="grid md:gap-2">
-                <span className="">
-                    $ docker build -t [image-name]({dockerfile.name}) [.](location of dockerfile)
+                <span className="docker-off-commands">
+                    $ docker build -t {dockerfile.name} (.)
                 </span>
-                <span className="">
+                <span className="docker-off-commands">
                     {dockerfile.driver && getNetworkCommand(dockerfile)}
                 </span>
-                <span className="">
-                    $ docker run --network {getNetName(dockerfile)} -it {dockerfile.ports.length>0 && `-p ${dockerfile.ports.map(port => `${port.host} : ${port.container}`)}`} --name [container-name] [image-name]({dockerfile.name}) 
+                <span className="docker-off-commands">
+                    $ docker run --network {getNetName(dockerfile)} -it {dockerfile.ports.length>0 && `-p ${dockerfile.ports.map(port => `${port.host} : ${port.container}`)}`} --name cont-name {dockerfile.name}
                 </span>
             </div>
         </div>
