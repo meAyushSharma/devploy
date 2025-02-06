@@ -10,7 +10,6 @@ const ParentName = memo(({heading, placeholder, value, setParent, createLabel, o
                 <TextInput>
                     <input type="text" placeholder={placeholder} onChange={e => setParent(e.target.value)} value={value} className="w-full p-1 rounded-lg text-black placeholder-gray-800"/>
                 </TextInput>
-                {/* <Button label={createLabel} onClickFun={onClickCreateFun}/> */}
                 <Button>
                     <button onClick={onClickCreateFun}>{createLabel}</button>
                 </Button>

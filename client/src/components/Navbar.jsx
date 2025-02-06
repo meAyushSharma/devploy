@@ -40,7 +40,7 @@ const Navbar = () => {
         Cookies.remove("isUserRegistered")
         if(isUserRegistered === "true"){
             const createDirectory = () => {
-                const worker = new Worker(new URL('./worker/createDirectory.js', import.meta.url));
+                const worker = new Worker(new URL('../worker/createDirectory.js', import.meta.url));
                 worker.postMessage({});
                 worker.onmessage = e => {
                   worker.terminate();

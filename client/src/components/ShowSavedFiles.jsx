@@ -13,6 +13,7 @@ import { BsDatabaseFillDown } from "react-icons/bs";
 import Button from "./common/Button";
 import { useDeleteFileData } from "../hooks/useDeleteFileData";
 import { useSetLocalData } from "../hooks/useSetLocalData";
+import deployService from "../utils/deployService";
 const FormattedCode = lazy(() => import("./FormattedCode"));
 const DockerfileCode = lazy(() => import("./DockerfileCode"));
 
@@ -44,6 +45,10 @@ const ShowSavedFiles = () => {
 
     const { delFun, isDeleting, error } = useDeleteFileData({setTrigger});
     const { setFetchedData, isFetching, fetchError } = useSetLocalData();
+    const deployEnv = async ({envId}) => {
+      const res = await deployService.deployEnvironment({envId});
+      console.log(res.data);
+    }
 
   return (
     <div className="border-t-4 border-gray-700/70 rounded-lg my-6">
@@ -83,14 +88,14 @@ const ShowSavedFiles = () => {
                         style={{cursor:`${isDeleting ? "not-allowed" : "pointer"}`, pointerEvents:`${isDeleting ? "none" : "auto"}`}}
                         >
                           {!isDeleting ? <MdDelete className="text-xl"/> : <FiLoader className="animate-spin"/>}Delete File</button>
-                        <button onClick={() => downloadEnvFileHelper({fileName:fileDetails.handle.name})} className="shiny-btn">
+                        <button onClick={() => downloadEnvFileHelper({ fileName:fileDetails.handle.name })} className="shiny-btn">
                            <FaCloudDownloadAlt className="text-xl"/>
                            Download
                         </button>
-                        <button className="shiny-btn">
+                        {isUserRegistered && <button className="shiny-btn" onClick={() => deployEnv({envId:fileDetails.id})}>
                           <FaSoundcloud className="text-xl"/>
                            Deploy
-                        </button>
+                        </button>}
                       </div>
                     </div>
               </div>

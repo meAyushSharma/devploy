@@ -1,10 +1,12 @@
 export const generateDockerfile = (input) => {
-    const { os, runtimes, databases, packageManagers, npm, pip, cargo, gem, ports, driver, bridge, ipvlan, macvlan, name, envVariables } = input;
+    const { os, runtimes, databases, packageManagers, npm, pip, cargo, gem, ports, driver, bridge, ipvlan, macvlan, name, envVariables, command } = input;
     let dockerfile = `# Dockerfile name : ${name}\n`;
     dockerfile += `\n# Custom dynamically generated Dockerfile\n`;
 
     //1. add operating system
     dockerfile += os.length>0 ? `FROM ${os[0].value}:${os[0].tag}\n` : `FROM alpine:3.21\n`;
+    // dockerfile += `\n# Following command will update system and install necessary dependencies/tools, it is for ubuntu and similar systems, change it accordingly\n`;
+    // dockerfile += `\nRUN apt-get update && apt-get install -y curl git && apt-get clean\n`;
 
     //2. add runtime(s)
     const defaultRuntimes = {
@@ -23,8 +25,7 @@ export const generateDockerfile = (input) => {
         runtimesArray.forEach((runtime, index) => {
             dockerfile += `\n#Setup for ${runtime.value}\n`;
             dockerfile += `FROM ${runtime.value}:${runtime.tag}\n`;
-            dockerfile += `\n# Following tag will update system and install dependencies, it is for ubuntu and similar systems, change it accordingly\n`
-            dockerfile += `\nRUN apt-get update && apt-get install -y curl git && apt-get clean\n\n#$${index}\n`;
+            dockerfile += `\n#$${index}\n`
         });
     }
 
@@ -112,12 +113,12 @@ export const generateDockerfile = (input) => {
         dockerfile += `\n# Exposed ports\n`;
         let exposedPorts=``;
         ports.forEach(port => exposedPorts += ` ${port.container}`);
-        dockerfile+=`EXPOSE ${exposedPorts}`
+        dockerfile+=`EXPOSE ${exposedPorts}\n`
     }
 
     //7. command for bash
     dockerfile+=`\n# Command for bash\n`;
-    dockerfile+=`CMD ["bash"]`;
+    dockerfile+=`CMD [${command||'/bin/sh'}]`;
 
     return dockerfile;
 }

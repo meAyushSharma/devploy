@@ -1,48 +1,64 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-// npx prisma migrate dev --name <name>
-
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["relationJoins"]
 }
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://postgres:mysecretpassword@localhost:5433/postgres"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id              Int @id @default(autoincrement())
-  email           String @unique
-  password        String?
-  username        String?
-  name            String?
-  google_id       String? @unique
-  is_google_user  Boolean @default(false)
-  profile_pic     String?
-  environments    Environment[]
-  composes        Compose[]
-  created_at      DateTime @default(now())
+  id             Int           @id @default(autoincrement())
+  email          String        @unique
+  username       String?
+  name           String?
+  password       String?
+  created_at     DateTime      @default(now())
+  google_id      String?       @unique
+  is_google_user Boolean       @default(false)
+  profile_pic    String?
+  composes       Compose[]
+  environments   Environment[]
+  images         Image[]
 }
 
 model Environment {
-  id              Int       @id       @default(autoincrement())
-  name            String?
-  value           String
-  userId          Int
-  user            User      @relation(fields: [userId], references: [id])
-  created_at      DateTime  @default(now())
+  id         Int      @id @default(autoincrement())
+  name       String?
+  userId     Int
+  created_at DateTime @default(now())
+  value      String
+  user       User     @relation(fields: [userId], references: [id])
+  images     Image[]
 }
 
 model Compose {
-  id              Int       @id       @default(autoincrement())
-  name            String?
-  value           String
-  userId          Int
-  user            User      @relation(fields: [userId], references: [id])
-  created_at      DateTime  @default(now())
+  id         Int      @id @default(autoincrement())
+  name       String?
+  userId     Int
+  created_at DateTime @default(now())
+  value      String
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model Container {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  created_at DateTime @default(now())
+  ipAddress  String
+  imageId    Int
+  ports      String
+  image      Image    @relation(fields: [imageId], references: [id])
+}
+
+model Image {
+  id          Int         @id @default(autoincrement())
+  name        String      @unique
+  created_at  DateTime    @default(now())
+  userId      Int
+  envId       Int
+  container   Container[]
+  environment Environment @relation(fields: [envId], references: [id])
+  user        User        @relation(fields: [userId], references: [id])
 }

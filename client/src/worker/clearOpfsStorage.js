@@ -1,4 +1,4 @@
-// ON MAIN THREAD
+// ON WORKER THREAD
 self.addEventListener('message', async e => {
     if(!e){
         self.postMessage({success: false, error:"send something in clearOpfsWorker"});

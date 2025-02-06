@@ -54,7 +54,7 @@ const GuestMode = ({setLocalAuth, category}) => {
             setLocalPassword("");
             setChoosenPic(0);
             const createDirectory = () => {
-              const worker = new Worker(new URL('./worker/createDirectory.js', import.meta.url));
+              const worker = new Worker(new URL('../../worker/createDirectory.js', import.meta.url));
               worker.postMessage({});
               worker.onmessage = e => {
                 worker.terminate();

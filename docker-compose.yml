@@ -1,0 +1,57 @@
+name: DevBox-v0
+services:
+  postgres:
+    image: postgres:latest
+    container_name: devbox-db
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - my_postgres_data:/var/lib/postgresql/data
+    networks:
+      - devbox-network
+    
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: devbox-server
+    restart: unless-stopped
+    env_file: ./server/.env
+    volumes:
+      - "./server:/app"
+      - /app/node_modules
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    ports:
+      - "3007:3007"
+      - "80:3030"
+    networks:
+      - devbox-network
+    depends_on:
+      - postgres
+
+  client:
+    build: 
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: devbox-client
+    restart: unless-stopped
+    env_file: ./client/.env
+    volumes:
+      - "./client:/app"
+      - /app/node_modules
+    networks:
+      - devbox-network
+    ports:
+      - 5173:5173
+    command: npm run dev -- --host
+    depends_on:
+      - server
+
+volumes:
+  my_postgres_data:
+
+networks:
+  devbox-network:
+    driver: bridge

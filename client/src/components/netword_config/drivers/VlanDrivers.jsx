@@ -1,7 +1,7 @@
 import { useRecoilState } from "recoil";
 import { lazy, memo, useState } from "react";
 import isCidr from "is-cidr";
-import {ipVersion} from 'is-ip';
+import { ipVersion } from 'is-ip';
 
 import { ipvlanAtom } from "../../../store/atoms/networkAtoms/ipvlanAtom";
 import { macvlanAtom } from "../../../store/atoms/networkAtoms/macvlanAtom";
@@ -33,7 +33,7 @@ const VlanDrivers = memo(({vlan, type}) => {
     const addNet = () => setVlanConfig(prevState => ({ ...prevState, name:name }));
     const updateMode = e => setVlanConfig(prevState => ({ ...prevState, mode: e.target.value }));
     const addPair = () => {
-        if(ipVersion(isCidr(subnet))){
+        if(isCidr(subnet)){
             setVlanConfig(prevState => ({ ...prevState, pairs: [...prevState.pairs, {subnet:subnet, gateway:gateway}] }));
             setSubnet("");
             setGateway("");

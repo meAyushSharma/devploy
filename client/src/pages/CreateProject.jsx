@@ -16,15 +16,7 @@ const NetworkConfig = lazy(() => import("../components/netword_config/NetworkCon
 const Button = lazy(() => import("../components/common/Button"));
 const CreateDockerfile = lazy(() => import("../components/CreateDockerfile"));
 const RenderPackageManager = lazy(() => import("../components/package_manager/RenderPackageManager"));
-
-
-// import PackageManager from "../components/package_manager/PackageManager";
-// import Environments from "../components/environment/Environments";
-// import Configurations from "../components/Configurations";
-// import NetworkConfig from "../components/netword_config/NetworkConfig";
-// import Button from "../components/common/Button";
-// import CreateDockerfile from "../components/CreateDockerfile";
-// import RenderPackageManager from "../components/package_manager/RenderPackageManager";
+const Command = lazy(() => import("../components/Command"));
 
 import { getServiceNames } from "../store/selectors/getServiceNames";
 import { useDebounce } from "../hooks/useDebounce";
@@ -49,7 +41,7 @@ const CreateProject = memo(({type}) => {
     const [nameIsValid, setNameIsValid] = useState(null);
 
     // check environment (folder) dockerfiles duplicates
-    const envNameisValid = useWorkerValidName({workerPath:'../worker/envNameDuplicacy.js', debouncedName});
+    const envNameisValid = useWorkerValidName({ workerPath :'../worker/envNameDuplicacy.js', debouncedName});
 
      // handles empty input
     const [isTouched, setIsTouched] = useState(false);
@@ -88,34 +80,37 @@ const CreateProject = memo(({type}) => {
             {env && projName && !envNameisValid && (
                 <div className="flex gap-1 items-center">
                     <IoInformationCircleOutline className="text-rose-500"/>
-                    <span className="text-rose-500 text-sm">Name already exists</span>
+                    <span className="text-rose-500 text-sm">Name already exists or is invalid.</span>
                 </div>
             )}
             {service && projName && !nameIsValid && (
                 <div className="flex gap-1 items-center">
                     <IoInformationCircleOutline className="text-rose-500"/>
-                <span className="text-rose-500 text-sm">Name already exists</span>
+                <span className="text-rose-500 text-sm">Name already exists or is invalid.</span>
             </div>
             )}
         </div>
 
 
-        <div className="text-2xl font-semibold text-gray-700/80 mt-4">Software and tools :</div>
+        <div className="text-2xl font-semibold text-gray-700/80 mt-4">Software and tools</div>
         <DockerSearchComponent label={"Operating System"} type={whatType}/>
         <DockerSearchComponent label={"Runtime(s)"} type={whatType}/>
         <DockerSearchComponent label={"Database(s)"} type={whatType}/>
 
 
         <div className="text-2xl font-semibold text-gray-700/80 mt-4">Framework and libraries :</div>
-        <PackageManager label={"Package Managers"} isMulti={true} type={whatType}/>
-        {packageManagers.map((pm, key) => <RenderPackageManager pmValue={pm.value} whatType={whatType} key={key}/>)}
+        <div className="border-2 border-gray-300/70 hover:border-gray-500/70 rounded-lg my-2 p-1 px-2">
+            <PackageManager label={"Package Managers"} isMulti={true} type={whatType}/>
+            {packageManagers.map((pm, key) => <RenderPackageManager pmValue={pm.value} whatType={whatType} key={key}/>)}
+        </div>
 
 
         <div className="text-2xl font-semibold text-gray-700/80 mt-4 mb-2">Choose Configurations :</div>
         <Configurations type={whatType}/>
         <Environments type={whatType}/>
         <NetworkConfig type={whatType}/>
-        <div className="w-full text-xl">
+        <Command type={whatType} />
+        <div className="w-full text-xl mt-4">
             <div className="max-w-[10%] ml-auto text-xl mr-[3vw]">
                 <Button>
                     <MdReviews/>

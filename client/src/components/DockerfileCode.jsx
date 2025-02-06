@@ -49,10 +49,10 @@ const DockerfileCode = memo(({dockerfile, delFun}) => {
     // }
     return (
     <div className="grid md:grid-cols-[1fr_1fr]">
-        <div className="mr-3">
+        <div className="">
             <FormattedCode code={dockerfile.dockerfile} delFun={delFun ? delFun : ""}/>
         </div>
-        <div className="grid font-medium text-gray-700 text-lg h-fit m-2">
+        <div className="grid font-medium text-gray-700 text-lg h-fit mx-4">
             <div className="md:text-2xl h-fit md:my-4">
                 Commands to run :
             </div>

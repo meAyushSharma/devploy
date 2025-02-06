@@ -42,7 +42,8 @@ const CreateDockerfile = memo(({type}) => {
         pip:input.pip,
         cargo:input.cargo,
         gem:input.gem,
-        envVariables:input.envVariables
+        envVariables:input.envVariables,
+        command:input.command
     }
    
     const [serviceCount, setServiceCount] = useRecoilState(serviceCountAtom);
