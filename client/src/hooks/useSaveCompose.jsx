@@ -61,6 +61,7 @@ export const useSaveCompose = ({ saveToDB, saveToLocal, dockerfiles, composeFile
     };
 
     const saveComposeToDB = async () => {
+        if(isSaving) return;
         if (!nameIsValid) return;
         setIsSaving(true);
         if(isUserRegistered){

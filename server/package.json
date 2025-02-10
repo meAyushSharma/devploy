@@ -5,6 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js",
+    "start:cron": "nodemon --legacy-watch --inspect=0.0.0.0 cronJobService.js",
+    "start:all": "concurrently \"npm run start\" \"npm run start:cron\"",
     "dev": "nodemon --legacy-watch --inspect=0.0.0.0 index.js"
   },
   "repository": {
@@ -19,7 +21,7 @@
   "homepage": "https://github.com/meAyushSharma/DevBox#readme",
   "description": "",
   "dependencies": {
-    "@prisma/client": "^6.3.0",
+    "@prisma/client": "^6.3.1",
     "@types/http-proxy": "^1.17.15",
     "@xterm/xterm": "^5.5.0",
     "axios": "^1.7.9",
@@ -33,6 +35,7 @@
     "google-auth-library": "^9.15.1",
     "http-proxy": "^1.18.1",
     "jsonwebtoken": "^9.0.2",
+    "node-cron": "^3.0.3",
     "nodemon": "^3.1.9",
     "openai": "^4.79.1",
     "pg": "^8.13.1",
@@ -41,6 +44,6 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "prisma": "^6.3.0"
+    "prisma": "^6.3.1"
   }
 }

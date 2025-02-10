@@ -7,6 +7,7 @@ export const useAuth = ({type}) => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
     const authFun = async ({email, password, setAuth, name}) => {
+        if(isLoading) return;
         setIsLoading(true);
         setError(null);
         setSuccess(false);

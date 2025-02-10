@@ -21,6 +21,7 @@ model User {
   composes       Compose[]
   environments   Environment[]
   images         Image[]
+  containers     Container[]
 }
 
 model Environment {
@@ -46,10 +47,14 @@ model Container {
   id         Int      @id @default(autoincrement())
   name       String   @unique
   created_at DateTime @default(now())
+  expires_at DateTime
   ipAddress  String
   imageId    Int
   ports      String
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
   image      Image    @relation(fields: [imageId], references: [id])
+  dockerId   String
 }
 
 model Image {
@@ -61,4 +66,5 @@ model Image {
   container   Container[]
   environment Environment @relation(fields: [envId], references: [id])
   user        User        @relation(fields: [userId], references: [id])
+  dockerId    String
 }

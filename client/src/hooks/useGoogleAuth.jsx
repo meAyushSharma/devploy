@@ -21,6 +21,7 @@ export const useGoogleAuth = () => {
     })
 
     const logUserIn = () => {
+        if(isLoading) return;
         setIsLoading(true);
         setError(null);
         login();

@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Suspense, lazy, useEffect } from "react";
 
 import Login from "./pages/Login";
+import DeployEnvironment from "./pages/DeployEnvironment";
 const DevAi = lazy(() => import("./pages/DevAi"));
 const CreateProject  = lazy(() => import("./pages/CreateProject"));
 const DockerCompose = lazy(() => import("./pages/DockerCompose"));
@@ -40,6 +41,7 @@ function App() {
             <Route path="/ask-devai" element={<Suspense fallback={<Skeleton num={20}/>}><DevAi/></Suspense>}></Route>
             <Route path="/signup" element={<Suspense fallback={<Skeleton num={20}/>}><Signup/></Suspense>}></Route>
             <Route path="/login" element={<Suspense fallback={<Skeleton num={20}/>}><Login/></Suspense>}></Route>
+            <Route path="/environment" element={<Suspense fallback={<Skeleton num={20}/>}><DeployEnvironment/></Suspense>}></Route>
           </Routes>
         </BrowserRouter>
     </>

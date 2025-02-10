@@ -17,7 +17,7 @@ services:
       context: ./server
       dockerfile: Dockerfile
     container_name: devbox-server
-    restart: unless-stopped
+    restart: on-failure
     env_file: ./server/.env
     volumes:
       - "./server:/app"
@@ -26,6 +26,7 @@ services:
     ports:
       - "3007:3007"
       - "80:3030"
+      - "4010:4010"
     networks:
       - devbox-network
     depends_on:
@@ -36,7 +37,7 @@ services:
       context: ./client
       dockerfile: Dockerfile
     container_name: devbox-client
-    restart: unless-stopped
+    restart: on-failure
     env_file: ./client/.env
     volumes:
       - "./client:/app"
@@ -48,6 +49,25 @@ services:
     command: npm run dev -- --host
     depends_on:
       - server
+
+  worker:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: devbox-cronjob-worker
+    restart: always
+    env_file: ./server/.env
+    volumes:
+      - "./server:/app"
+      - /app/node_modules
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - devbox-network
+    depends_on:
+      - postgres
+      - server
+    command: ["npm", "run", "start:cron"]
+
 
 volumes:
   my_postgres_data:

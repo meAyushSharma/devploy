@@ -8,6 +8,7 @@ const useChat = () => {
     const [error, setError] = useState(null);
 
     const sendQuery = async () => {
+        if(isLoading) return;
         if(!query) return;
         setError(null);
         setIsLoading(true);

@@ -92,20 +92,20 @@ const CreateProject = memo(({type}) => {
         </div>
 
 
-        <div className="text-2xl font-semibold text-gray-700/80 mt-4">Software and tools</div>
+        <div className="medium-heading">Software and tools :</div>
         <DockerSearchComponent label={"Operating System"} type={whatType}/>
         <DockerSearchComponent label={"Runtime(s)"} type={whatType}/>
         <DockerSearchComponent label={"Database(s)"} type={whatType}/>
 
 
-        <div className="text-2xl font-semibold text-gray-700/80 mt-4">Framework and libraries :</div>
+        <div className="medium-heading">Framework and libraries :</div>
         <div className="border-2 border-gray-300/70 hover:border-gray-500/70 rounded-lg my-2 p-1 px-2">
             <PackageManager label={"Package Managers"} isMulti={true} type={whatType}/>
             {packageManagers.map((pm, key) => <RenderPackageManager pmValue={pm.value} whatType={whatType} key={key}/>)}
         </div>
 
 
-        <div className="text-2xl font-semibold text-gray-700/80 mt-4 mb-2">Choose Configurations :</div>
+        <div className="medium-heading mb-2">Choose Configurations :</div>
         <Configurations type={whatType}/>
         <Environments type={whatType}/>
         <NetworkConfig type={whatType}/>

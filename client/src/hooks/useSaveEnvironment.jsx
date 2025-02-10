@@ -23,6 +23,7 @@ export const useSaveEnvironment = ({ setTestDockerfile, resetEnvAtoms, setServic
     };
 
     const saveEnvironment = async () => {
+        if(isSaving) return;
         if (env) {
             setIsSaving(true);
             if(isUserRegistered){

@@ -13,7 +13,7 @@ import { BsDatabaseFillDown } from "react-icons/bs";
 import Button from "./common/Button";
 import { useDeleteFileData } from "../hooks/useDeleteFileData";
 import { useSetLocalData } from "../hooks/useSetLocalData";
-import deployService from "../utils/deployService";
+import { useDeployEnv } from "../hooks/useDeployEnv";
 const FormattedCode = lazy(() => import("./FormattedCode"));
 const DockerfileCode = lazy(() => import("./DockerfileCode"));
 
@@ -43,12 +43,9 @@ const ShowSavedFiles = () => {
     fetchData();
   }, [trigger]);
 
-    const { delFun, isDeleting, error } = useDeleteFileData({setTrigger});
+    const { delFun, isDeleting, delFileError } = useDeleteFileData({setTrigger});
     const { setFetchedData, isFetching, fetchError } = useSetLocalData();
-    const deployEnv = async ({envId}) => {
-      const res = await deployService.deployEnvironment({envId});
-      console.log(res.data);
-    }
+    const { deployEnv, isLoading, envDeployErr } = useDeployEnv();
 
   return (
     <div className="border-t-4 border-gray-700/70 rounded-lg my-6">
@@ -93,7 +90,7 @@ const ShowSavedFiles = () => {
                            Download
                         </button>
                         {isUserRegistered && <button className="shiny-btn" onClick={() => deployEnv({envId:fileDetails.id})}>
-                          <FaSoundcloud className="text-xl"/>
+                          {!isLoading ? <FaSoundcloud className="text-xl"/> : <FiLoader className="animate-spin m-1"/>}
                            Deploy
                         </button>}
                       </div>

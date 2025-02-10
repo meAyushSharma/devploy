@@ -79,6 +79,10 @@ const Navbar = () => {
                     Builds
                     <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-gray-500 transition-all duration-300 group-hover:w-full"></span>
                 </div>
+                <div className="mx-3 cursor-pointer rounded-md p-1 hover:bg-[#f2f3f3] relative group" onClick={() => navigate('/environment')}>
+                    Dashboard
+                    <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-gray-500 transition-all duration-300 group-hover:w-full"></span>
+                </div>
 
 
                 <div className={`mx-3 p-1 ${profilePic ? "cursor-pointer" : ""}`}>
@@ -94,9 +98,9 @@ const Navbar = () => {
                             <span className="p-1 text-center text-sm h-auto flex flex-col whitespace-normal break-all bg-gray-300/30 hover:bg-gray-300/70 rounded-md m-1 ">
                                 {email}
                             </span>
-                            <span className="p-1 text-center h-auto whitespace-normal break-all bg-gray-300/30 hover:bg-gray-300/70 rounded-md mb-1 mx-1" onClick={logoutFun}>Logout</span>
-                            <span className="p-1 text-center h-auto whitespace-normal break-all bg-gray-300/30 hover:bg-gray-300/70 rounded-md mb-1 mx-1">testAuth</span>
-                            <span className="p-1 text-center h-auto whitespace-normal break-all bg-gray-300/30 hover:bg-gray-300/70 rounded-md mb-1 mx-1">Reset Password</span>
+                            <span className="mini-dashboard" onClick={logoutFun}>Logout</span>
+                            <span className="mini-dashboard">testAuth</span>
+                            <span className="mini-dashboard">Reset Password</span>
                         </div>)
                     }
                 </div>

@@ -7,7 +7,7 @@ import { userModeSelector } from "../store/selectors/userModeSelector";
 export const useDeleteFileData = ({setTrigger}) => {
     const isUSerResistered = useRecoilValue(userModeSelector);
     const [isDeleting, setIsDeleting] = useState(false);
-    const [error, setError] = useState(null);
+    const [delFileError, setError] = useState(null);
     const delFun = async ({parentFolder, handle, delId, type}) => {
         if(isDeleting) return;
         if(!parentFolder || !handle || !delId) return;
@@ -60,6 +60,6 @@ export const useDeleteFileData = ({setTrigger}) => {
     }
     }
     return {
-        delFun, isDeleting, error
+        delFun, isDeleting, delFileError
     }
 }

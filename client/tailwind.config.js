@@ -10,7 +10,8 @@ export default {
         'Satoshi': ['Satoshi', 'sans-serif'],
       },
       backgroundImage: {
-        'empty-screen':"url('https://res.cloudinary.com/dubrgx4b1/image/upload/v1737031281/gjfzwbpiwysluosachu5.png')"
+        'empty-screen':"url('https://res.cloudinary.com/dubrgx4b1/image/upload/v1737031281/gjfzwbpiwysluosachu5.png')",
+        "empty-elements":"url('https://res.cloudinary.com/dubrgx4b1/image/upload/v1739096355/rjmbumgi5nxgow0gxc5s.png')",
       },
       colors: {
         "soft-white": "#fefffe",
