@@ -3,13 +3,14 @@ import { useSetRecoilState, useRecoilValue } from "recoil";
 import deployService from "../utils/deployService";
 import { userModeSelector } from "../store/selectors/userModeSelector";
 import { envDeployDetails } from "../store/atoms/envDeployDetails";
-
+import { openTerminalsAtom } from "../store/atoms/openTerminalsAtom";
 
 export const useGetActiveContainers = () => {
     const [isGettingConts, setIsGettingConts] = useState(false);
     const [errorGettingContainers, setError] = useState(null);
     const token = useRecoilValue(userModeSelector);
     const setDeployDetails = useSetRecoilState(envDeployDetails);
+    const setOpenTerminals = useSetRecoilState(openTerminalsAtom);
     const fetchContainers = async () => {
         if(isGettingConts) return;
         if(!token) {
@@ -26,6 +27,12 @@ export const useGetActiveContainers = () => {
             }
             const envNameSet = new Set();
             const sortedObj = {};
+            setOpenTerminals(state => {
+                return state.filter(terminal => {
+                    const contIds = response.data.containers.map(conts => conts.id);
+                    return contIds.includes(terminal.contId);
+                })
+            })
             response.data.containers.map(cont => envNameSet.add(cont.image.environment.name));
 
             const toBeSorted = response.data.containers.map(cont => {

@@ -118,7 +118,12 @@ export const generateDockerfile = (input) => {
 
     //7. command for bash
     dockerfile+=`\n# Command for bash\n`;
-    dockerfile+=`CMD [${command||'/bin/sh'}]`;
+    if(command!=""){
+        dockerfile+= `ENTRYPOINT ["/bin/sh", "-c"]\n`;
+        dockerfile+=`CMD ["${command} && exec /bin/sh"]`;
+    }else {
+        dockerfile+=`CMD ["/bin/sh", "-c", "exec /bin/sh"]`
+    }
 
     return dockerfile;
 }

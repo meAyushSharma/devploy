@@ -5,7 +5,7 @@ const Container = require("./models/containerModel");
 
 // Run every minute to check for expired containers
 cron.schedule("* * * * *", async () => {
-    console.log("Checking for expired containers...");
+    // console.log("Checking for expired containers...");
     
     const expiredContainers = await Container.findMany({
         where: { expires_at : { lte: new Date() } }

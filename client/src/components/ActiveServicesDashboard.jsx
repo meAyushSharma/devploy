@@ -21,9 +21,19 @@ const ActiveServicesDashboard = () => {
     useEffect(() => {
         fetchContainers();
     }, [success]);
-    const openTerminal = ({contId, contDockerId}) => {
-        setOpenTerminals(state => [...state, { contId, contDockerId}]);
+    const openTerminal = ({contId, contDockerId, containerName, envName}) => {
+        // console.log(deployDetails);
+        const environment = deployDetails.filter(env => env[0]===envName);
+        if(environment){
+            const cont = environment[0][1].filter(contDetails => contDetails.containerId === contId);
+            console.log(cont)
+            if(cont){
+                setOpenTerminals(state => [...state, { contId, contDockerId, containerName}]);
+            }
+        }
     }
+
+
     return (
         <div className="m-10">
             <div className="">
@@ -67,7 +77,7 @@ const ActiveServicesDashboard = () => {
                                         <Timer createdTime={serviceDetails.created_at} recallFun={fetchContainers}/>
                                     </td>
                                     <td className="text-center rounded">
-                                        <button className="dashboard-btn" onClick={() => openTerminal({contId: serviceDetails.containerId, contDockerId: serviceDetails.contDockerId})}>
+                                        <button className="dashboard-btn" onClick={() => openTerminal({contId: serviceDetails.containerId, contDockerId: serviceDetails.contDockerId, containerName: serviceDetails.containerName, envName:serviceDetails.envName})}>
                                             Open Terminal
                                         </button>
                                     </td>

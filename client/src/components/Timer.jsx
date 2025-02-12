@@ -9,7 +9,6 @@ const Timer = ({ createdTime, recallFun }) => {
     const remainingTime = endTime - now;
 
     if (remainingTime <= 0) {
-      console.log("Fetching all active containers")
       return { minutes: 0, seconds: 0 };
     }
 
@@ -28,6 +27,12 @@ const Timer = ({ createdTime, recallFun }) => {
 
     return () => clearInterval(timer); // Cleanup on unmount
   }, []);
+
+  useEffect(() => {
+    if(timeLeft.minutes + timeLeft.seconds == 0){
+      setTimeout(recallFun, 60*1000);
+    }
+  }, [timeLeft, recallFun]);
 
   return (
     <div className={`${(timeLeft.minutes + timeLeft.seconds) ? "": "text-rose-500"}`}>

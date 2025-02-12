@@ -137,7 +137,7 @@ module.exports.envDeploy = async (req, res, next) => {
             const containerInfo = await container.inspect();
             // 5. get containerInfo, create container tuple
             // console.log("This is Container info: ", containerInfo.NetworkSettings.Networks[netName]?.IPAddress);
-            const exposedPorts = Object.keys(containerInfo.Config.ExposedPorts).map(port => port.split("/")[0]);
+            const exposedPorts = containerInfo.Config.ExposedPorts ? Object.keys(containerInfo.Config.ExposedPorts).map(port => port.split("/")[0]) : [];
             console.log("ExposedPorts: ", exposedPorts);
             const createdAt = new Date();  // Current timestamp
             const expiresAt = new Date(createdAt.getTime() + 16 * 60 * 1000);
