@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 
 const Timer = ({ createdTime, recallFun }) => {
-  const createdDate = new Date(createdTime); // Convert string to Date object
-  const endTime = new Date(createdDate.getTime() + 16 * 60 * 1000); // Add 16 minutes
+  const createdDate = new Date(createdTime);
+  const endTime = new Date(createdDate.getTime() + 16 * 60 * 1000);
 
   const calculateTimeLeft = () => {
     const now = new Date();
@@ -22,17 +22,21 @@ const Timer = ({ createdTime, recallFun }) => {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
+      setTimeLeft(prevTime => {
+        if (prevTime?.minutes === 0 && prevTime?.seconds === 0) {
+          clearInterval(timer);
+          setTimeout(recallFun, 70 * 1000);
+          return prevTime;
+        }
+  
+        return calculateTimeLeft();
+      });
     }, 1000);
-
-    return () => clearInterval(timer); // Cleanup on unmount
+  
+    return () => clearInterval(timer);
   }, []);
+  
 
-  useEffect(() => {
-    if(timeLeft.minutes + timeLeft.seconds == 0){
-      setTimeout(recallFun, 60*1000);
-    }
-  }, [timeLeft, recallFun]);
 
   return (
     <div className={`${(timeLeft.minutes + timeLeft.seconds) ? "": "text-rose-500"}`}>

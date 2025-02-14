@@ -20,6 +20,6 @@ router.use('/devai', catchAsync(authMiddleware), devaiRouter);
 router.get('/search', catchAsync(registrySearchController));
 router.get("/get-tags", catchAsync(tagSearchRegistry));
 
-router.get('/health', (req, res) => res.status(statusCodes.Ok).json({success: true, msg: "Health check successfull, server running smoothly!!!!"}));
+router.get('/health', (req, res) => res.status(statusCodes.Ok).json({success: true, msg: "Health check successfull, server running smoothly!!"}));
 
 module.exports = { router };

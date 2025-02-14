@@ -13,8 +13,8 @@ const jsonBody = zod.object({
 module.exports.saveEnvironment = async (req, res, next) => {
     const { content, name } = req.body;
     const { success } = jsonBody.safeParse(req.body);
-    if(!success) throw new ExpressError("Invalid environment json string", statusCodes["Bad Request"], { error : "zod deemed invalid: saveEnvironment"});
-    if(!req.user.id) throw new ExpressError("Unauthorized Access Denied", statusCodes.Unauthorized, { error : "req.user.id not found"});
+    if(!success) return next(new ExpressError("Invalid environment json string", statusCodes["Bad Request"], { error : "zod deemed invalid: saveEnvironment"}));
+    if(!req.user.id) return next(new ExpressError("Unauthorized Access Denied", statusCodes.Unauthorized, { error : "req.user.id not found"}));
     try {
         const env = await Environment.create({
             data : {
@@ -28,7 +28,7 @@ module.exports.saveEnvironment = async (req, res, next) => {
                 id: true,
             }
         })
-        if(!env) throw new ExpressError("Error occured in DB during creation of env", statusCodes["Server Error"], { error: "Database error"});
+        if(!env) return next(new ExpressError("Error occured in DB during creation of env", statusCodes["Server Error"], { error: "Database error"}));
         console.log(`saved env :\n`, env);
         return res.status(statusCodes.Ok).json({
             success : true,
@@ -59,8 +59,8 @@ const jsonFile = {
 module.exports.saveCompose = async (req, res, next) => {
     const { content, name } = req.body;
     const { success } = jsonBody.safeParse(req.body);
-    if(!success) throw new ExpressError("Invalid compose json string", statusCodes["Bad Request"], { error : "zod deemed invalid: saveCompose"});
-    if(!req.user.id) throw new ExpressError("Unauthorized Access Denied", statusCodes.Unauthorized, { error : "req.user.id not found"});
+    if(!success) return next(new ExpressError("Invalid compose json string", statusCodes["Bad Request"], { error : "zod deemed invalid: saveCompose"}));
+    if(!req.user.id) return next(new ExpressError("Unauthorized Access Denied", statusCodes.Unauthorized, { error : "req.user.id not found"}));
     try {
         const compose = await Compose.create({
             data : {
@@ -74,7 +74,7 @@ module.exports.saveCompose = async (req, res, next) => {
                 id: true
             }
         });
-        if(!compose) throw new ExpressError("Error occured in DB during creation of compose", statusCodes["Server Error"], { error: "Database error"});
+        if(!compose) return next(new ExpressError("Error occured in DB during creation of compose", statusCodes["Server Error"], { error: "Database error"}));
         console.log(`saved compose:\n`, compose);
         return res.status(statusCodes.Ok).json({
             success : true,
@@ -96,7 +96,7 @@ const delBody = zod.object({
 module.exports.deleteEnvironment = async (req, res, next) => {
     const { delId } = req.body;
     const { success } = delBody.safeParse(req.body);
-    if(!success) throw new ExpressError("Invalid delId string", statusCodes["Bad Request"], { error : "zod deemed invalid: deleteEnvironment"});
+    if(!success) return next(new ExpressError("Invalid delId string", statusCodes["Bad Request"], { error : "zod deemed invalid: deleteEnvironment"}));
     try {
         const deleteEnv = await Environment.delete({
             where : {
@@ -107,7 +107,7 @@ module.exports.deleteEnvironment = async (req, res, next) => {
                 id: true,
             }
         });
-        if(!deleteEnv) throw new ExpressError("Error occured in DB during deletion of environment", statusCodes["Server Error"], { error: "Database error"});
+        if(!deleteEnv) return next(new ExpressError("Error occured in DB during deletion of environment", statusCodes["Server Error"], { error: "Database error"}));
         console.log(`deleted environment:\n`, deleteEnv);
         return res.status(statusCodes.Ok).json({
             success : true,
@@ -125,7 +125,7 @@ module.exports.deleteEnvironment = async (req, res, next) => {
 module.exports.deleteCompose = async (req, res, next) => {
     const { delId } = req.body;
     const { success } = delBody.safeParse(req.body);
-    if(!success) throw new ExpressError("Invalid delId string", statusCodes["Bad Request"], { error : "zod deemed invalid: deleteCompose"});
+    if(!success) return next(new ExpressError("Invalid delId string", statusCodes["Bad Request"], { error : "zod deemed invalid: deleteCompose"}));
     try {
         const deleteCompose = await Compose.delete({
             where : {
@@ -136,7 +136,7 @@ module.exports.deleteCompose = async (req, res, next) => {
                 id: true,
             }
         });
-        if(!deleteCompose) throw new ExpressError("Error occured in DB during deletion of compose folder", statusCodes["Server Error"], { error: "Database error"});
+        if(!deleteCompose) return next(new ExpressError("Error occured in DB during deletion of compose folder", statusCodes["Server Error"], { error: "Database error"}));
         console.log(`deleted compose folder:\n`, deleteCompose);
         return res.status(statusCodes.Ok).json({
             success : true,
@@ -152,29 +152,8 @@ module.exports.deleteCompose = async (req, res, next) => {
 }
 
 module.exports.getUserData = async (req, res, next) => {
-    if(!req.user.id) throw new ExpressError("Unauthorized Access Denied", statusCodes.Unauthorized, { error : "req.user.id not found"});
+    if(!req.user.id) return next(new ExpressError("Unauthorized Access Denied", statusCodes.Unauthorized, { error : "req.user.id not found"}));
     try {
-        // const envWithCompose = await Environment.findMany({
-        //     relationLoadStrategy : "join",
-        //     where : { userId : req.user.id, },
-        //     select : {
-        //         user : {
-        //             select : {
-        //                 composes : {
-        //                     select : {
-        //                         id : true,
-        //                         value : true,
-        //                         name : true,
-        //                     }
-        //                 },
-        //                 id: true
-        //             }
-        //         },
-        //         id: true,
-        //         name: true,
-        //         value: true,
-        //     },
-        // })
         const envWithCompose = await User.findUnique({
             relationLoadStrategy : "join",
             where : { id : req.user.id, },
@@ -197,7 +176,7 @@ module.exports.getUserData = async (req, res, next) => {
                 id : true,
             },
         })
-        if(!envWithCompose) throw new ExpressError("EnvWithCompose not found", statusCodes["Not Found"], { error : "EnvWithCompose null/Not found"})
+        if(!envWithCompose) return next(new ExpressError("EnvWithCompose not found", statusCodes["Not Found"], { error : "EnvWithCompose null/Not found"}))
         console.log(envWithCompose);
         
         return res.status(statusCodes.Ok).json({

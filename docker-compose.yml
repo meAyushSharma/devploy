@@ -17,7 +17,7 @@ services:
       context: ./server
       dockerfile: Dockerfile
     container_name: devbox-server
-    restart: on-failure
+    restart: always
     env_file: ./server/.env
     volumes:
       - "./server:/app"
@@ -37,7 +37,7 @@ services:
       context: ./client
       dockerfile: Dockerfile
     container_name: devbox-client
-    restart: on-failure
+    restart: always
     env_file: ./client/.env
     volumes:
       - "./client:/app"

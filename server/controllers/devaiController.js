@@ -8,7 +8,7 @@ module.exports.askDevai = async (req, res, next) => {
         console.log(`This is user message array:\n`, query);
         const reply = await getChatReply(query);
         if(reply) return res.status(statusCodes.Ok).json({ msg: reply, success: true })
-        else throw new ExpressError("Failed to get reply from AI <(＿　＿)>", statusCodes["Server Error"], {error : "error in getting reply from ai"});
+        else return next(new ExpressError("Failed to get reply from AI <(＿　＿)>", statusCodes["Server Error"], {error : "error in getting reply from ai"}));
 
     }catch (err) {
         next(err)

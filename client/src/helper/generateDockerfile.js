@@ -7,6 +7,10 @@ export const generateDockerfile = (input) => {
     dockerfile += os.length>0 ? `FROM ${os[0].value}:${os[0].tag}\n` : `FROM alpine:3.21\n`;
     // dockerfile += `\n# Following command will update system and install necessary dependencies/tools, it is for ubuntu and similar systems, change it accordingly\n`;
     // dockerfile += `\nRUN apt-get update && apt-get install -y curl git && apt-get clean\n`;
+    dockerfile += `\n# Creation of non-root user (skip for root priviliges)\n`;
+    dockerfile += `RUN adduser -D -u 1001 devuser\n`;
+    dockerfile += `\n# Switch to non-root user (skip for root priviliges)\n`;
+    dockerfile += `USER devuser`;
 
     //2. add runtime(s)
     const defaultRuntimes = {

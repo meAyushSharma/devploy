@@ -25,15 +25,15 @@ module.exports.registerUser = async (req, res, next) => {
     try{
         const { email, password, name, profile_pic } = req.body;
         const { success, data } = registerBody.safeParse(req.body);
-        if(!success) throw new ExpressError("Invalid Signup Credentials ━┳━ ━┳━", statusCodes["Bad Request"], {error: "zod deemed invalid: signup creds"})
-        if(!email || !password) throw new ExpressError("Signup Credentials not provided (┬┬﹏┬┬)", statusCodes["Bad Request"], {error:"Missing credentials"});
+        if(!success) return next(new ExpressError("Invalid Signup Credentials ━┳━ ━┳━", statusCodes["Bad Request"], {error: "zod deemed invalid: signup creds"}))
+        if(!email || !password) return next(new ExpressError("Signup Credentials not provided (┬┬﹏┬┬)", statusCodes["Bad Request"], {error:"Missing credentials"}));
 
         const hashedPass = bcrypt.hashSync(password, 10);
         const { user, error, msg } = await createUser({authObj:false, email, password: hashedPass, name, profile_pic, User});
 
-        if(error) throw new ExpressError(error.message, statusCodes["Server Error"], {error : "error is mentioned in msg"});
+        if(error) return next(new ExpressError(error.message, statusCodes["Server Error"], {error : "error is mentioned in msg"}));
         console.log(`User created in DB:\n`, user);
-        if(!user) throw new ExpressError(msg, statusCodes["Not Found"], {error: "User not found"});
+        if(!user) return next(new ExpressError(msg, statusCodes["Not Found"], {error: "User not found"}));
 
         const jwtToken = jwt.sign(JSON.stringify(user), process.env.JWT_SECRET || "random-secret");
         res.cookie("registerToken", jwtToken, { /* httpOnly:true, */ maxAge: 7 * 24 * 60 * 60 * 1000 })
@@ -55,16 +55,16 @@ module.exports.loginUser = async (req, res, next) => {
     try {
         const { email, password } = req.body;
         const { success, data } = loginBody.safeParse(req.body);
-        if(!success) throw new ExpressError("Invalid Login credentials ━┳━ ━┳━", statusCodes["Bad Request"], {error: "zod deemed invalid: login creds"})
-        if(!email || !password) throw new ExpressError("Login Credentials not provided (┬┬﹏┬┬)", statusCodes["Bad Request"], {error:"Missing credentials"});
+        if(!success) return next(new ExpressError("Invalid Login credentials ━┳━ ━┳━", statusCodes["Bad Request"], {error: "zod deemed invalid: login creds"}))
+        if(!email || !password) return next(new ExpressError("Login Credentials not provided (┬┬﹏┬┬)", statusCodes["Bad Request"], {error:"Missing credentials"}));
 
         const user = await checkUserExists({email, User});
 
-        if(!user) throw new ExpressError("user login failed (┬┬﹏┬┬)", statusCodes["Not Found"], {error: "User not exists"})
-        console.log("this is user inside loginAuth: ", user);
+        if(!user) return next(new ExpressError("user login failed (┬┬﹏┬┬)", statusCodes["Not Found"], {error: "User not exists"}))
+        console.log("User inside loginAuth: ", user);
 
         const passCheck = bcrypt.compareSync(password, user.password);
-        if(!passCheck) throw new ExpressError("User Login failed (┬┬﹏┬┬)", statusCodes.Unauthorized, {error: "Wrong password/username"});
+        if(!passCheck) return next(new ExpressError("User Login failed (┬┬﹏┬┬)", statusCodes.Unauthorized, {error: "Wrong password/username"}));
         
         const jwtToken = jwt.sign(JSON.stringify(user), process.env.JWT_SECRET || "random-secret");
         res.cookie("registerToken", jwtToken, { /* httpOnly:true,*/ maxAge: 7 * 24 * 60 * 60 * 1000 })
@@ -82,7 +82,7 @@ module.exports.loginUser = async (req, res, next) => {
 module.exports.googleAuth = async (req, res, next) => {
     try{
         const { tokens } = await oAuth2Client.getToken(req.body.code);
-        if(!tokens) throw new ExpressError("Google Auth token Missing", statusCodes["Bad Request"], {error: "error mentioned in msg"});
+        if(!tokens) return next(new ExpressError("Google Auth token Missing", statusCodes["Bad Request"], {error: "error mentioned in msg"}));
         const authObj = jwt.decode(tokens.id_token);
 
         // 1. check if user exists
@@ -101,8 +101,8 @@ module.exports.googleAuth = async (req, res, next) => {
         }else {
             const { user, error, msg } = await createUser({ authObj, email:null, password:null, name:null, profile_pic:null, User });
 
-            if(error) throw new ExpressError(error.message, statusCodes["Server Error"], {error: "User not created, due to error"})
-            if(!user) throw new ExpressError("User not created", statusCodes["Server Error"], {error:"Error during user creation"})
+            if(error) return next(new ExpressError(error.message, statusCodes["Server Error"], {error: "User not created, due to error"}))
+            if(!user) return next(new ExpressError("User not created", statusCodes["Server Error"], {error:"Error during user creation"}))
 
             const googleToken = jwt.sign(JSON.stringify(user), process.env.JWT_SECRET || "random-secret");
             res.cookie("googleToken", googleToken, { maxAge : 7 * 24 * 60 * 60 * 1000 });

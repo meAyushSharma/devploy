@@ -131,7 +131,12 @@ module.exports.envDeploy = async (req, res, next) => {
                     Memory: 512 * 1024 * 1024,
                     CpuShares: 1024,
                     NetworkMode: netName,
-                }
+                    ReadonlyRootfs: false,
+                    CapDrop: ["All"],
+                    SecurityOpt: ["no-new-privileges"],
+                    Privileged: false,
+                },
+                Volumes: {},
             });
             await container.start();
             const containerInfo = await container.inspect();

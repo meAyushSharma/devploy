@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 const url = require("url");
 const docker = require("../utils/dockerInstance");
 const statusCodes = require("../utils/statusCodes");
-const { dockerCommandExecHelper } = require("../helper/dockerCommandExecHelper");
 
 module.exports.webSocketConnectionOn = async (ws, req) => { 
         console.log(req.headers.origin);
@@ -10,11 +9,13 @@ module.exports.webSocketConnectionOn = async (ws, req) => {
         if(!token){
             console.log("❌ Closing connection: Missing token");
             ws.send("Unauthorized access denied");
+            ws.close(statusCodes["Ws Unauthorized"]);
             return;
         }
         if(!contId) {
             console.log("❌ Closing connection: Missing contId");
             ws.send("Unauthorized access denied");
+            ws.close(statusCodes["Ws Forbidden"]);
             return;
         }
     
@@ -23,11 +24,13 @@ module.exports.webSocketConnectionOn = async (ws, req) => {
             if(!verifiedToken){
                 console.log("Unauthorized user access denied");
                 ws.send("Unauthorized access denied");
+                ws.close(statusCodes["Ws Unauthorized"]);
                 return;
             }
         }  catch (err) {
             console.log("Error during token verification: ", err.message);
             ws.send("Unauthorized access denied");
+            ws.close(statusCodes["Ws Internal Error"]);
             return;
         }
         console.log("Token: ", token);
@@ -59,15 +62,17 @@ module.exports.webSocketConnectionOn = async (ws, req) => {
         
             const stream = await exec.start({ stdin: true, hijack: true });
         
-            // Send the container's output to the WebSocket
             stream.on("data", (data) => {
                 ws.send(data.toString());
             });
         
-            // Receive commands from the WebSocket and write to the container
             ws.on("message", (msg) => {
                 console.log("Command received:", msg.toString());
-                stream.write(msg + "\n"); // Append newline so command executes
+                if(msg.toString()==='SIGINT'){
+                    stream.write("\x03");
+                }else{
+                    stream.write(msg + "\n");
+                }
             });
         
             ws.on("close", () => {
@@ -78,6 +83,7 @@ module.exports.webSocketConnectionOn = async (ws, req) => {
         } catch (error) {
             console.error("Error attaching to container:", error);
             ws.send(`Error: ${error.message}`);
+            ws.close(statusCodes["Ws Internal Error"]);
         }
 }
 

@@ -9,42 +9,6 @@ import useWebSocket , { ReadyState } from "react-use-websocket";
 import { userDetailsAtom } from "../store/atoms/userDetailsAtom";
 
 
-// const ActiveTerminals = () => {
-    // const token = useRecoilValue(userModeSelector);
-    // if (!token) return <div>Not authenticated</div>;
-
-//     const termRef = useRef(null);
-//     const wsRef = useRef(null);
-
-//     useEffect(() => {
-//             const term = new Terminal();
-
-//             if(termRef.current) {
-//                 term.open(termRef.current);
-//                 term.write("Connecting to container...\r\n");
-//                 wsRef.current = new WebSocket("http://localhost:4010");
-    
-//                 wsRef.current.onopen = () => {
-//                     term.write("Connected to container logs.\r\n");
-//                 };
-    
-//                 wsRef.current.onmessage = (event) => {
-//                     term.write(event.data);
-//                 };
-//                 wsRef.current.onclose = () => {
-//                     term.write("\r\nDisconnected from container logs.\r\n");
-//                 };
-//             }
-//         return () => {
-//             term.dispose();
-//             if (wsRef.current) wsRef.current.close();
-//         };
-//     }, []);
-
-//     return <div ref={termRef} className="w-full h-full"></div>;
-// };
-
-
 const ActiveTerminals = ({terminal}) => {
    // ws setup
     // const WSL_URL = import.meta.env.VITE_WS_URL || `http://localhost:4010`
@@ -64,9 +28,12 @@ const ActiveTerminals = ({terminal}) => {
             theme: {
                 background:"#1E1E3F",
                 foreground:"#A599E9",
+                selectionBackground:"#adb5bd",
+                selectionForeground:"#212529",
             },
             rows:"30",
-            scrollback:1500
+            scrollback:1500,
+            fontSize:16
         });
         const fitAddon = new FitAddon();
         term.current.loadAddon(fitAddon);
@@ -84,40 +51,65 @@ const ActiveTerminals = ({terminal}) => {
     
                 wsRef.current.onopen = () => {
                     retryRef.current = 0;
-                    term.current.write(`User: ${userDetails.email}\r\nLogged into container: [${terminal.containerName}]\r\nAt time: ${(new Date()).toISOString()}\r\nType your commands below: (enter exit to kill shell)\r\n`);
+                    term.current.write(`~ User: ${userDetails.email}\r\n~ Logged into container: [${terminal.containerName}]\r\n~ At time: ${(new Date()).toISOString()}\r\n~ Enter exit to kill shell/terminal\r\n~ Enter ctrl+c to stop running process in shell/terminal.\r\n~ Type your commands below: \r\n`);
                 };
     
                 wsRef.current.onmessage = (event) => {
                     term.current.write(event.data);
                 };
+
+                term.current.attachCustomKeyEventHandler((event) => {
+                    if ((event.ctrlKey || event.metaKey) && (event.key === 'c' || event.key === 'v')) {
+                        return true;
+                    }
+                    return true;
+                });
     
                 // Capture user input and send it to WebSocket
                 term.current.onKey(({ key, domEvent }) => {
                     console.log(domEvent.key);
-                    const isPrintable = /^[a-zA-Z0-9 .,!?_-]$/.test(key);
+                
+                    const isPrintable = /^[a-zA-Z0-9:/.,!?_\-\s]$/.test(key);
+                
                     if (domEvent.key === "Enter") {
-                        // console.log("Entering the command: ", input);
-                        if(inputBuffer.trim()){
-                            console.log("Tnput buffer befor sending is: ", inputBuffer);
+                        if (inputBuffer.trim()) {
+                            console.log("Input buffer before sending:", inputBuffer);
                             term.current.write("\r\n");
                             wsRef.current.send(inputBuffer);
                             inputBuffer = "";
                         }
-                    } else if (domEvent.key === "Backspace"){
-                        if(inputBuffer){
+                    }
+                    else if (domEvent.key === "Backspace") {
+                        if (inputBuffer) {
                             term.current.write("\b \b");
-                            inputBuffer = inputBuffer.slice(0,-1);
+                            inputBuffer = inputBuffer.slice(0, -1);
                         }
+                    }
+                    else if (domEvent.ctrlKey && domEvent.key === "c") {
+                        const selection = term.current.getSelection();
+                        if (selection) {
+                            document.execCommand("copy");
+                        } else {
+                            wsRef.current.send("SIGINT");
+                        }
+                    }
+                    else if (domEvent.ctrlKey && domEvent.key === "v") {
+                        navigator.clipboard.readText().then((text) => {
+                            inputBuffer += text;
+                            term.current.write(text);
+                        });
                     }
                     else {
                         if (isPrintable) {
                             inputBuffer += key;
                             term.current.write(key);
-                          } else {
+                        } else {
                             domEvent.preventDefault();
-                          }
+                        }
                     }
                 });
+                
+                
     
                 wsRef.current.onclose = () => {
                     retryRef.current += 1;
