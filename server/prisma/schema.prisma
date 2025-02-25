@@ -30,7 +30,7 @@ model Environment {
   userId     Int
   created_at DateTime @default(now())
   value      String
-  user       User     @relation(fields: [userId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   images     Image[]
 }
 
@@ -40,7 +40,7 @@ model Compose {
   userId     Int
   created_at DateTime @default(now())
   value      String
-  user       User     @relation(fields: [userId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Container {
@@ -52,9 +52,9 @@ model Container {
   imageId    Int
   ports      String
   userId     Int
-  user       User     @relation(fields: [userId], references: [id])
-  image      Image    @relation(fields: [imageId], references: [id])
-  dockerId   String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  image      Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  dockerId   String   @unique
 }
 
 model Image {
@@ -64,7 +64,13 @@ model Image {
   userId      Int
   envId       Int
   container   Container[]
-  environment Environment @relation(fields: [envId], references: [id])
-  user        User        @relation(fields: [userId], references: [id])
-  dockerId    String
+  environment Environment @relation(fields: [envId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dockerId    String      @unique
+}
+
+model MetaData {
+  email       String   @id     @unique
+  code        String
+  created_at  DateTime      @default(now())
 }

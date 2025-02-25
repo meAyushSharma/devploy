@@ -4,6 +4,7 @@ const Compose = require("../models/composeModel");
 const ExpressError = require("../utils/ExpressError");
 const statusCodes = require("../utils/statusCodes");
 const User = require("../models/userModel");
+const docker = require("../utils/dockerInstance");
 
 const jsonBody = zod.object({
     content : zod.string().nonempty(),
@@ -105,9 +106,42 @@ module.exports.deleteEnvironment = async (req, res, next) => {
             select : {
                 name : true,
                 id: true,
+                images : {
+                    select : {
+                        dockerId : true,
+                        name: true,
+                        container : {
+                            select : {
+                                dockerId : true,
+                                name: true
+                            }
+                        }
+                    }
+                }
             }
         });
         if(!deleteEnv) return next(new ExpressError("Error occured in DB during deletion of environment", statusCodes["Server Error"], { error: "Database error"}));
+        try {
+            for (const image of deleteEnv.images) {
+                for (const cont of image.container) {
+                    const container = docker.getContainer(cont.dockerId);
+                    const inspectData = await container.inspect();
+                    if (inspectData.State.Running) {
+                        await container.stop();
+                        console.log(`Container ${cont.name} stopped successfully upon env deletion`);
+                    }
+                    await container.remove({ force: true });
+                    console.log(`Container ${cont.name} removed from docker as well successfully upon env deletion`);
+                }
+                const removableImage = docker.getImage(image.dockerId);
+                console.log("Time: ", (await removableImage.inspect()).Created);
+                await removableImage.remove({ force: true });
+                console.log(`Image: ${image.name} removed from docker as well successfully`);
+            }
+        } catch (dockerErr) {
+            console.log(`Error deleting docker images and containers while deleting env is: `, dockerErr.message);
+        }
+        
         console.log(`deleted environment:\n`, deleteEnv);
         return res.status(statusCodes.Ok).json({
             success : true,

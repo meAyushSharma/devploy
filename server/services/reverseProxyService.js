@@ -63,6 +63,7 @@ module.exports.reverseProxyService = async (req, res) => {
                 proxy.web(req, res, {target: target, changeOrigin: true});
                 proxy.on("error", (err, req, res) => {
                     console.error(`Proxy error: ${err.message}`);
+                    console.log("Proper error is this: ", err)
                     if (!res.headersSent) {
                         // res.writeHead(statusCodes["Server Error"], { "Content-Type": "application/json" });
                         res.end(JSON.stringify({

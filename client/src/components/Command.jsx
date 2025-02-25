@@ -25,7 +25,7 @@ const Command = ({type}) => {
         onClickFun={addCommand} 
         condition={
             (globalCommand && <div className="flex gap-8 items-center">
-                <div className="font-medium text-gray-800 items-center">Network Name : {globalCommand}</div>
+                <div className="font-medium text-gray-800 items-center md:text-xl sm:text-base text-sm">Command Name : {globalCommand}</div>
                 <Button>
                     <button onClick={delCommand}>Delete</button>
                 </Button>

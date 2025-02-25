@@ -15,37 +15,42 @@ services:
   server:
     build:
       context: ./server
-      dockerfile: Dockerfile
-    container_name: devbox-server
+      dockerfile: Dockerfile.dev
+    # container_name: devbox-server
     restart: always
-    env_file: ./server/.env
+    env_file: ./server/.env.local
+    environment:
+      - NODE_ENV=development
     volumes:
       - "./server:/app"
       - /app/node_modules
       - "/var/run/docker.sock:/var/run/docker.sock"
-    ports:
-      - "3007:3007"
-      - "80:3030"
-      - "4010:4010"
+    # ports:
+    #   - "3007:3007"
+    #   - "80:3030"
+    #   - "4010:4010"
     networks:
       - devbox-network
+    command: npm run dev
     depends_on:
       - postgres
 
   client:
     build: 
       context: ./client
-      dockerfile: Dockerfile
-    container_name: devbox-client
+      dockerfile: Dockerfile.dev
+    # container_name: devbox-client
     restart: always
-    env_file: ./client/.env
+    env_file: ./client/.env.local
+    environment:
+      - NODE_ENV=local
     volumes:
       - "./client:/app"
       - /app/node_modules
     networks:
       - devbox-network
-    ports:
-      - 5173:5173
+    # ports:
+    #   - 5173:5173
     command: npm run dev -- --host
     depends_on:
       - server
@@ -53,10 +58,10 @@ services:
   worker:
     build:
       context: ./server
-      dockerfile: Dockerfile
-    container_name: devbox-cronjob-worker
+      dockerfile: Dockerfile.dev
+    # container_name: devbox-cronjob-worker
     restart: always
-    env_file: ./server/.env
+    env_file: ./server/.env.local
     volumes:
       - "./server:/app"
       - /app/node_modules
@@ -67,10 +72,39 @@ services:
       - postgres
       - server
     command: ["npm", "run", "start:cron"]
+  
+  
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - devbox-network
+    depends_on:
+      - server
+      - client
+
+  # cloudflared:
+  #   image: cloudflare/cloudflared:latest
+  #   restart: unless-stopped
+  #   env_file:
+  #     - ./server/.env
+  #   environment:
+  #     - TUNNEL_TOKEN=eyJhIjoiZTc0NmUyYWZjOTU5NDE0YTE2ZWQzZTkxYWFkOGJlYWIiLCJ0IjoiYzQ1YmYxNDItY2MzOS00NTcxLWFhMWYtN2U1ZmIzYzM3MDE2IiwicyI6IlpHUm1NakU1WldZdFpXRm1OUzAwTldVeUxXRTFOemd0WldObE4ySXpNVEJpWTJZMiJ9
+  #   command: tunnel --no-autoupdate run
+  #   networks:
+  #     - devbox-network
 
 
 volumes:
   my_postgres_data:
+  caddy_data:
+  caddy_config:
 
 networks:
   devbox-network:

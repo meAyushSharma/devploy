@@ -1,4 +1,4 @@
-import { lazy, memo, useMemo } from "react";
+import { lazy, memo, useEffect, useMemo } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useNavigate } from "react-router-dom";
 
@@ -19,9 +19,11 @@ import { generateDockerfile } from "../helper/generateDockerfile";
 import { saveToLocal } from "../helper/saveToLocal";
 
 import Button from "./common/Button";
+import { useAlert } from "../hooks/useAlert";
 const DockerfileCode = lazy(() => import("./DockerfileCode"));
 
 const CreateDockerfile = memo(({type}) => {
+    const {showAlert} = useAlert();
     const input = useRecoilValue(getDockerfileFamily(type));
     // console.log("this is input: ", input)
     const dockerfile = useMemo(() => generateDockerfile(input) , [generateDockerfile, input]);
@@ -51,7 +53,7 @@ const CreateDockerfile = memo(({type}) => {
     const env = type === "env";
     const [testDockerfile, setTestDockerfile] = useRecoilState(testDockerfileAtom(type));
 
-    const { saveEnvironment, isSaving } = useSaveEnvironment({
+    const { saveEnvironment, isSaving, saveEnvError, envSaved } = useSaveEnvironment({
         setTestDockerfile,
         resetEnvAtoms,
         setServiceCount,
@@ -63,6 +65,8 @@ const CreateDockerfile = memo(({type}) => {
         isUserRegistered
     });
 
+    useEffect(() => {envSaved && showAlert("Environment saved successfully (づ￣ 3￣)づ", "info")}, [envSaved]);
+    useEffect(() => {saveEnvError && showAlert("Error saving environment (┬┬﹏┬┬)", "error")}, [saveEnvError]);
 
     return (
         <div className="my-4 border-2 border-violet-500/50 hover:border-violet-500/100 p-2 rounded-lg">

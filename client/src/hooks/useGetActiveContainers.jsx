@@ -8,13 +8,14 @@ import { openTerminalsAtom } from "../store/atoms/openTerminalsAtom";
 export const useGetActiveContainers = () => {
     const [isGettingConts, setIsGettingConts] = useState(false);
     const [errorGettingContainers, setError] = useState(null);
+    const [getConts, setGetConts] = useState(false);
     const token = useRecoilValue(userModeSelector);
     const setDeployDetails = useSetRecoilState(envDeployDetails);
     const setOpenTerminals = useSetRecoilState(openTerminalsAtom);
     const fetchContainers = async () => {
         if(isGettingConts) return;
         if(!token) {
-            setError("Unauthorized Access Denied: no token on client")
+            setError("Unauthorized Access Denied: no token on client");
             setIsGettingConts(false);
             return;
         }
@@ -67,6 +68,7 @@ export const useGetActiveContainers = () => {
                 }
             })
             const activeContainersDetails = Object.entries(sortedObj);
+            setGetConts(true);
             setDeployDetails(activeContainersDetails);
             // console.log("This is activeContainersDetails: ", activeContainersDetails);
         } catch (err) {
@@ -77,6 +79,6 @@ export const useGetActiveContainers = () => {
         }
     }
     return {
-        fetchContainers, errorGettingContainers, isGettingConts
+        fetchContainers, errorGettingContainers, isGettingConts, getConts
     }
 }

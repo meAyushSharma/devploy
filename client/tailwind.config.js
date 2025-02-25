@@ -16,7 +16,10 @@ export default {
       colors: {
         "soft-white": "#fefffe",
         "soft-dark":"#111",
-        "format-code-dark":"#17191E"
+        "format-code-dark":"#17191E",
+        "soft-indigo":"#cdb4db",
+        "soft-brown":"#efd780",
+        "soft-green":"#ccd5ae",
       }
     },
   },

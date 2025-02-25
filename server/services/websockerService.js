@@ -51,7 +51,8 @@ module.exports.webSocketConnectionOn = async (ws, req) => {
         // });
         try {
             const container = docker.getContainer(CONTAINER_ID);
-            console.log("Container name is: ", (await container.inspect()).Name);
+            const contName = (await container.inspect()).Name;
+            console.log("Container name is: ", contName);
             const exec = await container.exec({
                 Cmd: ["/bin/sh"],
                 AttachStdin: true,

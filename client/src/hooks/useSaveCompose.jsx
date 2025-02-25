@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 export const useSaveCompose = ({ saveToDB, saveToLocal, dockerfiles, composeFile, debouncedName, nameIsValid, resetAllAtoms, isUserRegistered }) => {
     const navigate = useNavigate();
     const [isSaving, setIsSaving] = useState(false);
-
+    const [composeSaved, setSaved] = useState(false);
+    const [composeError, setError] = useState(null);
     const saveCompose = async ({ id }) => {
         try {
             // Save individual service files
@@ -80,20 +81,28 @@ export const useSaveCompose = ({ saveToDB, saveToLocal, dockerfiles, composeFile
                 const dbResponse = await saveToDB({ jsonFile, type: "compose" });
                 if (dbResponse.data?.success) {
                     console.log("Successfully saved compose to database");
-                    await saveCompose({ id: dbResponse.data.id });
+                    const res = await saveCompose({ id: dbResponse.data.id });
+                    if(res?.data?.success){
+                        setSaved(true);
+                    }
                 } else {
+                    setError(dbResponse.data.error);
                     console.error("Error saving compose to database: ", dbResponse.data.error);
                 }
             } catch (err) {
                 console.log("Error saving compose data either in DB or local: ", err);
-                alert("Some error occurred, compose not saved");
+                setError(err);
             } finally {
                 setIsSaving(false);
             }
         } else {
             try {
-                await saveCompose({id: 1});
+                const res = await saveCompose({id: 1});
+                if(res?.data?.success) {
+                    setSaved(true);
+                }
             } catch (err) {
+                setError(err);
                 console.error("Error in saving Compose file locally in guest mode: ", err);
             } finally {
                 setIsSaving(false);
@@ -101,5 +110,5 @@ export const useSaveCompose = ({ saveToDB, saveToLocal, dockerfiles, composeFile
         }
     };
 
-    return { saveComposeToDB, isSaving };
+    return { saveComposeToDB, isSaving, composeSaved, composeError };
 };

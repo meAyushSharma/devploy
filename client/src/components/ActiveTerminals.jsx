@@ -7,19 +7,36 @@ import { AttachAddon } from '@xterm/addon-attach';
 import "@xterm/xterm/css/xterm.css";
 import useWebSocket , { ReadyState } from "react-use-websocket";
 import { userDetailsAtom } from "../store/atoms/userDetailsAtom";
+import Button from "./common/Button";
+import { IoTerminal } from "react-icons/io5";
+import { IoTerminalOutline } from "react-icons/io5";
+import { IoExit } from "react-icons/io5";
+import { FaCircleStop } from "react-icons/fa6";
 
-
-const ActiveTerminals = ({terminal}) => {
-   // ws setup
-    // const WSL_URL = import.meta.env.VITE_WS_URL || `http://localhost:4010`
+const ActiveTerminals = ({terminal, index}) => {
     const token = useRecoilValue(userModeSelector);
     if (!token) return <div>Not authenticated</div>;
+    const WS_URL = `${import.meta.env.VITE_BACKEND_DOMAIN}/ws?token=${token}&contId=${terminal.contDockerId}` || `https://server.devbox.localhost/ws?token=${token}&contId=${terminal.contDockerId}`
+    console.log("WS_URL: ", WS_URL);
     const userDetails = useRecoilValue(userDetailsAtom);
     const termRef = useRef(null);
     const wsRef = useRef(null);
     const term = useRef(null);
     const retryRef = useRef(0);
     let inputBuffer = "";
+    const [terminalToggle, setTerminalToggle] = useState(true);
+
+    const handleExit = (e) => {
+        if(wsRef.current && term.current) {
+            wsRef.current.send("exit");
+        }
+    }
+
+    const handleStop = e => {
+        if(wsRef.current && term.current) {
+            wsRef.current.send("SIGINT");
+        }
+    }
     
     useEffect(() => {
         term.current = new Terminal({
@@ -39,7 +56,9 @@ const ActiveTerminals = ({terminal}) => {
         term.current.loadAddon(fitAddon);
 
         const connectWebSocket = () => {
-            if (retryRef.current >= 5) return;
+            if (retryRef.current >= 2){
+                return;
+            }
             if (!termRef.current) return;
             if (termRef.current) {
                 term.current.open(termRef.current);
@@ -47,7 +66,7 @@ const ActiveTerminals = ({terminal}) => {
                 term.current.write("Connecting to container...\r\n");
     
                 // Connect to WebSocket server
-                wsRef.current = new WebSocket(`http://localhost:4010?token=${token}&contId=${terminal.contDockerId}`);
+                wsRef.current = new WebSocket(WS_URL);
     
                 wsRef.current.onopen = () => {
                     retryRef.current = 0;
@@ -128,11 +147,18 @@ const ActiveTerminals = ({terminal}) => {
     }, []);
 
     return (
-        <div className="rounded-lg my-10">
-            <div className="text-xl text-gray-800 font-medium mt-4 mb-2">
-                Terminal to service : {terminal.containerName}
+        <div className="rounded-lg border-2 border-gray-950/60 my-4 py-4">
+            <div className="md:text-xl sm:text:-md text-base text-gray-800 font-medium w-[96%] m-auto flex justify-between items-center">
+                <span>{index}. Terminal to service : <span className="border-b-2 border-dashed border-gray-950">{terminal.containerName}</span></span>
+                <span className="flex gap-4 items-center">
+                    <FaCircleStop className="text-gray-950/90 text-xl sm:text-2xl cursor-pointer hover:text-gray-950" onClick={handleStop}/>
+                    <IoExit className="text-gray-950/90 sm:text-4xl text-2xl cursor-pointer hover:text-gray-950" onClick={handleExit}/>
+                    {terminalToggle ? 
+                    <IoTerminal className={`text-gray-950/90 sm:text-3xl text-xl cursor-pointer hover:text-gray-950`} onClick={() => setTerminalToggle(state => !state)}/>
+                    : <IoTerminalOutline className="text-gray-950/90 sm:text-3xl text-xl cursor-pointer hover:text-gray-950" onClick={() => setTerminalToggle(state => !state)}/>}
+                </span>
             </div>
-            <div ref={termRef} className="w-full h-full bg-rose-500 text-white"></div>
+            <div ref={termRef} className={`w-[96%] h-full bg-rose-500 text-white m-auto my-5 ${terminalToggle ? "":"hidden"}`}></div>
         </div>
     )
 };

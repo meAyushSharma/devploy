@@ -4,12 +4,12 @@ import { MdDelete } from "react-icons/md";
 
 const FormattedCode = memo(({code, delFun}) => {
     return (
-        <div className="min-w-[40vw] max-w-[100%]">
+        <div className="min-w-[40vw] md:max-w-[100%] w-[300%] ">
          <pre className="">
             <code language="javascript">
                 <div className="flex font-Satoshi my-6">
                     <div className="w-1 bg-gray-500 rounded-lg ml-2"></div>
-                    <div className="bg-format-code-dark min-w-[40vw] p-8 text-white font-medium rounded-md ml-2 hover:shadow-2xl cursor-pointer overflow-x-auto text-wrap">
+                    <div className="bg-format-code-dark min-w-[40vw] p-8 text-slate-200 font-medium rounded-md ml-2 hover:shadow-2xl cursor-pointer overflow-x-auto text-wrap">
                         <div className="">
                             <IoCopy className="ml-auto text-xl cursor-pointer text-slate-500 hover:text-slate-300" onClick={e => {
                                 if(navigator.clipboard) navigator.clipboard.writeText(code);

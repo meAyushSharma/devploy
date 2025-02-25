@@ -5,6 +5,7 @@ import userApiService from "../utils/userApiService";
 export const useSetLocalData = () => {
     const [isFetching, setIsFetching] = useState(false);
     const [fetchError, setFetchError] = useState(null);
+    const [refreshedData, setRefreshedData] = useState(false);
     const setFetchedData = async () => {
         if (isFetching) return;
         setIsFetching(true);
@@ -14,9 +15,8 @@ export const useSetLocalData = () => {
 
             if(!dbData?.success) {
                 console.log("Data fetching from Database failed");
-                // alert user
                 setFetchError(dbData?.error);
-            }else {
+            } else {
                 // 1. create global array to store promises
                 const dbDataPromises = [];
 
@@ -96,12 +96,12 @@ export const useSetLocalData = () => {
                 // 4. Resolve all the promises parallely
                 const dbToLocalTransferResults = await Promise.all(dbDataPromises);
                 const transferFailedRedults = dbToLocalTransferResults.filter(event => !event?.data?.success);
+                setRefreshedData(true);
                 if (transferFailedRedults.length > 0) {
                     console.error(`Failed saves from DB to Local:`, transferFailedRedults);
-                    alert("Some services could not be saved. Check the console for details.");
+                    setRefreshedData("Some services could not be saved");
                 }
             }
-
         }
         catch (err) {
             console.log("Error during transfer of data from DB to Local is : ", err);
@@ -112,6 +112,6 @@ export const useSetLocalData = () => {
         }
     }
     return {
-        isFetching, setFetchedData, fetchError
+        isFetching, setFetchedData, fetchError, refreshedData
     }
 }

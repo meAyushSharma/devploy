@@ -6,14 +6,16 @@ import { FiLoader } from "react-icons/fi";
 import FormattedCode from "../components/FormattedCode";
 import { userDetailsAtom } from "../store/atoms/userDetailsAtom";
 import { userModeSelector } from "../store/selectors/userModeSelector";
+import { useAlert } from "../hooks/useAlert";
 
 const DevAi = () => {
     const isUserRegistered = useRecoilValue(userModeSelector);
+    const {showAlert} = useAlert();
     const userDetails = useRecoilValue(userDetailsAtom);
     const {messages, isLoading, error, query, setQuery, sendQuery} = useChat();
     const messageRef = useRef(null);
-    useEffect(() => { messageRef.current?.scrollIntoView({behavior : "smooth"}) }, [messages])
-
+    useEffect(() => { messageRef.current?.scrollIntoView({behavior : "smooth"}) }, [messages]);
+    useEffect(() => {error && showAlert("Error in getting AI response (┬┬﹏┬┬)", "error")}, [error]);
     return ( 
         <div className="font-Satoshi">
             <div className="text-9xl font-bold text-center text-format-code-dark mt-10 mb-[20vh]">

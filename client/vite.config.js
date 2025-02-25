@@ -16,9 +16,10 @@ export default defineConfig({
     watch: {
       usePolling: true
     },
-    hmr: {
-      host: 'localhost',
-    }
+    // hmr: {
+    //   host: 'localhost',
+    //   host: 'devbox-client.meayushsharma.co',
+    // }
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx']

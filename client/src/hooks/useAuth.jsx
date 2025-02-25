@@ -6,14 +6,14 @@ export const useAuth = ({type}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
-    const authFun = async ({email, password, setAuth, name}) => {
+    const authFun = async ({ email, password, setAuth, name, code }) => {
         if(isLoading) return;
         setIsLoading(true);
         setError(null);
         setSuccess(false);
         try{
             if(!email.trim() || !password.trim()) throw new Error("Email and password are required");
-            const updatedValue = { email, password, name, profile_pic: profilePicUrls[Math.floor(Math.random()*12)]};
+            const updatedValue = { email, password, name, profile_pic: profilePicUrls[Math.floor(Math.random()*12)], code };
             const sendData = await (type ? authService.registerUser(updatedValue) : authService.loginUser(updatedValue))
             if(await sendData.data.success){
                 console.log(sendData.data.msg);

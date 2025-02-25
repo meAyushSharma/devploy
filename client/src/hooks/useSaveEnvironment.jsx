@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 export const useSaveEnvironment = ({ setTestDockerfile, resetEnvAtoms, setServiceCount, saveToDB, saveToLocal, dockerfileJSON, env, name, isUserRegistered }) => {
     const navigator = useNavigate();
     const [isSaving, setIsSaving] = useState(false);
+    const [envSaved, setSaved] = useState(false);
+    const [saveEnvError, setError] = useState(null);
 
     const saveProject = async ({ id }) => {
         setTestDockerfile(dockerfileJSON);
@@ -16,8 +18,10 @@ export const useSaveEnvironment = ({ setTestDockerfile, resetEnvAtoms, setServic
         if (event.data.success) {
             console.log("Successfully saved env data on local");
             resetEnvAtoms();
+            setSaved(true);
             navigator("/builds");
         } else {
+            setError(event?.data?.error)
             console.error("The error saving environment data to local is: ", event.data.error);
         }
     };
@@ -35,11 +39,11 @@ export const useSaveEnvironment = ({ setTestDockerfile, resetEnvAtoms, setServic
                         // alert user
                     } else {
                         console.log("Error saving env data to Database : ", dbResponse.data.error);
-                        alert("Error occurred during saving of environment");
+                        setError(dbResponse.data.error);
                     }
                 } catch (err) {
                     console.log("Error saving environment data either in db or local : ", err);
-                    alert("Some error occurred, environment not saved");
+                    setError(err);
                 } finally {
                     setIsSaving(false);
                 }
@@ -48,6 +52,7 @@ export const useSaveEnvironment = ({ setTestDockerfile, resetEnvAtoms, setServic
                 try {
                     await saveProject({id : 1});
                 } catch (err) {
+                    setError(err);
                     console.error("Error during env file save to local in guest mode : ", err);
                 } finally {
                     setIsSaving(false);
@@ -60,5 +65,5 @@ export const useSaveEnvironment = ({ setTestDockerfile, resetEnvAtoms, setServic
         }
     };
 
-    return { saveEnvironment, isSaving };
+    return { saveEnvironment, isSaving, envSaved, saveEnvError };
 };

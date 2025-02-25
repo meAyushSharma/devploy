@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 export const useWorkerValidName = ({workerPath, debouncedName, type="env"}) => {
     const [nameIsValid, setNameIsValid] = useState(null);
     useEffect(() => {
-        if (!debouncedName || debouncedName.includes("/")) {
+        if (!debouncedName || debouncedName.includes("/") || debouncedName.includes(" ")) {
             setNameIsValid(null);
             return;
         }

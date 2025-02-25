@@ -48,17 +48,17 @@ const DockerfileCode = memo(({dockerfile, delFun}) => {
     //     envVariables:input.envVariables
     // }
     return (
-    <div className="grid md:grid-cols-[1fr_1fr]">
+    <div className="grid md:grid-cols-[3fr_2fr] overflow-x-auto">
         <div className="">
             <FormattedCode code={dockerfile.dockerfile} delFun={delFun ? delFun : ""}/>
         </div>
-        <div className="grid font-medium text-gray-700 text-lg h-fit mx-4">
+        <div className="grid font-medium text-gray-700 md:text-lg h-fit mx-4 text-xs sm:text-md">
             <div className="md:text-2xl h-fit md:my-4">
                 Commands to run :
             </div>
             <div className="grid md:gap-2">
                 <span className="docker-off-commands">
-                    $ docker build -t {dockerfile.name} (.)
+                    $ docker build -t {dockerfile.name} .
                 </span>
                 <span className="docker-off-commands">
                     {dockerfile.driver && getNetworkCommand(dockerfile)}

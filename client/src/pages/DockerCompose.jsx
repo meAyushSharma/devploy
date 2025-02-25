@@ -1,4 +1,4 @@
-import { lazy, useState } from "react";
+import { lazy, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState, useRecoilState } from "recoil";
 
@@ -22,12 +22,14 @@ import { generateCompose } from "../helper/generateCompose";
 import { saveToDB } from "../helper/saveToDB";
 import { useSaveCompose } from "../hooks/useSaveCompose";
 import { userModeSelector } from "../store/selectors/userModeSelector";
+import { useAlert } from "../hooks/useAlert";
 
 
 
 const DockerCompose = () => {
     // obviously type=service
     const navigate = useNavigate();
+    const {showAlert} = useAlert();
     //* handle project name : project name of docker compose is not global variable, so handle while keeping it in mind
     const [projName, setProjName] = useState("my-project");
     const debouncedName = useDebounce(projName, 1000);
@@ -51,7 +53,7 @@ const DockerCompose = () => {
 
     const saveToggle = (n-serviceDelTracker.length);
 
-    const { saveComposeToDB, isSaving } = useSaveCompose({
+    const { saveComposeToDB, isSaving, composeSaved, composeError } = useSaveCompose({
         saveToDB,
         saveToLocal,
         dockerfiles,
@@ -62,6 +64,14 @@ const DockerCompose = () => {
         isUserRegistered
     });
     
+    useEffect(() => {
+        composeSaved && showAlert("Saved compose files successfully (づ￣ 3￣)づ", "info");
+    }, [composeSaved]);
+
+    useEffect(() => {
+        composeError && showAlert("Error saving compose files (┬┬﹏┬┬)", "info");
+    }, [composeError]);
+
     return (
         <div className="font-Satoshi m-5 bg-soft-white">
             <div className="flex items-center">

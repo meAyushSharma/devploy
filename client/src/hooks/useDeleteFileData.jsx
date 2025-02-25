@@ -5,15 +5,16 @@ import { useRecoilValue } from "recoil";
 import { userModeSelector } from "../store/selectors/userModeSelector";
 
 export const useDeleteFileData = ({setTrigger}) => {
-    const isUSerResistered = useRecoilValue(userModeSelector);
+    const isUserRegistered = useRecoilValue(userModeSelector);
     const [isDeleting, setIsDeleting] = useState(false);
     const [delFileError, setError] = useState(null);
+    const [deleted, setDeleted] = useState(false);
     const delFun = async ({parentFolder, handle, delId, type}) => {
         if(isDeleting) return;
         if(!parentFolder || !handle || !delId) return;
         const isEnv = type === "env";
         setIsDeleting(true);
-    if(isUSerResistered){
+    if(isUserRegistered){
         try{
             const dbResponse = await (isEnv ? userApiService.deleteEnvironment({delId}) : userApiService.deleteCompose({delId}))
             if(dbResponse.data.success) {
@@ -21,6 +22,7 @@ export const useDeleteFileData = ({setTrigger}) => {
                 const success = await removeLocalHelper(parentFolder, handle);
                 if(success){
                     setTrigger(state => !state);
+                    setDeleted(true);
                     console.log("Successfully deleted environment file from local");
                 }else {
                     console.log("Error during deletion of env file on local");
@@ -46,11 +48,12 @@ export const useDeleteFileData = ({setTrigger}) => {
             const success = await removeLocalHelper(parentFolder, handle);
             if(success){
                 setTrigger(state => !state);
+                setDeleted(true);
                 console.log("Successfully deleted environment file from local");
             }else {
                 console.log("Error during deletion of env file on local");
                 setError("Error during deletion of env file on local");
-                    // alert user
+                // alert user
             }
         } catch(err) {
             setError(err);
@@ -60,6 +63,6 @@ export const useDeleteFileData = ({setTrigger}) => {
     }
     }
     return {
-        delFun, isDeleting, delFileError
+        delFun, isDeleting, delFileError, deleted
     }
 }

@@ -50,7 +50,8 @@ const CreateProject = memo(({type}) => {
     // getServiceNames(get names only) => have undeleted ones only.
     const services = useRecoilValue(getServiceNames);
     useEffect(() => {
-        service && debouncedName && (services.includes(debouncedName) ? setNameIsValid(false) : setNameIsValid(true));
+        service && debouncedName && services.includes(debouncedName) ? setNameIsValid(false) : (debouncedName.includes(" ") ? setNameIsValid(false) : setNameIsValid(true));
+        // service && debouncedName && !debouncedName.includes(" ") ? setNameIsValid(false) : setNameIsValid(true);
     }, [setNameIsValid, service, services, debouncedName]);
 
     
@@ -61,15 +62,15 @@ const CreateProject = memo(({type}) => {
     const packageManagers = useRecoilValue(selectedPackageManagerAtom(whatType));
 
     return (
-    <div className="font-Satoshi m-5 bg-soft-white">
+    <div className="font-Satoshi md:m-5 sm:m-3 m-2 bg-soft-white">
         <div className="flex items-center">
-            <span className="text-3xl font-semibold text-gray-700">{env?"Environment":`Service${serviceCount+1}`} name : </span>
+            <span className="md:text-3xl sm:text-xl text-base font-semibold text-gray-700">{env?"Environment":`Service${serviceCount+1}`} name : </span>
             <input 
             type="text"
             onBlur={handleBlur}
             onChange={e => setProjName(e.target.value.trim())}
             value={projName}
-            className={`border rounded text-lg font-medium px-2 text-center text-gray-700 mx-2 ${projName ? 'border-violet-500':'border-rose-500 mx-2'} enabled:hover:border-gray-400`}
+            className={`border rounded md:text-lg text-sm sm:text-md font-medium px-2 text-center text-gray-700 mx-2 ${projName ? 'border-violet-500':'border-rose-500 mx-2'} enabled:hover:border-gray-400`}
             />
             {!projName && isTouched && (
                 <div className="flex gap-1 items-center">
@@ -110,8 +111,8 @@ const CreateProject = memo(({type}) => {
         <Environments type={whatType}/>
         <NetworkConfig type={whatType}/>
         <Command type={whatType} />
-        <div className="w-full text-xl mt-4">
-            <div className="max-w-[10%] ml-auto text-xl mr-[3vw]">
+        <div className="w-full md:text-xl sm:text-base text-sm mt-4">
+            <div className="md:max-w-[10%] max-w-[30%] sm:max-w-[20%] ml-auto md:text-xl sm:text-base text-sm mr-[3vw]">
                 <Button>
                     <MdReviews/>
                     <button onClick={e => setReview(state => !state)}>Review</button>

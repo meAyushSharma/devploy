@@ -19,7 +19,7 @@ const PackageManager = memo(({label, isMulti=true, type}) => {
     ];
 
     return <div className="grid md:grid-cols-[1fr_3fr] mb-2">
-         <div className="flex items-center text-lg font-medium text-gray-800"><span>{label}</span><span>:</span></div>
+         <div className="flex items-center md:text-lg sm:text-base text-sm font-medium text-gray-800"><span>{label}</span><span>:</span></div>
          <div className="m-1">
             <Select
                 options={options}

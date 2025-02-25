@@ -23,7 +23,7 @@ const Ports = memo(({type}) => {
 
     return <div className="my-4">
         <div className="grid md:grid-cols-[1fr_4fr]">
-            <div className="flex text-lg font-medium text-gray-800 items-center">Expose Ports :</div>
+            <div className="flex md:text-lg sm:text-base text-sm font-medium text-gray-800 items-center">Expose Ports :</div>
             <div className="grid md:grid-cols-[3fr_3fr_1fr] gap-4 items-center">
                 <TextInput>
                     <input type="text" placeholder={"host port"} onChange={e => setChange(e.target.value, setHostPort)} value={hostPort} className="w-full p-1 rounded-lg text-black placeholder-gray-800"/>

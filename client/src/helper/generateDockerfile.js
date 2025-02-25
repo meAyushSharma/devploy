@@ -8,9 +8,35 @@ export const generateDockerfile = (input) => {
     // dockerfile += `\n# Following command will update system and install necessary dependencies/tools, it is for ubuntu and similar systems, change it accordingly\n`;
     // dockerfile += `\nRUN apt-get update && apt-get install -y curl git && apt-get clean\n`;
     dockerfile += `\n# Creation of non-root user (skip for root priviliges)\n`;
-    dockerfile += `RUN adduser -D -u 1001 devuser\n`;
+    dockerfile += `RUN (command -v addgroup && addgroup -g 1001 devuser && adduser -D -G devuser -u 1001 devuser) || \
+    (command -v groupadd && groupadd -g 1001 devuser && useradd -m -u 1001 -g devuser devuser) || \
+    (command -v groupadd && groupadd -r devuser && useradd -r -g devuser devuser) || \
+    (command -v pw && pw groupadd devuser && pw useradd devuser -u 1001 -G devuser -m) || \
+    (command -v dscl && dscl . -create /Users/devuser UserShell /bin/bash && dscl . -create /Users/devuser UniqueID 1001) || \
+    echo "Unsupported OS: Please create the user manually"\n`;
+    dockerfile += `\n# Installing git according to operating system\n`;
+    dockerfile += `RUN sh -c ' \
+    if command -v apk > /dev/null; then apk add --no-cache git; \
+    elif command -v apt-get > /dev/null; then apt-get update && apt-get install -y git; \
+    elif command -v yum > /dev/null; then yum install -y git; \
+    elif command -v dnf > /dev/null; then dnf install -y git; \
+    elif command -v pacman > /dev/null; then pacman -Sy --noconfirm git; \
+    elif command -v zypper > /dev/null; then zypper install -y git; \
+    elif command -v xbps-install > /dev/null; then xbps-install -y git; \
+    elif command -v eopkg > /dev/null; then eopkg install -y git; \
+    elif command -v pkg > /dev/null; then pkg install -y git; \
+    else echo "Unsupported OS: Install Git manually"; exit 1; \
+    fi'
+    \n`
+    dockerfile += `\n#Setting necessary permissions (skip for root priviliges)\n`;
+    dockerfile += `RUN mkdir -p /app /app/data && \
+    chown -R devuser:devuser /app /app/data && \
+    chmod -R 755 /app /app/data\n`
+    dockerfile += `\n# Set the working directory to /app\n`;
+    dockerfile += `WORKDIR /app\n`
     dockerfile += `\n# Switch to non-root user (skip for root priviliges)\n`;
-    dockerfile += `USER devuser`;
+    dockerfile += `USER devuser\n`;
+
 
     //2. add runtime(s)
     const defaultRuntimes = {
@@ -96,7 +122,7 @@ export const generateDockerfile = (input) => {
                 dockerfile = newDockerfile;
                 dockerfile += `\n# Setup for ${manager.value} (default runtime: ${runtimeForManager})\n`;
                 dockerfile += `FROM ${runtimeForManager}\n`;
-                dockerfile += `RUN apt-get update && apt-get install -y curl git && apt-get clean\n`
+                // dockerfile += `RUN apt-get update && apt-get install -y curl git && apt-get clean\n`
                 dockerfile += packageCommand || "";
             }
         })
@@ -123,8 +149,9 @@ export const generateDockerfile = (input) => {
     //7. command for bash
     dockerfile+=`\n# Command for bash\n`;
     if(command!=""){
-        dockerfile+= `ENTRYPOINT ["/bin/sh", "-c"]\n`;
-        dockerfile+=`CMD ["${command} && exec /bin/sh"]`;
+        // dockerfile+= `ENTRYPOINT ["/bin/sh", "-c"]\n`;
+        // dockerfile+=`CMD /bin/sh -c "${command} & tail -f /dev/null"`;
+        dockerfile+=`CMD [${command}]`;
     }else {
         dockerfile+=`CMD ["/bin/sh", "-c", "exec /bin/sh"]`
     }

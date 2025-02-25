@@ -18,7 +18,7 @@ cron.schedule("* * * * *", async () => {
                 await container.stop();
                 console.log(`Container ${dbContainer.name} stopped automatically.`);
             }
-            await container.remove();
+            await container.remove({ force: true });
             console.log(`Container ${dbContainer.name} removed automatically.`);
             await Container.delete({ where: { id: dbContainer.id } });
             console.log(`Container ${dbContainer.name} deleted from db automatically.`);
@@ -28,36 +28,61 @@ cron.schedule("* * * * *", async () => {
     }
 
     try {
-        const dbImages = await Image.findMany();
-        const containers = docker.listContainers();
-        // const images = docker.listImages();
-        for(const dbImage of dbImages) {
-            const inUse = (await containers).some(container => container.Image === dbImage.name);
-            if(!inUse) {
-                const dockerImage = docker.getImage(dbImage.name);
-                await dockerImage.remove();
-                console.log(`Docker image: ${dbImage.name} got removed from docker automatically successfully.`);
-                await Image.delete({ where: { id: dbImage.id }});
-                console.log(`Image : ${dbImage.name} got deleted from database automatically successfully.`)
-            }
-        }
-        const images = await docker.listImages();
+        // const images = (await docker.listImages()).map(image => (new Date() - new Date(image.Created*1000))/60000);
         // console.log("This is images: ", images);
-        for(const image of images) {
-            console.log("image: ", image);
-            const inUse = (await containers).some(container => container.Image === image.RepoTags[0]);
+        // remove images based on 
+        const containers = await docker.listContainers({all: true});
+        const dbImages = await Image.findMany();
+        const containersUsingImage = containers.map(cont => cont.Image);
+        for(const dbImage of dbImages) {
+            const inUse = containersUsingImage.includes(dbImage.name)
+            console.log(`Image : ${dbImage.name} to remove : ${!inUse}`);
             if(!inUse) {
-                const removableImage = docker.getImage(image.Id);
-                await removableImage.remove();
-                console.log(`Docker image: ${image.RepoTags[0]} got removed from docker automatically successfully.`);
+                const elapsedMinutes = (new Date() - new Date(dbImage.created_at)) / 60000;
+                if(elapsedMinutes >= 5) {
+                    try {
+                        const dockerImage = docker.getImage(dbImage.name);
+                        await dockerImage.remove();
+                        console.log(`Docker image: ${dbImage.name} got removed from docker automatically successfully.`);
+                        await Image.delete({ where: { id: dbImage.id }});
+                        console.log(`Image : ${dbImage.name} got deleted from database automatically successfully.`)
+                    } catch (err) {
+                        console.error(`Failed to remove image ${dbImage.name}:`, err);
+                    }
+                }
             }
         }
     } catch (err){
-
+        console.log("Error during automatic image deletion is: ", err)
     }
-
-    // const image = docker.getImage("sha256:385c418cf9461cd92e0d39b00b9762ddbac01cf77a2a0b400b37e092b6e22fbf");
-    // console.log("This is image: ",image);
 });
+
+cron.schedule("*/30 * * * *", async () => {
+    // automatic removal of unused base docker images
+    const containers = await docker.listContainers({all: true});
+    const images = await docker.listImages();
+        const usedImageIds = new Set(containers.map(container => container.ImageID));
+        const unUsedImages = images.filter(image => !usedImageIds.has(image.Id));
+        for(const image of unUsedImages) {
+            console.log("Created time is: ", image.Created);
+            const elapsedMinutes = (new Date() - new Date(image.Created * 1000)) / 60000;
+            console.log(`Elapsed time for removal in mins is: ${elapsedMinutes}`);
+            if(elapsedMinutes >= 10) {
+                try {
+                    console.log(`Removing unused image after 5 min of wait: ${image.Id}`);
+                    await docker.getImage(image.Id).remove();
+                } catch (err) {
+                    console.error(`Failed to remove image ${image.Id}:`, err);
+                }
+            }
+            console.log('Unused images removed successfully.');
+        }
+        try {
+            const result = await docker.pruneImages();
+            console.log("Dangling images removed:", result);
+        } catch (error) {
+            console.error("Error pruning images:", error.message);
+        }
+})
 
 console.log("Cron job started and running in the background...");

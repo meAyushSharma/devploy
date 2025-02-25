@@ -13,7 +13,7 @@ const ShowEnv = memo(({type}) => {
     
     return envs.length>0 && (
         <div className="min-w-[40vw] w-fit mr-auto mt-4 border-2 border-violet-500/70 rounded-lg">
-            <IoCopy className="ml-auto text-base cursor-pointer text-slate-500 hover:text-slate-500/70 m-1" onClick={copy}/>
+            <IoCopy className="ml-auto md:text-base sm:text-md text-sm cursor-pointer text-slate-500 hover:text-slate-500/70 m-1" onClick={copy}/>
             <div className="border-2 border-violet-500/50 hover:border-violet-500/100 m-4 rounded-lg">
                     {envs.map((env, key) => {
                         return (

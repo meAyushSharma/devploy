@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({ path: '.env.local' });
 const { registerGlobalErrorHandlers } = require("./services/globalExceptionHandler");
 registerGlobalErrorHandlers();
 const express = require("express");
@@ -13,10 +13,10 @@ const { reverseProxyService } = require("./services/reverseProxyService");
 const { webSocketConnectionOn } = require("./services/websockerService");
 const ExpressError = require("./utils/ExpressError");
 
-const port = process.env.PORT;
-const reverseProxyPort = process.env.REVERSE_PROXY_PORT;
-const websocketPort = process.env.WEBHOOK_PORT;
-const host = process.env.HOST;
+const port = process.env.PORT || 3007;
+const reverseProxyPort = process.env.REVERSE_PROXY_PORT || 3030;
+const websocketPort = process.env.WEBHOOK_PORT || 4010;
+const host = process.env.HOST || "0.0.0.0";
 
 const app = express();
 const reverseProxyApp = express();
@@ -38,7 +38,7 @@ app.use(errorHandler);
 reverseProxyApp.use(reverseProxyService);
 const reverseProxy = http.createServer(reverseProxyApp);
 
-// handle upgrade from http to ws
+// handle upgrade from https to wss
 mainServer.on("upgrade", function upgrade(request, socket, head) {
   console.log("upgrading to ws.......")
     socket.on("error", (err) => {
@@ -54,24 +54,30 @@ mainServer.on("upgrade", function upgrade(request, socket, head) {
 wss.on("connection", webSocketConnectionOn);
 
 // main application server
-app.listen(port, host, () => {
+const mainApp = app.listen(port, host, () => {
     console.log(`Server listening on port: ${port} and host: ${host}`);
 });
 
 // reverse proxy server
-reverseProxy.listen(reverseProxyPort, host, () => {
+const proxyApp = reverseProxy.listen(reverseProxyPort, host, () => {
     console.log(`Reverse proxy listening on port : ${reverseProxyPort} and host: ${host}`);
 });
 
 // websocket server
-mainServer.listen(websocketPort, host, () => {
+const webSocketApp = mainServer.listen(websocketPort, "0.0.0.0", () => {
     console.log(`Websocket server listening on port: ${websocketPort} w/ host: ${host}`);
 })
 
 
 process.on("exit", () => {
   console.log("Server shutting down...");
-  server.close(() => {
-      console.log("Server closed");
+  mainApp.close(() => {
+      console.log("Main server closed");
+  });
+  proxyApp.close(() => {
+      console.log("Reverse proxy server closed");
+  });
+  webSocketApp.close(() => {
+      console.log("Websocket server closed");
   });
 });

@@ -9,9 +9,11 @@ import {selectedDatabaseAtom} from "../store/atoms/softwareAtoms/selectedDatabas
 import {selectedOsAtom} from "../store/atoms/softwareAtoms/selectedOsAtom";
 import {selectedRuntimeAtom} from "../store/atoms/softwareAtoms/selectedRuntimeAtom";
 import searchRegistryService from "../utils/searchRegistryService";
+import { useAlert } from "../hooks/useAlert";
 
 
 const DockerSearchComponent = memo(({ label, type }) => {
+  const {showAlert} = useAlert();
   const [inputValue, setInputValue] = useState(null);
   const [selectedOption, setSelectedOption] = useState([]);
 
@@ -21,6 +23,8 @@ const DockerSearchComponent = memo(({ label, type }) => {
 
   const { data, isLoading, error } = useFetchRegistry({inputValue : inputValue ? inputValue : null , requestFor : "docker"});
 
+  useEffect(() => {error && showAlert("Error getting registry data (┬┬﹏┬┬)", "error")}, [error]);
+  
   const [inputTags, setInputTags] = useState([]);
   const [selectedTag, setSelectedTag] = useState({});
   const prevSelectedOption = useRef(new Set());
@@ -93,7 +97,7 @@ useEffect(() => {
   return (
     <div className="border-2 border-gray-300/70 hover:border-gray-500/70 rounded-lg my-2 p-1 px-2">
       <div className="grid md:grid-cols-[1fr_3fr]">
-        <div className="flex items-center text-lg font-medium text-gray-800"><span>{label}</span><span>:</span></div>
+        <div className="flex items-center md:text-lg sm:text-base text-sm font-medium text-gray-800"><span>{label}</span><span>:</span></div>
         <div className="m-1">
           <Select
               options={data}

@@ -30,25 +30,37 @@ export const generateCompose = (dockerfiles) => {
   });
 
   dockerCompose += `networks:\n`;
-  dockerfiles.services.map((service) => {
+  const uniqueNetworks = new Map();
+  
+  dockerfiles.services.forEach((service) => {
     if (service.dockerfileDetails) {
-      switch (service?.dockerfileDetails?.driver) {
+      const { driver } = service.dockerfileDetails;
+      let networkName;
+  
+      switch (driver) {
         case "bridge":
-          dockerCompose += `\t${service.dockerfileDetails.bridge}:\n`;
-          dockerCompose += `\t\tdriver: bridge\n`;
+          networkName = service.dockerfileDetails.bridge;
           break;
         case "ipvlan":
-          dockerCompose += `\t${service.dockerfileDetails.ipvlan.name}:\n`;
-          dockerCompose += `\t\tdriver: ipvlan\n`;
+          networkName = service.dockerfileDetails.ipvlan?.name;
           break;
         case "macvlan":
-          dockerCompose += `\t${service.dockerfileDetails.macvlan.name}:\n`;
-          dockerCompose += `\t\tdriver: macvlan\n`;
+          networkName = service.dockerfileDetails.macvlan?.name;
           break;
         default:
-          dockerCompose += ``;
+          return;
+      }
+  
+      if (networkName && !uniqueNetworks.has(networkName)) {
+        uniqueNetworks.set(networkName, driver);
       }
     }
   });
+  
+  uniqueNetworks.forEach((driver, name) => {
+    dockerCompose += `\t${name}:\n`;
+    dockerCompose += `\t\tdriver: ${driver}\n`;
+  });
+  
   return dockerCompose;
 };

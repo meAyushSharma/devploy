@@ -64,17 +64,17 @@ module.exports.envDeploy = async (req, res, next) => {
                             console.log('Image built successfully!');
                             resolve();
                         });
-                        stream.on('error', (error) => reject(error));
+                        stream.on('error', (error) => reject(error.message));
                     });
                 });
-                const imageInfo = await docker.getImage(`img-${dockerfileDetails.name}-user-${req.user.id}-env-${env.id}:latest`);
+                const imageInfo = docker.getImage(`img-${dockerfileDetails.name}-user-${req.user.id}-env-${env.id}:latest`);
                 const imageId = (await imageInfo.inspect()).Id;
                 const image = await Image.create({
                     data : {
                         name: `img-${dockerfileDetails.name}-user-${req.user.id}-env-${env.id}:latest`,
                         user : { connect : { id : req.user.id } },
                         environment : {connect : {id : env.id}},
-                        dockerId: imageId.split(":")[0]
+                        dockerId: imageId.split(":")[1]
                     },
                     select : {
                         name: true,
@@ -112,7 +112,7 @@ module.exports.envDeploy = async (req, res, next) => {
 
         // 4. after building image create container, attach to devbox network and start it.
         try {
-            const network = await docker.getNetwork("devbox-v0_devbox-network");
+            const network = docker.getNetwork("devbox-v0_devbox-network");
             let netName = "bridge";
             if(network.id === "devbox-v0_devbox-network"){
                 console.log("Found network: devbox-v0_devbox-network")
@@ -126,20 +126,30 @@ module.exports.envDeploy = async (req, res, next) => {
                 AttachStdout: true,
                 AttachStderr: true,
                 AttachStdin: true,
+                User: "devuser",
+                WorkingDir: "/app",
                 HostConfig: {
                     AutoRemove: false,
                     Memory: 512 * 1024 * 1024,
                     CpuShares: 1024,
                     NetworkMode: netName,
-                    ReadonlyRootfs: false,
+                    // ReadonlyRootfs: false,
                     CapDrop: ["All"],
+                    CapAdd: ["NET_BIND_SERVICE"],
                     SecurityOpt: ["no-new-privileges"],
                     Privileged: false,
+                    Binds: ["/data:/app/data:rw"],
                 },
-                Volumes: {},
+                Volumes: {
+                    "/app/data": {}
+                },
             });
             await container.start();
+            // await docker.getNetwork("devbox-v0_devbox-network").connect({ Container: container.id });
             const containerInfo = await container.inspect();
+            // console.log("Container network is: ", containerInfo);
+
+
             // 5. get containerInfo, create container tuple
             // console.log("This is Container info: ", containerInfo.NetworkSettings.Networks[netName]?.IPAddress);
             const exposedPorts = containerInfo.Config.ExposedPorts ? Object.keys(containerInfo.Config.ExposedPorts).map(port => port.split("/")[0]) : [];
