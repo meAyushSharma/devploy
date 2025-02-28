@@ -3,7 +3,7 @@ self.addEventListener('message', async e => {
     try {
         if (!navigator.storage || !navigator.storage.getDirectory) {
             console.log("OPFS is not supported in your browser.");
-            return;
+            self.postMessage({success:false});
         }
         const rootDir = await navigator.storage.getDirectory();
         const tempFileHandle = await rootDir.getFileHandle('temp-file.txt', { create: true });

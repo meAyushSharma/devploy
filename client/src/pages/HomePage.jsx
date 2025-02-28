@@ -76,8 +76,8 @@ const HomePage = () => {
                         </div>
                     </div>
                     <div className="grid gap-4">
-                        <div className="md:text-5xl text-lg sm:text-3xl font-medium text-gray-800 group flex items-center md:gap-4 gap-2 border">
-                            <span className="border">Create Custom Environment: </span><LuExternalLink className="hidden group-hover:block md:text-5xl text-2xl sm:text-3xl cursor-pointer" onClick={() => navigate("/create-env")}/>
+                        <div className="md:text-5xl text-lg sm:text-3xl font-medium text-gray-800 group flex items-center md:gap-4 gap-2">
+                            <span className="">Create Custom Environment: </span><LuExternalLink className="hidden group-hover:block md:text-5xl text-2xl sm:text-3xl cursor-pointer" onClick={() => navigate("/create-env")}/>
                         </div>
                         <div className="md:text-2xl text-sm sm:text-xl md:mx-4 mx-2 grid gap-6 mb-20">
                             <div className="">

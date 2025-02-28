@@ -1,6 +1,7 @@
 import { lazy, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState, useRecoilState } from "recoil";
+import Cookies from "js-cookie";
 
 import { FaSave } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
@@ -11,24 +12,32 @@ import { FiLoader } from "react-icons/fi";
 import Button from "../components/common/Button";
 const DockerfileCode = lazy(() => import("../components/DockerfileCode"))
 
+import { useAlert } from "../hooks/useAlert";
 import { useDebounce } from "../hooks/useDebounce";
+import { useSaveCompose } from "../hooks/useSaveCompose";
 import { useResetAllAtoms } from "../hooks/useResetAllAtoms";
 import { useWorkerValidName } from "../hooks/useWorkerValidName";
+
+import { userModeSelector } from "../store/selectors/userModeSelector";
 import { dockerfileSelector } from "../store/selectors/dockerfileSelector";
 import { serviceDelTrackerAtom } from "../store/atoms/serviceDelTrackerAtom";
 
 import { saveToLocal } from "../helper/saveToLocal";
 import { generateCompose } from "../helper/generateCompose";
 import { saveToDB } from "../helper/saveToDB";
-import { useSaveCompose } from "../hooks/useSaveCompose";
-import { userModeSelector } from "../store/selectors/userModeSelector";
-import { useAlert } from "../hooks/useAlert";
 
 
 
 const DockerCompose = () => {
-    // obviously type=service
+    /* restriction */
     const navigate = useNavigate();
+    const isUserLoggedIn = useRecoilValue(userModeSelector);
+    const isGuestLoggedIn = Cookies.get("localAuthToken") === "true"; // local
+    useEffect(() => {
+        if(!(isGuestLoggedIn || isUserLoggedIn)) navigate("/signup");
+    }, [isGuestLoggedIn, navigate, isUserLoggedIn]);
+
+    // obviously type=service
     const {showAlert} = useAlert();
     //* handle project name : project name of docker compose is not global variable, so handle while keeping it in mind
     const [projName, setProjName] = useState("my-project");
@@ -72,7 +81,7 @@ const DockerCompose = () => {
         composeError && showAlert("Error saving compose files (┬┬﹏┬┬)", "info");
     }, [composeError]);
 
-    return (
+    return ((isGuestLoggedIn || isUserLoggedIn) && 
         <div className="font-Satoshi m-5 bg-soft-white">
             <div className="flex items-center">
                 <span className="text-3xl font-bold text-gray-700 my-4">Project name : </span>

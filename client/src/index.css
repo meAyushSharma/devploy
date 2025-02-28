@@ -23,7 +23,7 @@
         @apply border-2 border-gray-800/60 text-gray-800/80 text-center rounded cursor-pointer
     }
     .mini-dashboard {
-        @apply p-1 text-center text-xs sm:text-sm md:text-base h-auto whitespace-normal break-all bg-gray-300/70 hover:bg-gray-300 rounded-md mb-1 md:mx-1 font-medium
+        @apply p-1 text-center text-xs sm:text-sm md:text-base h-auto whitespace-normal break-all bg-gray-300/70 hover:bg-gray-300 rounded-md mb-1 mx-1 font-medium
     }
     .homepage-underline {
         @apply underline decoration-dashed p-[1px] hover:text-white transition-all

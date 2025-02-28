@@ -1,10 +1,14 @@
 import { useRecoilState, useRecoilValue } from "recoil";
 import { lazy, memo, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"
+import Cookies from "js-cookie";
 
 import { IoInformationCircleOutline } from "react-icons/io5";
 import { MdReviews } from "react-icons/md";
 
 import { selectedPackageManagerAtom } from "../store/atoms/libAtoms/selectedPackageManagerAtom";
+import { userModeSelector } from "../store/selectors/userModeSelector";
+import { getServiceNames } from "../store/selectors/getServiceNames";
 import { serviceCountAtom } from "../store/atoms/serviceCountAtom";
 import { projectNameAtom } from "../store/atoms/projectNameAtom";
 
@@ -18,50 +22,53 @@ const CreateDockerfile = lazy(() => import("../components/CreateDockerfile"));
 const RenderPackageManager = lazy(() => import("../components/package_manager/RenderPackageManager"));
 const Command = lazy(() => import("../components/Command"));
 
-import { getServiceNames } from "../store/selectors/getServiceNames";
-import { useDebounce } from "../hooks/useDebounce";
 import { useWorkerValidName } from "../hooks/useWorkerValidName";
+import { useDebounce } from "../hooks/useDebounce";
 
 
 
 const CreateProject = memo(({type}) => {
-    //?for debugging purposes only ...
-    console.log("am i re-rendering?");
 
+    /* 1. Restriction */
+    const navigate = useNavigate();
+    const isUserLoggedIn = useRecoilValue(userModeSelector);
+    const isGuestLoggedIn = Cookies.get("localAuthToken") === "true"; // local
+    useEffect(() => {
+        if(!(isGuestLoggedIn || isUserLoggedIn)) navigate("/signup");
+    }, [isGuestLoggedIn, navigate, isUserLoggedIn]);
 
-    // check whether : service or env
+    /* check whether : service or env */
     const [serviceCount, setServiceCount] = useRecoilState(serviceCountAtom);
     const env = type === "env";
     const service = type === "service";
     const whatType = env ? "env" : service ? `service${serviceCount+1}` : -1;
 
-    // project name
+    /* project name */
     const [projName, setProjName] = useRecoilState(projectNameAtom(whatType));
     const debouncedName = useDebounce(projName, 1000);
     const [nameIsValid, setNameIsValid] = useState(null);
 
-    // check environment (folder) dockerfiles duplicates
+    /* check environment (folder) dockerfiles duplicates */
     const envNameisValid = useWorkerValidName({ workerPath :'../worker/envNameDuplicacy.js', debouncedName});
 
-     // handles empty input
+     /* handles empty input */
     const [isTouched, setIsTouched] = useState(false);
     const handleBlur = () => setIsTouched(true);
 
-    // getServiceNames(get names only) => have undeleted ones only.
+    /* getServiceNames(get names only) => have undeleted ones only */
     const services = useRecoilValue(getServiceNames);
     useEffect(() => {
         service && debouncedName && services.includes(debouncedName) ? setNameIsValid(false) : (debouncedName.includes(" ") ? setNameIsValid(false) : setNameIsValid(true));
-        // service && debouncedName && !debouncedName.includes(" ") ? setNameIsValid(false) : setNameIsValid(true);
     }, [setNameIsValid, service, services, debouncedName]);
 
     
-    // review 
+    /* review */ 
     const [review, setReview] = useState(false);
 
-    // pm for selected managers
+    /* pm for selected managers */
     const packageManagers = useRecoilValue(selectedPackageManagerAtom(whatType));
 
-    return (
+    return ((isGuestLoggedIn || isUserLoggedIn) &&
     <div className="font-Satoshi md:m-5 sm:m-3 m-2 bg-soft-white">
         <div className="flex items-center">
             <span className="md:text-3xl sm:text-xl text-base font-semibold text-gray-700">{env?"Environment":`Service${serviceCount+1}`} name : </span>

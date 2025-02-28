@@ -13,7 +13,7 @@ export const useAuth = ({type}) => {
         setSuccess(false);
         try{
             if(!email.trim() || !password.trim()) throw new Error("Email and password are required");
-            const updatedValue = { email, password, name, profile_pic: profilePicUrls[Math.floor(Math.random()*12)], code };
+            const updatedValue = { email, password, name, profile_pic: profilePicUrls[7], code };
             const sendData = await (type ? authService.registerUser(updatedValue) : authService.loginUser(updatedValue))
             if(await sendData.data.success){
                 console.log(sendData.data.msg);

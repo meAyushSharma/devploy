@@ -1,6 +1,6 @@
 const httpProxy = require("http-proxy");
 const proxy = httpProxy.createProxy({});
-const Container = require("../models/containerModel");
+const { Container } = require("../models/prismaClient");
 const statusCodes = require("../utils/statusCodes");
 const ExpressError = require("../utils/ExpressError");
 const jwt = require("jsonwebtoken");

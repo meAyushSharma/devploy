@@ -9,7 +9,7 @@ import { useAlert } from "../../hooks/useAlert";
 
 const AuthFooter = ({category}) => {
     const type = category === "Signup";
-    const {showAlert} = useAlert();
+    const { showAlert } = useAlert();
     const navigate = useNavigate();
     const { data, isLoading, error, logUserIn } = useGoogleAuth();
 
@@ -44,8 +44,7 @@ const AuthFooter = ({category}) => {
         </div>
         <div className="sm:text-sm text-xs font-medium text-gray-700 text-center mt-2">
                 <span>{type ? "Already have an account ?": "Don't have an account ?"}{" "}</span>
-                {type ? <a href="/login" className="hover:text-violet-950">Login</a> : <a href="/signup" className="hover:text-violet-950">Signup</a>}
-                
+                {type ? <a href="/login" className="hover:text-violet-950">Login</a> : <a href="/signup" className="hover:text-violet-950">Signup</a>}  
         </div>
     </div>
     )

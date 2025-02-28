@@ -1,29 +1,53 @@
 name: DevBox-v0
 services:
+  postgres:
+    image: postgres:latest
+    container_name: devbox-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - my_postgres_data:/var/lib/postgresql/data
+    networks:
+      - devbox-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      retries: 5
+      timeout: 3s
+    
   server:
     build:
       context: ./server
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     restart: always
-    env_file: ./server/.env
+    env_file: ./server/.env.local
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
     volumes:
       - "./server:/app"
       - /app/node_modules
       - "/var/run/docker.sock:/var/run/docker.sock"
+      - ./server/.env.local:/app/.env
     networks:
       - devbox-network
-    command: npm run dev
+    command: >
+      sh -c "until npx prisma migrate dev --name init; do sleep 5; done && npm run dev"
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   client:
     build: 
       context: ./client
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     restart: always
-    env_file: ./client/.env
+    env_file: ./client/.env.local
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=local
     volumes:
       - "./client:/app"
       - /app/node_modules
@@ -36,9 +60,9 @@ services:
   worker:
     build:
       context: ./server
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     restart: always
-    env_file: ./server/.env
+    env_file: ./server/.env.local
     volumes:
       - "./server:/app"
       - /app/node_modules
@@ -46,6 +70,7 @@ services:
     networks:
       - devbox-network
     depends_on:
+      - postgres
       - server
     command: ["npm", "run", "start:cron"]
   
@@ -58,10 +83,8 @@ services:
     ports:
       - 80:80
       - 443:443
-    environment:
-      DOMAIN_NAME: ${DOMAIN_NAME}
     volumes:
-      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./caddy/Caddyfile.dev:/etc/caddy/Caddyfile
       - caddy_data:/data
       - caddy_config:/config
     networks:
@@ -70,7 +93,9 @@ services:
       - server
       - client
 
+
 volumes:
+  my_postgres_data:
   caddy_data:
   caddy_config:
 

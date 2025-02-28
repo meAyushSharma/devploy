@@ -6,6 +6,8 @@ const userApiService = {
     deleteEnvironment : (data) => apiService.post("/user/del-env", data),
     deleteCompose : (data) => apiService.post("/user/del-compose", data),
     fetchDbData : () => apiService.get("/user/get-data"),
+    resetPassword: (data) => apiService.post("/user/reset-pass", data),
+    deleteAccount: () => apiService.get("/user/delete-account"),
 }
 
 export default userApiService;

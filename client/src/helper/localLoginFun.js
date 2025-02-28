@@ -28,7 +28,7 @@ export const localLoginFun = ({username, password}) => {
         console.error("some error occured during guest login: ", err);
         return {
             success: false,
-            cause:`${err}`,
+            cause:`${err.message || err}`,
             redirect:"no"
         }
     }

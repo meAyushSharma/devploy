@@ -1,12 +1,10 @@
 import { lazy, useEffect } from "react";
 import { useNavigate } from "react-router-dom"
 import Cookies from "js-cookie";
-import { jwtDecode } from "jwt-decode";
 const ShowSavedFiles = lazy(() => import("../components/ShowSavedFiles"));
 
 import { FaBrain } from "react-icons/fa6";
 import { FaOctopusDeploy } from "react-icons/fa";
-import { LuContainer } from "react-icons/lu";
 import { useRecoilValue } from "recoil";
 import { userModeSelector } from "../store/selectors/userModeSelector";
 
@@ -14,15 +12,14 @@ const Builds = () => {
     const navigate = useNavigate();
     const isUserLoggedIn = useRecoilValue(userModeSelector);
     const isGuestLoggedIn = Cookies.get("localAuthToken") === "true"; // local
-    // const isUserLoggedIn =  Cookies.get("isUserRegistered") === "true"; // server
     useEffect(() => {
         if(!(isGuestLoggedIn || isUserLoggedIn)) navigate("/signup");
     }, [isGuestLoggedIn, navigate, isUserLoggedIn])
 
     return ( (isGuestLoggedIn || isUserLoggedIn) &&
-    <div className="font-Satoshi bg-soft-white md:mx-6 sm:mx-4 mx-2 border border-black">
+    <div className="font-Satoshi bg-soft-white md:mx-6 sm:mx-4 mx-2">
         <div className="grid grid-rows-2 gap-3 md:m-4 m-1 sm:m-2 text-[#232223]">
-            <div className="flex md:flex-row flex-col min-h-[40vh] md:m-4 m-1 sm:m-2 border border-black">
+            <div className="flex md:flex-row flex-col min-h-[40vh] md:m-4 m-1 sm:m-2">
                 <div className="md:p-4 p-1 sm:p-2">
                     <div 
                     className="
@@ -56,7 +53,7 @@ const Builds = () => {
                 </div>
             </div>
 
-            <div className="flex md:flex-row flex-col min-h-[40vh] md:m-4 m-1 sm:m-2 border border-black">
+            <div className="flex md:flex-row flex-col min-h-[40vh] md:m-4 m-1 sm:m-2">
                 <div className="cursor-pointer flex justify-center md:mr-5 mr-0">
                     <div className="md:w-[45vw] md:h-[40vh] w-[80vw] h-[60vw] bg-[url('./assets/element_leo_transparent.png')] bg-cover bg-center bg-no-repeat border rounded-lg text-lg text-gray-500 relative group scale-100 hover:scale-105 hover:border-2 hover:shadow transition-all ease-in-out">
                         <div className="absolute inset-0 group-hover:backdrop-blur-sm group-hover:bg-white/30 transition-all duration-300"></div>

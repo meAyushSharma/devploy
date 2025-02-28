@@ -1,5 +1,4 @@
 import { lazy, useEffect, useMemo, useState } from "react";
-import Cookies from "js-cookie";
 import { downloadEnvFileHelper } from "../helper/downloadFileHelper";
 import { downloadComposeFileHelper } from "../helper/downloadComposeFileHelper";
 
@@ -21,12 +20,11 @@ const FormattedCode = lazy(() => import("./FormattedCode"));
 const DockerfileCode = lazy(() => import("./DockerfileCode"));
 
 const ShowSavedFiles = () => {
-  console.log("how many times am i triggering ... ?");
+
   const [dataObj, setDataObj] = useState(null);
   const [trigger, setTrigger] = useState(false);
   const {showAlert} = useAlert();
   const isUserRegistered = useRecoilValue(userModeSelector);
-  // const isUserRegistered = Cookies.get("isUserRegistered") === "true";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -81,7 +79,6 @@ const ShowSavedFiles = () => {
     <div className="border-t-4 border-gray-700/70 rounded-lg my-6">
       <div className="flex">
         <div className="ml-auto mr-6 mt-6 flex gap-3">
-          {/* <Button label={"Refresh"} onClickFun={() => setTrigger((state) => !state)}/> */}
           {isUserRegistered && <Button disabled={isFetching}>
               <button onClick={ setFetchedData } className={`md:text-lg text-xs sm:text-xl flex items-center gap-2 md:p-1`}>
               {!isFetching ? <BsDatabaseFillDown className="md:text-2xl text-xl"/> : <FiLoader className="animate-spin m-1"/>}

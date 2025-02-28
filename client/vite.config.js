@@ -18,7 +18,6 @@ export default defineConfig({
     },
     // hmr: {
     //   host: 'localhost',
-    //   host: 'devbox-client.meayushsharma.co',
     // }
   },
   resolve: {

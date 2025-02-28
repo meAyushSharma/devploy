@@ -5,8 +5,8 @@ const https = require("https");
 
 // Create an agent forcing IPv4
 const agent = new https.Agent({
-    family: 4,          // Force IPv4
-    keepAlive: true,    // Optionally keep connections alive
+    family: 4,
+    keepAlive: true,
 });
 
 module.exports.registrySearchController = async (req, res, next) => {

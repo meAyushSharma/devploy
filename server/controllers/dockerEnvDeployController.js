@@ -1,12 +1,8 @@
-const Docker = require("dockerode");
-const docker = new Docker({ socketPath : "/var/run/docker.sock" });
-const Environment = require("../models/environmentModel");
-const Container = require("../models/containerModel");
-const Image = require("../models/imageModel");
+const docker = require("../utils/dockerInstance");
+const { Environment, Container, Image, User } = require("../models/prismaClient")
 const ExpressError = require("../utils/ExpressError");
 const statusCodes = require("../utils/statusCodes");
 const tar = require("tar-stream");
-const User = require("../models/userModel");
 
 module.exports.envDeploy = async (req, res, next) => {
     try {

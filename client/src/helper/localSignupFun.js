@@ -6,13 +6,12 @@ export const localSignupFun = ({ username, localPassword, setLocalAuth, choosenP
             const localObj = localStorage.getItem("localAuthObj");
             // check for duplicacy => still left
             if(localObj) {
-                alert("User is already using in guest mode");
-                return false;
+                return "userExist";
             }
             // setLocalAuth(state => ({ ...state, username, password:localPassword, profile_pic:choosenPic })); /* //! depreciated  */
             const localAuthObj = { username, localPassword, profile_pic : choosenPic || profilePicUrls[0] }
             localStorage.setItem("localAuthObj", JSON.stringify(localAuthObj));
-            console.log("this is localAuthObj: ", localStorage.getItem("localAuthObj"));
+            // console.log("This is localAuthObj: ", localStorage.getItem("localAuthObj"));
             return true;
         }
     }catch(err) {

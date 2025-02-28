@@ -1,3 +1,6 @@
+/* not in use currently */
+/* //! depreciated */
+
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
@@ -6,8 +9,8 @@ const transporter = nodemailer.createTransport({
     service: "gmail",
     port: 465,
     auth: {
-      user: process.env.NODEMAILER_EMAIL_USER,
-      pass: process.env.NODEMAILER_EMAIL_PASS 
+      user: process.env.NODEMAILER_EMAIL_USER || "",
+      pass: process.env.NODEMAILER_EMAIL_PASS || "",
     }
 });
 

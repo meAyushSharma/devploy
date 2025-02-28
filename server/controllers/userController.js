@@ -1,9 +1,8 @@
 const zod = require("zod");
-const Environment = require("../models/environmentModel");
-const Compose = require("../models/composeModel");
+const bcrypt = require("bcrypt");
+const { Environment, Compose, User, MetaData } = require("../models/prismaClient");
 const ExpressError = require("../utils/ExpressError");
 const statusCodes = require("../utils/statusCodes");
-const User = require("../models/userModel");
 const docker = require("../utils/dockerInstance");
 
 const jsonBody = zod.object({
@@ -223,6 +222,109 @@ module.exports.getUserData = async (req, res, next) => {
         });
     } catch (err) {
         console.log("Error in envWithCompose");
+        next(err);
+    }
+}
+
+const passwordBody = zod.object({
+    password : zod.string().min(8),
+});
+
+module.exports.resetUserPass = async (req, res, next) => {
+    if(!req.user.id) return next(new ExpressError("Unauthorized Access Denied", statusCodes.Unauthorized, { error : "req.user.id not found"}));
+    try {
+        const { password } = req.body;
+        const { success, data } = passwordBody.safeParse(req.body);
+        if(!success) return next(new ExpressError("Invalid password string", statusCodes["Bad Request"], { error : "zod deemed invalid: resetUserPass"}));
+        const hashedPass = bcrypt.hashSync(password, 10);
+        const user = await User.update({
+            where: {
+                id: req.user.id
+            },
+            data: {
+                password: hashedPass
+            },
+            select: {
+                name: true,
+                email: true,
+                id: true,
+            }
+        });
+        if(!user) return next(new ExpressError("Error during password reset of user", statusCodes["Not Found"], { error: "User not found"}));
+        console.log("Successfully resetted password of user", req.user.email);
+        return res.status(statusCodes.Ok).json({
+            success: true,
+            msg: `Your password changed successfully (づ￣ 3￣)づ`,
+        });
+
+    } catch (err) {
+        console.log("Error in resetUserPass");
+        next(err);
+    }
+}
+
+
+module.exports.deleteAccount = async (req, res, next) => {
+    if(!req.user.id) return next(new ExpressError("Unauthorized Access Denied", statusCodes.Unauthorized, { error : "req.user.id not found"}));
+    try {
+        const user = await User.delete({
+            where: {
+                id: req.user.id
+            },
+            select: {
+                email: true,
+                environments: {
+                    select: {
+                        name : true,
+                        id: true,
+                        images : {
+                            select : {
+                                dockerId : true,
+                                name: true,
+                                container : {
+                                    select : {
+                                        dockerId : true,
+                                        name: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
+        if(!user) return next(new ExpressError(`Error during account deletion of user: ${req.user.id}`, statusCodes["Not Found"], { error: "User not found"}));
+        try {
+            for(const environment of user.environments) {
+                for (const image of environment.images) {
+                    for (const cont of image.container) {
+                        const container = docker.getContainer(cont.dockerId);
+                        const inspectData = await container.inspect();
+                        if (inspectData.State.Running) {
+                            await container.stop();
+                            console.log(`Container ${cont.name} stopped successfully upon env deletion`);
+                        }
+                        await container.remove({ force: true });
+                        console.log(`Container ${cont.name} removed from docker as well successfully upon env deletion`);
+                    }
+                    const removableImage = docker.getImage(image.dockerId);
+                    console.log("Time: ", (await removableImage.inspect()).Created);
+                    await removableImage.remove({ force: true });
+                    console.log(`Image: ${image.name} removed from docker as well successfully`);
+                }
+            }
+        } catch (dockerErr) {
+            console.log(`Error deleting docker images and containers while deleting env is: `, dockerErr.message);
+        }
+        console.log(`deleted user:\n`, user);
+        return res.status(statusCodes.Ok).json({
+            success : true,
+            email: user.email,
+            id : req.user.id,
+            msg : "Successfully deleted user account from database"
+        })
+    } catch(err) {
+        console.log("Error in deleteAccount");
         next(err);
     }
 }

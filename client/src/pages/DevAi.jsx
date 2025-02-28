@@ -16,9 +16,9 @@ const DevAi = () => {
     const messageRef = useRef(null);
     useEffect(() => { messageRef.current?.scrollIntoView({behavior : "smooth"}) }, [messages]);
     useEffect(() => {error && showAlert("Error in getting AI response (┬┬﹏┬┬)", "error")}, [error]);
-    return ( 
+    return (
         <div className="font-Satoshi">
-            <div className="text-9xl font-bold text-center text-format-code-dark mt-10 mb-[20vh]">
+            <div className="md:text-9xl sm:text-7xl text-4xl font-bold text-center text-format-code-dark mt-10 mb-[20vh]">
                 DEVAì
             </div>
             <div className="w-[90vw] border-4 border-violet-700/60 m-auto rounded-lg mb-4">
@@ -30,10 +30,10 @@ const DevAi = () => {
                             <span className="text-2xl font-bold text-white">DEVAì</span>
                             <span className="text-3xl font-bold text-white">DEVAì</span>
                             <span className="text-4xl font-bold text-white">DEVAì</span>
-                            <span className="text-5xl font-bold text-white">DEVAì</span>
+                            <span className="text-5xl font-bold text-white hidden sm:block">DEVAì</span>
                         </div>
                     )}
-                    {messages.map((thread,key) => {
+                    {isUserRegistered && messages.map((thread,key) => {
                         if(thread.role === "user"){
                             return (
                             <div key={key} className="flex mt-8 items-center justify-end">
@@ -67,7 +67,7 @@ const DevAi = () => {
                         </div>
                     </div>
                 </div> : (
-                    <div className="text-xl font-medium text-gray-500 text-center my-3">Please create your registered account to use DevAi</div>
+                    <div className="sm:text-xl text-md font-medium text-gray-500 text-center my-3">Please create your registered account to use DevAi</div>
                 )}
             </div>
             {isUserRegistered && <div className="w-fit m-auto text-sm my-2 text-gray-500 mb-10">

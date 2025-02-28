@@ -5,10 +5,10 @@ const { OAuth2Client, UserRefreshClient, auth } = require('google-auth-library')
 const { checkUserExists, createUser } = require("../helper/authHelper");
 const ExpressError = require("../utils/ExpressError");
 const statusCodes = require("../utils/statusCodes");
-const transporter = require("../utils/transporter");
 
-const User = require("../models/userModel");
-const MetaData = require("../models/metaDataModel");
+const { User, MetaData } = require("../models/prismaClient");
+const { sendMail } = require("../services/sendMail");
+const { getVerifyEmailTemplate, getForgotPasswordTemplate } = require("../helper/resendHelper");
 
 const DOMAIN_NAME = process.env.DOMAIN_NAME || ".devbox.localhost";
 const oAuth2Client = new OAuth2Client(
@@ -177,23 +177,120 @@ module.exports.mailVerification = async (req, res, next) => {
             }
         });
         if(!meta) return next(new ExpressError("Meta Data not created", statusCodes["Server Error"], {error:"Error during mail verification"}));
-        const mailOptions = {
-            from: process.env.NODEMAILER_EMAIL_USER,  
+        const { data, error } = await sendMail({
             to: email,
-            subject: 'Email verification code', 
-            text: `Hello! This is the code for email verification on DevBox, code: ${code}`,
-            html: `Hello! <b>${email}</b>, we hope this finds you well. <br> The email verification code for DevBox is: ${code} <br> This code is valid only for 10 minutes.`
-        };
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-              console.log('Error sending email:', error);
-              return next(new ExpressError("Error sending code", statusCodes["Server Error"], { error: "Some error during sending code via mail" }))
+            ...getVerifyEmailTemplate(code)
+        });
+        if (error) {
+            console.log('Error sending email:', error);
+            return next(new ExpressError("Error sending code", statusCodes["Server Error"], { error: "Some error during sending code via mail" }))
+        }
+        console.log(`Successfully sent email verification mail for signup at: ${data.id}`);
+        return res.status(statusCodes.Ok).json({ msg: "Email verification sent successfully", success: true });
+    } catch (err) {
+        console.log("error during mailVerification for signup is: ", err);
+        return next(err);
+    }
+}
+
+
+module.exports.verifyEmailForgotPass = async (req, res, next) => {
+    try {
+        const {email} = req.body;
+        const {success} = emailBody.safeParse(req.body);
+        if(!success) return next(new ExpressError("Invalid Email ━┳━ ━┳━", statusCodes["Bad Request"], {error: "zod deemed invalid: mail verification for forgot password"}));
+        const code = Math.floor(Math.random()*10000000);
+        const meta = await MetaData.create({
+            data :{
+                email: email,
+                code: `${code}`
+            },
+            select : {
+                email:true,
+                code: true,
             }
-            console.log('Email sent successfully:', info.response);
-            return res.status(statusCodes.Ok).json({ msg: "Email verification sent successfully", success: true });
+        });
+        if(!meta) return next(new ExpressError("Meta Data not created", statusCodes["Server Error"], {error:"Error during mail verification forgot password"}));
+        const { data, error } = await sendMail({
+            to: email,
+            ...getForgotPasswordTemplate(code)
+        });
+        if (error) {
+            console.log('Error sending email:', error);
+            return next(new ExpressError("Error sending code", statusCodes["Server Error"], { error: "Some error during sending code via mail for forgot password" }))
+        }
+        console.log(`Successfully sent email verification mail for forgot password at: ${data.id}`);
+        return res.status(statusCodes.Ok).json({ msg: "Email verification sent successfully", success: true });
+    } catch (err) {
+        console.log("error during verifyEmailForgotPass is: ", err);
+        return next(err);
+    }
+}
+
+const forgotPassBody = zod.object({
+    email: zod.string().email().nonempty(),
+    password: zod.string().min(8),
+    code: zod.string().nonempty(),
+});
+
+module.exports.forgotPasswordReset = async (req, res, next) => {
+    try {
+        const { email, password, code } = req.body;
+        const { success, data } = forgotPassBody.safeParse(req.body);
+        if(!success) return next(new ExpressError("Invalid forgot password Credentials ━┳━ ━┳━", statusCodes["Bad Request"], {error: "zod deemed invalid: forgotPasswordReset"}))
+        if(!email || !password || !code) return next(new ExpressError("Forgot password Credentials not provided (┬┬﹏┬┬)", statusCodes["Bad Request"], {error:"Missing credentials"}));
+
+        // 1. checking if email verified
+        const meta = await MetaData.findFirst({
+            where: {
+                email,
+            },
+            select : {
+                email: true,
+                code : true,
+                created_at : true,
+            }
+        });
+        if(!meta) return next(new ExpressError("Couldn't find metadata for mail verification", statusCodes["Server Error"], { error: "Meta data for mail verification for FORGOT PASSWORD request not found in db"}));
+        const createdTime = new Date(meta.created_at);
+        const currTime = new Date();
+        try {
+            if(Math.floor((currTime-createdTime)/60000) > 10){
+                await MetaData.delete({ where: { email }});
+                console.log(`Metadata for ${email} and code ${code} deleted successfully`);
+                return next(new ExpressError("Code Expired", statusCodes.Forbidden, { error: "Mail verification code for forgot password request expired"}));
+            } else {
+                const valid = code === meta.code;
+                await MetaData.delete({ where: { email }});
+                console.log(`Metadata for ${email} and code ${code} deleted successfully`);
+                if(!valid) return next(new ExpressError("Invalid mail verification code for forgot password request", statusCodes.Forbidden, { error: "Invalid/Incorrect verification code for forgot password request"}));
+            }
+        } catch (err) {
+            return next(err);
+        }
+        const hashedPass = bcrypt.hashSync(password, 10);
+        const user = await User.update({
+            where: {
+                email,
+            },
+            data: {
+                password: hashedPass
+            },
+            select: {
+                name: true,
+                email: true,
+                id: true,
+            }
+        });
+        if(!user) return next(new ExpressError("Error during password reset request for forgot password of user", statusCodes["Not Found"], { error: "User not found"}));
+        console.log("Successfully resetted password for email: ", email);
+        return res.status(statusCodes.Ok).json({
+            success: true,
+            msg: `Your password changed successfully (づ￣ 3￣)づ`,
         });
     } catch (err) {
-        return next(err);
+        console.log("error during forgotPasswordReset is: ", err);
+        next(err);
     }
 }
 

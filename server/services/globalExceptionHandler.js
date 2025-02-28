@@ -9,11 +9,11 @@ function logErrorToFile(error) {
 }
 
 function globalErrorHandler(error, origin) {
-    console.error(`🔥 Critical Error: ${error.message || error}`);
+    console.error(`Critical Error: ${error.message || error}`);
     
     logErrorToFile(error);
 
-    console.log("🚨 Application is shutting down due to a critical error...");
+    console.log("Application is shutting down due to a critical error...");
     setTimeout(() => {
         process.exit(1);
     }, 500);

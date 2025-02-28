@@ -1,34 +1,59 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+import authService from "../../utils/authService";
+import { useAuth } from "../../hooks/useAuth";
+import { useAlert } from "../../hooks/useAlert";
+import { useMailVerification } from "../../hooks/useMailVerification";
+import { validateInput } from "../../helper/validateAuthInput";
+import { clearStorageHelper } from "../../helper/clearStorageHelper";
 import TextInput from "../common/TextInput";
 import Button from "../common/Button";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
 import { FiLoader } from "react-icons/fi";
 import { IoInformationCircleOutline } from "react-icons/io5";
-import { clearStorageHelper } from "../../helper/clearStorageHelper";
-import { validateInput } from "../../helper/validateAuthInput";
-import { useMailVerification } from "../../hooks/useMailVerification";
-import { useAlert } from "../../hooks/useAlert";
 
 const AuthMode = ({setAuth, category}) => {
     const type = category === "Signup";
+    const navigate = useNavigate();
+
+    const FRONTEND_DOMAIN = import.meta.env.VITE_FRONTEND_DOMAIN;
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
+
     const [errors, setErrors] = useState({});
+
     const [verified, setVerified] = useState(false);
     const [code, setCode] = useState("");
-    const navigate = useNavigate();
-    const { mailVerify, isVerifying, verificationError } = useMailVerification();
+
+    const { mailVerify, isVerifying, verificationError } = useMailVerification({apiService: authService.verifyMail});
     const { success, isLoading, error, authFun } = useAuth({type});
+
     const { showAlert } = useAlert();
 
     useEffect(() => {
         const afterAuth = async () => {
+            /* 1. reset values */
             setEmail("");
             setPassword("");
             setName("");
+            /* 2. clear guest cookies and local auth object */
+            Cookies.remove("localAuthToken", { path : "/", domain: FRONTEND_DOMAIN });
             localStorage.removeItem("localAuthToken");
+            /* 3. creating/ensuring directory exists */
+            const createDirectory = async () => {
+                const worker = new Worker(new URL('../../worker/createDirectory.js', import.meta.url));
+                worker.postMessage({});
+                worker.onmessage = e => {
+                    worker.terminate();
+                    if(e.data.success) console.log("successfully created directory structure");
+                    else console.error("error occured during opfs directory structure creation: ", e.data.error);
+                }
+            }
+            await createDirectory();
+
+            /* 4. clear directory */
             const clearStorageObj = await clearStorageHelper({workerPath: "../worker/clearOpfsStorage.js"});
             if(clearStorageObj?.data?.success) {
                 console.log("Authentication successfull, cleared opfs storage");
@@ -39,6 +64,8 @@ const AuthMode = ({setAuth, category}) => {
                 console.error("Some error occured during clearing of opfs storage: ", clearStorageObj.data)
                 showAlert("Failed to clear storage (┬┬﹏┬┬)", "error");
             }
+            /* 5. cookies are set by server */
+
         }
         success && afterAuth();
     }, [success, setEmail, setPassword, setName, navigate])
@@ -59,7 +86,7 @@ const AuthMode = ({setAuth, category}) => {
     }
 
     const handleVerification = async () => {
-        if(email.trim().toLowerCase()){
+        if(/\S+@\S+\.\S+/.test(email.trim().toLowerCase())){
             mailVerify({email: email.trim().toLowerCase()}).then(res => {
                 if(res){
                     showAlert(`Successfully sent mail verification code (づ￣ 3￣)づ`, "info")
@@ -95,11 +122,18 @@ const AuthMode = ({setAuth, category}) => {
                 <TextInput>
                     <input type="text" placeholder="sh62538*&6434G =) 8 chars" id="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full p-1 rounded-lg text-black placeholder-gray-700"/>
                 </TextInput>
-                {errors.password && <div className="flex gap-1 items-center">
-                <IoInformationCircleOutline className="text-rose-500 text-sm"/>
-                <span className="text-rose-500 whitespace-nowrap text-[12px]">{errors.password}</span>
-        </div>}
+                {errors.password && (
+                    <div className="flex gap-1 items-center">
+                        <IoInformationCircleOutline className="text-rose-500 text-sm"/>
+                        <span className="text-rose-500 whitespace-nowrap text-[12px]">{errors.password}</span>
+                    </div>
+                )}
             </div>
+            {!type && (
+                <div className="sm:text-sm text-end text-xs">
+                    <span className="cursor-pointer text-violet-950 hover:bg-violet-100 rounded p-[2px]" onClick={() => navigate("/forgot-password")}>Forgot Password ?</span>
+                </div>
+            )}
             {type && <div className="grid md:grid-cols-[1fr_3fr] gap-2 my-2">
                 <div className="flex items-center sm:justify-between sm:text-base text-sm font-medium text-gray-700">
                     <label htmlFor="name">Name</label>{":"}

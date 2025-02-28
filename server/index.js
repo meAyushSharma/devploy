@@ -1,4 +1,5 @@
-require("dotenv").config({ path: '.env.local' });
+require("dotenv").config({ path: '.env' });
+const { PrismaClient } = require('@prisma/client');
 const { registerGlobalErrorHandlers } = require("./services/globalExceptionHandler");
 registerGlobalErrorHandlers();
 const express = require("express");
@@ -6,6 +7,22 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const { WebSocketServer } = require("ws");
 const http = require("http");
+
+let prisma;
+if (!global.prisma) {
+    global.prisma = new PrismaClient();
+}
+prisma = global.prisma;
+async function connectDB() {
+    try {
+        await prisma.$connect();
+        console.log("Connected to Neon DB successfully 🚀");
+    } catch (error) {
+        console.error("Failed to connect to Neon DB ❌", error);
+        process.exit(1);
+    }
+}
+connectDB();
 
 const { router } = require("./routes/index");
 const { errorHandler } = require("./middlewares/errorHandler");
@@ -68,6 +85,10 @@ const webSocketApp = mainServer.listen(websocketPort, "0.0.0.0", () => {
     console.log(`Websocket server listening on port: ${websocketPort} w/ host: ${host}`);
 })
 
+// logging the state
+setInterval(() => {
+  console.log("Heartbeat: Server is alive...");
+}, 30000);
 
 process.on("exit", () => {
   console.log("Server shutting down...");

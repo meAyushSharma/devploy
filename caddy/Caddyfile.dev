@@ -1,0 +1,30 @@
+{
+    local_certs
+}
+
+devbox.localhost {
+    encode gzip
+    reverse_proxy client:5173 {
+        header_up Set-Cookie {http.response.header.Set-Cookie}
+        header_up Host {host}
+    }
+}
+
+server.devbox.localhost {
+    # WS proxying
+    reverse_proxy /ws server:4010 {
+        header_up Host {host}
+    }
+    # API proxying
+    reverse_proxy server:3007 {
+        header_up Set-Cookie {http.response.header.Set-Cookie}
+        header_up Cookie {http.request.header.Cookie}
+        header_up Host {host}
+    }
+}
+
+*.localhost {
+    reverse_proxy server:3030 {
+        header_up Host {host}
+    }
+}
