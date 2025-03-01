@@ -23,7 +23,7 @@ Devploy simplifies testing and deployment, making it a **powerful tool** for dev
 5. **Access Service** - It uses reverse proxy server built in-house to route request to particular service running inside container with specified port binded to it.    
 6. **Browser Storage** - OPFS, it uses **open private file system** to store configurations files on local.    
 
-<img href="https://res.cloudinary.com/dubrgx4b1/image/upload/v1740862513/diagram-export-3-2-2025-2_23_14-AM_hi5suh.png" alt="Architecture image"/>
+![Architecture image](https://res.cloudinary.com/dubrgx4b1/image/upload/v1740862513/diagram-export-3-2-2025-2_23_14-AM_hi5suh.png "Devploy Architecture")
 
 
 ## Tech stack    
