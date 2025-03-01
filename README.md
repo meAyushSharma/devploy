@@ -30,7 +30,11 @@ Devploy simplifies testing and deployment, making it a **powerful tool** for dev
 - **Backend**                   - Node with express.js     
 - **Frontend**                  - React.js    
 - **Database**                  - Postgresql    
-- **Notable implementations**   - Server: Dockerode, websocket, Resend (for sending mails) || Client: xterm.js, web workers, opfs    
+- **Notable implementations**   - 
+    - Dockerode : For managing docker images and containers.    
+    - WS server : For managing ws connection.     
+    - Resend    : For sending verification mails.   
+    - Xterm.js  : For browser-based terminal.      
 
 ## Implementation    
 ### **1. Configuration builds**    
@@ -56,6 +60,35 @@ Devploy simplifies testing and deployment, making it a **powerful tool** for dev
 
 ---
 
+## Installation     
+1. Fork this repository.   
+2. Clone the repository to your local environment.    
+3. In server and client folders, create a ```.env``` file and paste contents from ```.env.example``` in it, change ```.env``` file accordingly.   
+4. For local development run ```docker compose -f docker-compose.dev.yml up --build```in terminal opened in root folder where ```docker-compose.dev.yml``` is at.     
+Note: 
+    1. You need **docker** for this setup, install from here : [Install Docker Guide](https://docs.docker.com/engine/install/)    
+    2. This project uses caddy local authority which issues SSL certificates for local development, hence you need to setup it up locally, get root ssl certificates from caddy container, go to files (inside container) => /data/caddy/pki/authorities/local/root.crt, now save/download it and setup certificate management for your operating system, once you are done, go to your ```hosts``` file, for windows, find it: ```c:\Windows\System32\Drivers\etc\hosts``` here, for mac find it: ```/etc/hosts``` here, and add this in it:    
+    ```sh
+    # you can use some other name as well instead of devbox, just change it everywhere, it basically binds localhost -> devbox.localhost
+    127.0.0.1 devbox.localhost
+    127.0.0.1 server.devbox.localhost
+    ```    
+    You can actually use ```.example```, ```.test``` or ```.invalid``` as well instead of ```.localhost``` as well, since they do not resolve in dns outside of local environment.   
+    Now you are all set, it should be accessible on devbox.localhost    
+
+
 ## Other Features    
 1. **Guest Mode** - Use app in guest mode, your data stays at your browser, create configurations, store them, though can not deploy environments, data is volatile since clearing site data results in local data storage deletion.    
 2. **Robust Authentication** - *Google signin*, *Email signin with verification* using **Resend** service.    
+
+---
+
+## Image Gallery    
+*Docker configuration*:     
+![Docker configuration](https://res.cloudinary.com/dubrgx4b1/image/upload/v1740087953/Screenshot_2025-02-21_030437_w9on5w.png, "Docker configuration")
+      
+*Active services*:     
+![Active services](https://res.cloudinary.com/dubrgx4b1/image/upload/v1740096523/Screenshot_2025-02-21_053826_kj8jrd.png, "Active services")
+      
+*Terminal access*:     
+![Terminal access](https://res.cloudinary.com/dubrgx4b1/image/upload/v1740096525/Screenshot_2025-02-21_053755_lzaddy.png, "Terminal access")
