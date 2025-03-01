@@ -1,12 +1,13 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Suspense, lazy, useEffect } from "react";
+import { Suspense, lazy } from "react";
 
-import DeployEnvironment from "./pages/DeployEnvironment";
+const DeployEnvironment = lazy(() => import("./pages/DeployEnvironment"));
 const DevAi = lazy(() => import("./pages/DevAi"));
 const CreateProject  = lazy(() => import("./pages/CreateProject"));
 const DockerCompose = lazy(() => import("./pages/DockerCompose"));
 const Builds = lazy(() => import("./pages/Builds"));
 const Navbar = lazy(() => import("./components/Navbar"));
+const DeleteAccountChoice = lazy(() => import("./components/DeleteAccountChoice"));
 const HomePage = lazy(() => import("./pages/HomePage"));
 const Skeleton = lazy(() => import("./components/Skeleton"));
 const Signup = lazy(() => import("./pages/Signup"));
@@ -18,6 +19,7 @@ function App() {
     <>
         <BrowserRouter>
           <Navbar/>
+          <DeleteAccountChoice/>
           <Routes>
             <Route path="/" element={<Suspense fallback={<Skeleton num={20}/>}><HomePage/></Suspense>}></Route>
             <Route path="/builds" element={<Suspense fallback={<Skeleton num={20}/>}><Builds/></Suspense>}></Route>

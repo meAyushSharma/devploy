@@ -9,7 +9,6 @@ import { userModeSelector } from "../store/selectors/userModeSelector";
 
 import { useAlert } from "../hooks/useAlert";
 import { useResetPassword } from "../hooks/useResetPassword";
-import { useDeleteAccount } from "../hooks/useDeleteAccount";
 
 import userApiService from "../utils/userApiService";
 
@@ -17,6 +16,7 @@ import { FiLoader } from "react-icons/fi";
 import { PiSealWarningFill } from "react-icons/pi";
 import { IoInformationCircleOutline } from "react-icons/io5";
 import { clearStorageHelper } from "../helper/clearStorageHelper";
+import { deleteToggleAtom } from "../store/atoms/deleteToggleAtom";
 
 
 const Navbar = () => {
@@ -25,6 +25,7 @@ const Navbar = () => {
     const FRONTEND_DOMAIN = import.meta.env.VITE_FRONTEND_DOMAIN;
     console.log(`BACKEND_DOMAIN: ${BACKEND_DOMAIN}`)
     console.log(`FRONTEND_DOMAIN: ${FRONTEND_DOMAIN}`)
+
     const { showAlert } = useAlert();
 
     const isUserRegistered = useRecoilValue(userModeSelector);
@@ -36,10 +37,10 @@ const Navbar = () => {
 
     const [toggle, setToggle] = useState(false);
     const [toggleResetPass, setToggleResetPass] = useState(false);
+    const [deleteToggle, setDeleteToggle] = useRecoilState(deleteToggleAtom);
 
     const [resetPassword, setResetPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [deleteToggle, setDeleteToggle] = useState(false);
 
     const localAuthObj = localStorage.getItem("localAuthObj"); // obj
     const localAuthToken = Cookies.get("localAuthToken"); // t/f
@@ -119,24 +120,7 @@ const Navbar = () => {
         }
     }
 
-    const { deleteAccount, deleteError } = useDeleteAccount();
-    const accountDeleteHandler = async () => {
-        setDeleteToggle(state => !state);
-        const res = await deleteAccount();
-        if(res) {
-            showAlert("User Account deleted successfully <(＿　＿)>", "success");
-            Cookies.remove("registerToken", { path : "/", domain:BACKEND_DOMAIN });
-            Cookies.remove("googleToken",  {path: "/", domain:BACKEND_DOMAIN });
-            Cookies.remove("isUserRegistered", {path:"/", domain:BACKEND_DOMAIN });
-            Cookies.remove("localAuthToken", { path: "/", domain:FRONTEND_DOMAIN });
-            setTimeout(() => {
-                showAlert("Thank you for being with us (づ￣ 3￣)づ", "info");
-                navigate("/");
-            }, 3000)
-        } else {
-            showAlert(`${deleteError}`, "error");
-        }
-    }
+    
 
     return (
     <div className="sticky top-0 backdrop-blur z-20">
@@ -155,7 +139,7 @@ const Navbar = () => {
                     Dashboard
                     <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-gray-500 transition-all duration-300 group-hover:w-full"></span>
                 </div>
-                <div className={`mx-3 p-1 ${profilePic ? "cursor-pointer" : ""}`}>
+                <div className={`md:mx-3 sm:mx-2 mx-1 p-1 ${profilePic ? "cursor-pointer" : ""}`}>
                     {email ?
                     (
                     <div className="relative group">
@@ -237,7 +221,7 @@ const Navbar = () => {
                     </div>
                 ) :
                      (
-                    <div className="mx-3 cursor-pointer rounded-md p-1 hover:bg-[#f2f3f3] relative group" onClick={() => navigate('/builds')}>
+                    <div className="md:mx-3 sm:mx-2 mx-1 cursor-pointer rounded-md p-1 hover:bg-[#f2f3f3] relative group" onClick={() => navigate('/builds')}>
                         Signup
                         <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-gray-500 transition-all duration-300 group-hover:w-full"></span>
                     </div>
@@ -245,24 +229,9 @@ const Navbar = () => {
                 </div>
             </div>
         </div>
-        {deleteToggle && (
-            <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 p-2 bg-rose-50 my-20 rounded-lg shadow-xl md:text-lg sm:text-md text-xs md:px-10 sm:px-5 px-2">
-                <div className="text-rose-700 font-medium mb-4 grid gap-2">
-                    <span className="flex gap-2 items-center justify-center">
-                        <PiSealWarningFill className="md:text-xl sm:text-md text-sm"/> This Action is irreversible.
-                    </span>
-                    <span>
-                        Do you confirm to delete your account ?
-                    </span>
-                </div>
-                <div className="flex justify-around mb-2">
-                    <div className="cursor-pointer text-green-700 bg-green-200 rounded px-3 font-medium hover:bg-green-300/70" onClick={() => setDeleteToggle(state => !state)}>Stay</div>
-                    <div className="cursor-pointer text-rose-700 bg-rose-200 rounded px-3 font-medium hover:bg-rose-300/70" onClick={accountDeleteHandler}>Delete</div>
-                </div>
-            </div>
-        )}
     </div>
     )
 }
+
 export default Navbar;
 
