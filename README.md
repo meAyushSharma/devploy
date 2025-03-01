@@ -3,7 +3,8 @@
 ![Logo](https://res.cloudinary.com/dubrgx4b1/image/upload/v1740261820/devploy-high-resolution-logo-edit-1_bu9lgv.png "Devploy logo")
 ---
 
-**Devploy** is an on-demand platform for quickly testing **Docker-based environments**. It allows users to **create, deploy, and interact** with containerized setups in seconds—without any manual setup.  
+### TL;DR   
+**Devploy** is an on-demand platform for running **temporary Docker environments** in the browser. Users can create containers using **Dockerfiles or Docker Compose**, interact via a **built-in terminal**, and expose **custom ports dynamically** without manual configuration. It supports **guest mode** for quick access without an account and uses **OPFS storage** to save configurations locally for fast retrieval. Each session runs for **up to 15 minutes** before automatic cleanup.    
 
 ## Key Features   
 - **Instant Deployments** – Spin up containers in **seconds** and use them for **up to 15 minutes** before automatic cleanup.  
