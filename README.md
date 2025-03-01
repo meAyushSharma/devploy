@@ -85,10 +85,10 @@ Note:
 
 ## Image Gallery    
 *Docker configuration*:     
-![Docker configuration](https://res.cloudinary.com/dubrgx4b1/image/upload/v1740087953/Screenshot_2025-02-21_030437_w9on5w.png, "Docker configuration")
+![Docker configuration](https://res.cloudinary.com/dubrgx4b1/image/upload/v1740087953/Screenshot_2025-02-21_030437_w9on5w.png "Docker configuration")
       
 *Active services*:     
-![Active services](https://res.cloudinary.com/dubrgx4b1/image/upload/v1740096523/Screenshot_2025-02-21_053826_kj8jrd.png, "Active services")
+![Active services](https://res.cloudinary.com/dubrgx4b1/image/upload/v1740096523/Screenshot_2025-02-21_053826_kj8jrd.png "Active services")
       
 *Terminal access*:     
-![Terminal access](https://res.cloudinary.com/dubrgx4b1/image/upload/v1740096525/Screenshot_2025-02-21_053755_lzaddy.png, "Terminal access")
+![Terminal access](https://res.cloudinary.com/dubrgx4b1/image/upload/v1740096525/Screenshot_2025-02-21_053755_lzaddy.png "Terminal access")
