@@ -1,5 +1,6 @@
 <h1 align="center">Devploy</h1>
-
+      
+![Logo](https://res.cloudinary.com/dubrgx4b1/image/upload/v1740261820/devploy-high-resolution-logo-edit-1_bu9lgv.png "Devploy logo")
 ---
 
 **Devploy** is an on-demand platform for quickly testing **Docker-based environments**. It allows users to **create, deploy, and interact** with containerized setups in seconds—without any manual setup.  
@@ -22,7 +23,7 @@ Devploy simplifies testing and deployment, making it a **powerful tool** for dev
 4. **Terminal Access** - Xterm.js, it uses powerful *xterm* react library to interact with running container.   
 5. **Access Service** - It uses reverse proxy server built in-house to route request to particular service running inside container with specified port binded to it.    
 6. **Browser Storage** - OPFS, it uses **open private file system** to store configurations files on local.    
-
+      
 ![Architecture image](https://res.cloudinary.com/dubrgx4b1/image/upload/v1740862513/diagram-export-3-2-2025-2_23_14-AM_hi5suh.png "Devploy Architecture")
 
 
@@ -30,6 +31,7 @@ Devploy simplifies testing and deployment, making it a **powerful tool** for dev
 - **Backend**                   - Node with express.js     
 - **Frontend**                  - React.js    
 - **Database**                  - Postgresql    
+- **Reverse proxy**             - Caddy    
 - **Notable implementations**   - 
     - Dockerode : For managing docker images and containers.    
     - WS server : For managing ws connection.     
@@ -68,6 +70,7 @@ Devploy simplifies testing and deployment, making it a **powerful tool** for dev
 Note: 
     1. You need **docker** for this setup, install from here : [Install Docker Guide](https://docs.docker.com/engine/install/)    
     2. This project uses caddy local authority which issues SSL certificates for local development, hence you need to setup it up locally, get root ssl certificates from caddy container, go to files (inside container) => /data/caddy/pki/authorities/local/root.crt, now save/download it and setup certificate management for your operating system, once you are done, go to your ```hosts``` file, for windows, find it: ```c:\Windows\System32\Drivers\etc\hosts``` here, for mac find it: ```/etc/hosts``` here, and add this in it:    
+
     ```sh
     # you can use some other name as well instead of devbox, just change it everywhere, it basically binds localhost -> devbox.localhost
     127.0.0.1 devbox.localhost
