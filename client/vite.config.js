@@ -8,8 +8,11 @@ const workerFiles = glob.sync("src/worker/*.js").reduce((acc, file) => {
   return acc;
 }, {});
 
+const mode = import.meta.env.VITE_MODE;
+
 // https://vite.dev/config/
 export default defineConfig({
+  mode: VITE_MODE,
   plugins: [react()],
   server: {
     host: true,

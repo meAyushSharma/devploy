@@ -6,6 +6,7 @@ import { envDeployDetails } from "../store/atoms/envDeployDetails";
 import { openTerminalsAtom } from "../store/atoms/openTerminalsAtom";
 
 export const useGetActiveContainers = () => {
+    const VITE_FRONTEND_DOMAIN = import.meta.env.VITE_FRONTEND_DOMAIN;
     const [isGettingConts, setIsGettingConts] = useState(false);
     const [errorGettingContainers, setError] = useState(null);
     const [getConts, setGetConts] = useState(false);
@@ -38,8 +39,8 @@ export const useGetActiveContainers = () => {
 
             const toBeSorted = response.data.containers.map(cont => {
                 const urls = JSON.parse(cont.ports).map(port => ({
-                    url:`http://${cont.name.split("-")[0]}-${port}.localhost?token=${token}`,
-                    urlName: `${cont.name.split("-")[0]}-${port}.localhost`,
+                    url:`http://${cont.name.split("-")[0]}-${port}.${VITE_FRONTEND_DOMAIN}?token=${token}`,
+                    urlName: `${cont.name.split("-")[0]}-${port}.${VITE_FRONTEND_DOMAIN}`,
                     port,
                 }));
                 if(envNameSet.has(cont.image.environment.name)){
