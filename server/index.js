@@ -16,9 +16,9 @@ prisma = global.prisma;
 async function connectDB() {
     try {
         await prisma.$connect();
-        console.log("Connected to Neon DB successfully 🚀");
+        console.log("Connected to Neon DB successfully");
     } catch (error) {
-        console.error("Failed to connect to Neon DB ❌", error);
+        console.error("Failed to connect to Neon DB", error);
         process.exit(1);
     }
 }
