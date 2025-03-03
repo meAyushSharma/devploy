@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import removeConsole from 'vite-plugin-remove-console';
 import path from "path";
 import * as glob from "glob";
 
@@ -8,12 +9,10 @@ const workerFiles = glob.sync("src/worker/*.js").reduce((acc, file) => {
   return acc;
 }, {});
 
-const mode = import.meta.env.VITE_MODE;
-
 // https://vite.dev/config/
 export default defineConfig({
-  mode: VITE_MODE,
-  plugins: [react()],
+  mode: "production",
+  plugins: [react(), removeConsole()],
   server: {
     host: true,
     watch: {

@@ -61,6 +61,7 @@ services:
       - 443:443
     environment:
       DOMAIN_NAME: ${DOMAIN_NAME}
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN}
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data

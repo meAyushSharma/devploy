@@ -1,5 +1,5 @@
 import { useSetRecoilState } from "recoil";
-import { alertState } from "../store/atoms/alertAtom";
+import { alertState } from "../store/atoms/alertAtom.js";
 
 export const useAlert = () => {
   const setAlert = useSetRecoilState(alertState);

@@ -34,7 +34,6 @@ const ActiveServicesDashboard = () => {
         const environment = deployDetails.filter(env => env[0]===envName);
         if(environment){
             const cont = environment[0][1].filter(contDetails => contDetails.containerId === contId);
-            console.log(cont)
             if(cont){
                 setOpenTerminals(state => [...state, { contId, contDockerId, containerName}]);
             }

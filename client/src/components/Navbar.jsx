@@ -23,8 +23,8 @@ const Navbar = () => {
     const navigate = useNavigate();
     const BACKEND_DOMAIN = import.meta.env.VITE_BACKEND_DOMAIN;
     const FRONTEND_DOMAIN = import.meta.env.VITE_FRONTEND_DOMAIN;
-    console.log(`BACKEND_DOMAIN: ${BACKEND_DOMAIN}`)
-    console.log(`FRONTEND_DOMAIN: ${FRONTEND_DOMAIN}`)
+    // console.log(`BACKEND_DOMAIN: ${BACKEND_DOMAIN}`)
+    // console.log(`FRONTEND_DOMAIN: ${FRONTEND_DOMAIN}`)
 
     const { showAlert } = useAlert();
 

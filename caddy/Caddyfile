@@ -4,6 +4,9 @@
         header_up Set-Cookie {http.response.header.Set-Cookie}
         header_up Host {host}
     }
+    tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
 }
 
 www.{$DOMAIN_NAME:invalid} {
@@ -21,6 +24,11 @@ server.{$DOMAIN_NAME:invalid} {
         header_up Cookie {http.request.header.Cookie}
         header_up Host {host}
     }
+
+    tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+    
     header {
         -X-Powered-By
         -Server
@@ -61,6 +69,10 @@ server.{$DOMAIN_NAME:invalid} {
 *.{$DOMAIN_NAME:invalid} {
     reverse_proxy server:3030 {
         header_up Host {host}
+    }
+
+    tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
 
     header {

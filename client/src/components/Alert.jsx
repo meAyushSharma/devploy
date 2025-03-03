@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import { alertState } from "../store/atoms/alertAtom";
+import { alertState } from "../store/atoms/alertAtom.js";
 import { IoIosCloseCircle } from "react-icons/io";
 import { FaInfoCircle } from "react-icons/fa";
 import { SiTicktick } from "react-icons/si";
