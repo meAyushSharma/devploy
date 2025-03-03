@@ -12,6 +12,7 @@
 - **Custom Dockerfiles & Compose Support** – Define your own **Dockerfiles** or use **Docker Compose** for multi-container setups.  
 - **Dynamic Port Exposure** – No need for manual configurations; Devploy **automatically exposes user-defined ports**.  
 - **Ephemeral Environments** – Every session is temporary, ensuring a **clean slate** for each test.  
+- **Ask Devai** - Converse with AI to solve queries regarding configurations.
 
 Devploy simplifies testing and deployment, making it a **powerful tool** for developers who need **fast, disposable environments**.    
 
@@ -37,7 +38,8 @@ Devploy simplifies testing and deployment, making it a **powerful tool** for dev
     - Dockerode : For managing Docker images and containers.    
     - WebSocket Server : For managing WebSocket connections.     
     - Resend    : For sending verification emails.   
-    - Xterm.js  : For browser-based terminal.
+    - Xterm.js  : For browser-based terminal.    
+    - MindsDB AI integration : codellama-70b llm model with OpenAI chat completions API.    
 
 
 ## Reason for Building    
@@ -100,6 +102,9 @@ Devploy simplifies testing and deployment, making it a **powerful tool** for dev
 ---
 
 ## Image Gallery    
+*Home*:     
+![Home](https://res.cloudinary.com/dubrgx4b1/image/upload/v1740997087/Screenshot_2025-03-03_154413_smcixe.png "Devploy Home")
+
 *Docker Configuration*:     
 ![Docker Configuration](https://res.cloudinary.com/dubrgx4b1/image/upload/v1740087953/Screenshot_2025-02-21_030437_w9on5w.png "Docker Configuration")
       
