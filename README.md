@@ -56,7 +56,7 @@ Devploy simplifies testing and deployment, making it a **powerful tool** for dev
 4. Build <ins>*Docker Compose configs*</ins> with multi-service support.    
 5. Download configurations to keep on your device.    
 6. <ins>**Deploy**</ins> your custom-built environments for 15 (+ ~2) minutes with <ins>**512 MB** RAM</ins>. Run *tests*, *services*, and host applications at the ports specified in the Dockerfile with a <ins>*unique endpoint*</ins>.   
-7. <ins>**OPFS**</ins> storage is used to save configurations locally, allowing gigabytes of storage for extremely fast retrieval.    
+7. <ins>**OPFS**</ins> storage is used to save configurations locally, allowing gigabytes of storage for extremely fast retrieval without overloading main thread by using web-workers on client.        
 8. <ins>**Web Workers**</ins> are used to manage OPFS storage, keeping the main thread free.    
 
 ### **2. Service Orchestration and Management**     
