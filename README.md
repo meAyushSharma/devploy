@@ -31,7 +31,7 @@ Devploy simplifies testing and deployment, making it a **powerful tool** for dev
 
 ## Tech Stack    
 - **Backend**                   - Node.js with Express.js     
-- **Frontend**                  - React.js    
+- **Frontend**                  - React.js with Tailwind CSS    
 - **Database**                  - PostgreSQL    
 - **Reverse Proxy**             - Caddy    
 - **Notable Implementations**   -
