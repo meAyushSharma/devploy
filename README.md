@@ -24,7 +24,7 @@ Devploy simplifies testing and deployment, making it a **powerful tool** for dev
 3. **Connection to service** - WebSockets, it uses <ins>*WebSocket server*</ins> to stream from/to containers.    
 4. **Terminal Access** - Xterm.js, it uses powerful <ins>*Xterm*</ins> React library to interact with running containers.   
 5. **Access Service** - It uses <ins>*reverse proxy server*</ins> built in-house to route requests to specific services running inside containers with specified port bindings.    
-6. **Browser Storage** - OPFS, it uses <ins>**Open Private File System**</ins> to store configuration files locally.       
+6. **Browser Storage** - OPFS, it uses <ins>**Origin Private File System**</ins> to store configuration files locally.       
       
 ![Architecture image](https://res.cloudinary.com/dubrgx4b1/image/upload/v1740862513/diagram-export-3-2-2025-2_23_14-AM_hi5suh.png "Devploy Architecture")
       
