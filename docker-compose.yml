@@ -1,48 +1,36 @@
 name: DevBox-v0
 services:
   server:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
+    image: meayush/devploy-server:v1.0.0
     restart: always
     env_file: ./server/.env
     environment:
-      - NODE_ENV=production
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL}
     volumes:
-      - "./server:/app"
-      - /app/node_modules
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - ./server/.env:/app/.env
     networks:
       - devbox-network
-    command: npm run dev
+    command: sh -c "npx prisma migrate deploy && npm run start"
+
 
   client:
-    build: 
-      context: ./client
-      dockerfile: Dockerfile
+    image: meayush/devploy-client:v2.1.0
     restart: always
     env_file: ./client/.env
     environment:
       - NODE_ENV=production
-    volumes:
-      - "./client:/app"
-      - /app/node_modules
     networks:
       - devbox-network
-    command: npm run dev -- --host
+    command: npm run preview -- --host
     depends_on:
       - server
 
   worker:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
+    image: meayush/devploy-worker:v1.1.0
     restart: always
     env_file: ./server/.env
     volumes:
-      - "./server:/app"
-      - /app/node_modules
       - "/var/run/docker.sock:/var/run/docker.sock"
     networks:
       - devbox-network
@@ -52,9 +40,7 @@ services:
   
   
   caddy:
-    build:
-      context: ./caddy
-      dockerfile: Dockerfile
+    image: meayush/devploy-caddy:v2.0.0
     restart: always
     ports:
       - 80:80
@@ -63,7 +49,6 @@ services:
       DOMAIN_NAME: ${DOMAIN_NAME}
       CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN}
     volumes:
-      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data
       - caddy_config:/config
     networks:
