@@ -15,14 +15,14 @@ services:
 
 
   client:
-    image: meayush/devploy-client:v2.1.0
+    image: meayush/devploy-client:v2.4.0
     restart: always
     env_file: ./client/.env
     environment:
       - NODE_ENV=production
     networks:
       - devbox-network
-    command: npm run preview -- --host
+    command: npm run dev -- --host
     depends_on:
       - server
 
@@ -40,7 +40,7 @@ services:
   
   
   caddy:
-    image: meayush/devploy-caddy:v2.0.0
+    image: meayush/devploy-caddy:v2.1.0
     restart: always
     ports:
       - 80:80

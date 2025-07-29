@@ -16,7 +16,7 @@ import { FaCircleStop } from "react-icons/fa6";
 const ActiveTerminals = ({terminal, index}) => {
     const token = useRecoilValue(userModeSelector);
     if (!token) return <div>Not authenticated</div>;
-    const WS_URL = `${import.meta.env.VITE_BACKEND_DOMAIN_URL}/ws?token=${token}&contId=${terminal.contDockerId}` || `https://server.devbox.localhost/ws?token=${token}&contId=${terminal.contDockerId}`
+    const WS_URL = `${import.meta.env.VITE_BACKEND_DOMAIN_URL}/ws?token=${token}&contId=${terminal.contDockerId}` || `https://server.devploynest.in/ws?token=${token}&contId=${terminal.contDockerId}`
     console.log("WS_URL: ", WS_URL);
     const userDetails = useRecoilValue(userDetailsAtom);
     const termRef = useRef(null);
