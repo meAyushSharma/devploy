@@ -4,7 +4,7 @@
 
 devbox.localhost {
     encode gzip
-    reverse_proxy client:5173 {
+    reverse_proxy client:80 {
         header_up Set-Cookie {http.response.header.Set-Cookie}
         header_up Host {host}
     }

@@ -53,7 +53,7 @@ services:
       - /app/node_modules
     networks:
       - devbox-network
-    command: npm run dev -- --host
+    # command: npm run dev -- --host
     depends_on:
       - server
 

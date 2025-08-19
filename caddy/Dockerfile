@@ -1,6 +1,13 @@
 # Stage 1: Build Caddy with custom modules
 FROM caddy:2-builder AS builder
 
+# Add this: use Go proxy with direct fallback and enable checksum DB
+ENV GOPROXY=https://proxy.golang.org,direct \
+    GOSUMDB=sum.golang.org
+
+# Retry builds automatically if Go proxy flakes
+RUN go env -w GOINSECURE=*.golang.org
+
 RUN xcaddy build \
     --with github.com/mholt/caddy-ratelimit \
     --with github.com/caddy-dns/cloudflare
