@@ -9,7 +9,6 @@ const workerFiles = glob.sync("src/worker/*.js").reduce((acc, file) => {
   return acc;
 }, {});
 
-// https://vite.dev/config/
 export default defineConfig({
   mode: "production",
   plugins: [react(), removeConsole()],
@@ -17,19 +16,28 @@ export default defineConfig({
     host: true,
     watch: {
       usePolling: true
-    },
-    // hmr: {
-    //   host: 'localhost',
-    // }
+    }
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx']
   },
-  build :{
-    rollupOptions : {
-      input : {
-        main : "index.html",
+  build: {
+    rollupOptions: {
+      input: {
+        main: "index.html",
         ...workerFiles,
+      },
+      output: {
+        entryFileNames: (chunk) => {
+          // Workers go into /worker/ without hash
+          if (chunk.name in workerFiles) {
+            return `worker/${chunk.name}.js`;
+          }
+          // Everything else keeps normal hashing
+          return `assets/[name]-[hash].js`;
+        },
+        chunkFileNames: `assets/[name]-[hash].js`,
+        assetFileNames: `assets/[name]-[hash].[ext]`,
       }
     }
   }

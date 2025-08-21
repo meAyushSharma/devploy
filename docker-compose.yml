@@ -1,7 +1,7 @@
 name: DevBox-v0
 services:
   server:
-    image: meayush/devploy-server:v1.0.0
+    image: meayush/devploy-server:v1.0.1
     restart: always
     env_file: ./server/.env
     environment:
@@ -15,7 +15,7 @@ services:
 
 
   client:
-    image: meayush/devploy-client:v2.6.0
+    image: meayush/devploy-client:v2.8.0
     restart: always
     env_file: ./client/.env
     environment:

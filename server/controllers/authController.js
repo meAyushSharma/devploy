@@ -10,7 +10,7 @@ const { User, MetaData } = require("../models/prismaClient");
 const { sendMail } = require("../services/sendMail");
 const { getVerifyEmailTemplate, getForgotPasswordTemplate } = require("../helper/resendHelper");
 
-const DOMAIN_NAME = process.env.DOMAIN_NAME || ".devbox.localhost";
+const DOMAIN_NAME = process.env.DOMAIN_NAME;
 const oAuth2Client = new OAuth2Client(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
